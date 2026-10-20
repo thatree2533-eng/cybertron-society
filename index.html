@@ -1,240 +1,136 @@
 """
-ระบบแดชบอร์ด & ห้องแชตอัจฉริยะ
-ออกแบบ: Modular Grid + Multi-Agent Interface
-ระบบ 3 ดี : เก่ง · ดี · มีสุข
+Cybertron AI — ระบบหลัก + ปลั๊กอิน
+รูปแบบ: Plugin-Based Architecture
+เสียบต่อได้ตลอด ไม่ต้องรื้อระบบครับ 🤍✨
 """
-import tkinter as tk
-from tkinter import ttk, scrolledtext
 import json
-from pathlib import Path
+from abc import ABC, abstractmethod
+from typing import Dict, List, Optional
 from datetime import datetime
 
-APP_DIR = Path(__file__).parent.resolve()
-DATA_FILE = APP_DIR / "ระบบแดชบอร์ด.json"
+# ═══════════════ ฐานข้อมูลปลั๊กอิน ═══════════════
+class BasePlugin(ABC):
+    """คลาสแม่ของทุกปลั๊กอิน — ทำตามนี้เสียบได้ทันที"""
+    name: str
+    plugin_id: str
+    description: str
+    status: str = "inactive"
 
-# ═══════════════ ข้อมูลระบบ ═══════════════
-ระบบข้อมูล = {
-    "เวอร์ชัน": "V.2026.4",
-    "ชื่อ": "ซูเปอร์ AI บอท",
-    "ประกาศ": "อัปเดตโมเดลสมองกลเวอร์ชันล่าสุดแล้ว! (ลองใช้ฟังก์ชันวาดภาพใหม่ได้เลย)",
-    "แดชบอร์ด": {
-        "ส่วนที่ 1": {
-            "ชื่อ": "แชตและวิเคราะห์อัจฉริยะ",
-            "บล็อก": [
-                {"id": "chat", "ชื่อ": "💬 แชตถาม-ตอบทั่วไป", "รายละเอียด": "สลับโมเดล AI ได้อิสระ", "สถานะ": "เปิดใช้งาน"},
-                {"id": "analyze", "ชื่อ": "📄 สรุปและวิเคราะห์ไฟล์", "รายละเอียด": "รองรับ PDF, Excel, Word", "สถานะ": "เปิดใช้งาน"}
-            ]
-        },
-        "ส่วนที่ 2": {
-            "ชื่อ": "งานสร้างสรรค์ขั้นสูง",
-            "บล็อก": [
-                {"id": "image", "ชื่อ": "🎨 เจนรูปภาพ & กราฟิก", "รายละเอียด": "Midjourney/DALL-E 4", "สถานะ": "เปิดใช้งาน"},
-                {"id": "video", "ชื่อ": "🎬 เจนวิดีโอ & แอนิเมชัน", "รายละเอียด": "ฟังก์ชันอัปเดตล่าสุด!", "สถานะ": "ใหม่"}
-            ]
-        },
-        "ส่วนที่ 3": {
-            "ชื่อ": "ระบบสั่งการอัตโนมัติ",
-            "บล็อก": [
-                {"id": "connect", "ชื่อ": "🔗 เชื่อมต่อแอปภายนอก", "รายละเอียด": "LINE, Email, Sheets", "สถานะ": "เปิดใช้งาน"},
-                {"id": "automate", "ชื่อ": "📅 บอทช่วยงานประจำวัน", "รายละเอียด": "ตั้งเวลาทำงานล่วงหน้า", "สถานะ": "เปิดใช้งาน"}
-            ]
+    @abstractmethod
+    async def execute(self, user_input: str, **kwargs) -> Dict:
+        """รับคำสั่ง → ทำงาน → คืนผลลัพธ์"""
+        pass
+
+    def get_info(self) -> Dict:
+        return {
+            "id": self.plugin_id,
+            "name": self.name,
+            "description": self.description,
+            "status": self.status
         }
-    },
-    "ห้องแชต": {
-        "ชื่อ": "ห้องแชตทำงานร่วม (Multi-Agent Tool)",
-        "สถานะ": "บอทเขียนบทความ ✍️ + บอทวาดภาพ 🎨 กำลังออนไลน์",
-        "บอท": [
-            {"ชื่อ": "บอทเขียนบทความ", "ไอคอน": "🤖", "ข้อความ": "สวัสดีครับ ผมได้เตรียมเนื้อหาหน้าเว็บแมวให้คุณแล้ว สามารถอ่านโครงร่างด้านล่างนี้ได้เลยครับ..."},
-            {"ชื่อ": "บอทวาดภาพ", "ไอคอน": "🎨", "ข้อความ": "กำลังสร้างรูปภาพ \"แมวสีส้มขี่จรวด\" เพื่อเอาไปประกอบหน้าเว็บให้คุณตามคำสั่งครับ (กำลังประมวลผล 80%)"}
-        ],
-        "เครื่องมือ": [
-            {"ชื่อ": "ค้นหาเว็บสด", "สถานะ": "เปิดใช้"},
-            {"ชื่อ": "วิเคราะห์โค้ด", "สถานะ": "เปิดใช้"},
-            {"ชื่อ": "เพิ่มเครื่องมือ", "สถานะ": "พร้อม"}
-        ],
-        "คำแนะนำ": [
-            "\"ช่วยเขียนโค้ดเว็บแมว\"",
-            "\"แปลบทความนี้เป็นภาษาอังกฤษ\""
-        ]
-    },
-    "หลักการออกแบบ": [
-        {
-            "หัวข้อ": "Dynamic Grid",
-            "รายละเอียด": "แต่ละฟังก์ชันแยกส่วนกัน — เพิ่ม/ถอดได้ทันที ไม่ต้องรื้อระบบ"
-        },
-        {
-            "หัวข้อ": "Plugin Store",
-            "รายละเอียด": "ผู้ใช้เลือกติดตั้งฟังก์ชันเองได้ — แอปเบา อัปเดตเร็ว"
-        },
-        {
-            "หัวข้อ": "LLM Hot-Swap",
-            "รายละเอียด": "สลับโมเดล AI ได้ตลอดเวลา — มีตัวใหม่ก็เสียบต่อได้ทันที"
+
+# ═══════════════ ปลั๊กอินแต่ละตัว ═══════════════
+class ChatPlugin(BasePlugin):
+    def __init__(self, provider: str = "auto"):
+        self.plugin_id = "chat_general"
+        self.name = "แชตถาม-ตอบทั่วไป"
+        self.description = "เชื่อมต่อ GPT / Claude สลับได้อัตโนมัติ"
+        self.status = "active"
+        self.provider = provider
+
+    async def execute(self, user_input: str, **kwargs) -> Dict:
+        return {
+            "plugin": self.plugin_id,
+            "provider": self.provider,
+            "reply": f"ได้รับข้อความ: {user_input}",
+            "timestamp": datetime.now().isoformat()
         }
-    ]
-}
 
-def บันทึกข้อมูล():
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(ระบบข้อมูล, f, ensure_ascii=False, indent=2)
+class ImageGenPlugin(BasePlugin):
+    def __init__(self, model: str = "dalle"):
+        self.plugin_id = "image_generator"
+        self.name = "สร้างภาพ & กราฟิก"
+        self.description = "รองรับ Midjourney / DALL-E / Flux"
+        self.status = "active"
+        self.model = model
 
-# ═══════════════ หน้าจอหลัก ═══════════════
-class แดชบอร์ดหลัก:
-    def __init__(เอง, ราก):
-       เอง.ราก = ราก
-       เอง.ราก.title("🏠 แดชบอร์ดหลัก — ซูเปอร์ AI บอท")
-       เอง.ราก.geometry("900x700")
-       เอง.ราก.configure(bg="#0f172a")
-       เอง.สร้างส่วนหัว()
-       เอง.สร้างช่องค้นหา()
-       เอง.สร้างแถบประกาศ()
-       เอง.สร้างบล็อกฟังก์ชัน()
-       เอง.สร้างแถบล่าง()
+    async def execute(self, user_input: str, **kwargs) -> Dict:
+        return {
+            "plugin": self.plugin_id,
+            "model": self.model,
+            "prompt": user_input,
+            "status": "generating",
+            "preview_url": "..."
+        }
 
-    def สร้างส่วนหัว(เอง):
-        กรอบบน = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=12)
-        กรอบบน.pack(fill=tk.X)
-        tk.Label(กรอบบน, text="[โปรไฟล์ผู้ใช้]", bg="#334155", fg="#fff", width=18).pack(side=tk.LEFT)
-        tk.Label(กรอบบน, text=f"🤖 {ระบบข้อมูล['ชื่อ']} ({ระบบข้อมูล['เวอร์ชัน']})",
-                 bg="#1e293b", fg="#facc15", font=("Sarabun", 14, "bold")).pack(side=tk.LEFT, expand=True)
-        tk.Label(กรอบบน, text="[ตั้งค่า/อัปเดต]", bg="#334155", fg="#60a5fa", padx=15).pack(side=tk.RIGHT)
+class KnowledgePlugin(BasePlugin):
+    def __init__(self):
+        self.plugin_id = "knowledge_base"
+        self.name = "คลังความรู้"
+        self.description = "ค้นหาข้อมูลจากฐานความรู้ภายในระบบ"
+        self.status = "active"
 
-    def สร้างช่องค้นหา(เอง):
-        กรอบค้น = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=10)
-        กรอบค้น.pack(fill=tk.X, pady=(10, 0))
-        tk.Label(กรอบค้น, text="🔍", bg="#1e293b", fg="#94a3b8").pack(side=tk.LEFT)
-        tk.Entry(กรอบค้น, font=("Sarabun", 11), bg="#334155", fg="#cbd5e1",
-                 insertbackground="#fff").pack(side=tk.LEFT, fill=tk.X, expand=True, padx=8)
+    async def execute(self, user_input: str, **kwargs) -> Dict:
+        return {
+            "plugin": self.plugin_id,
+            "query": user_input,
+            "found": True,
+            "source": "Vector Database"
+        }
 
-    def สร้างแถบประกาศ(เอง):
-        กรอบแจ้ง = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=10)
-        กรอบแจ้ง.pack(fill=tk.X, pady=(10, 0))
-        tk.Label(กรอบแจ้ง, text="📢 ประกาศระบบ:", bg="#1e293b", fg="#facc15", font=("Sarabun", 10, "bold")).pack(side=tk.LEFT)
-        tk.Label(กรอบแจ้ง, text=ระบบข้อมูล["ประกาศ"], bg="#1e293b", fg="#4ade80", font=("Sarabun", 10)).pack(side=tk.LEFT, padx=5)
+# ═══════════════ ตัวจัดการกลาง ═══════════════
+class AIAgentOrchestrator:
+    """ตัวสลับสมองกลกลาง — เพิ่มปลั๊กอินใหม่เสียบตรงนี้ได้เลย"""
+    def __init__(self):
+        self.plugins: Dict[str, BasePlugin] = {}
+        self._register_core_plugins()
 
-    def สร้างบล็อกฟังก์ชัน(เอง):
-        พื้นที่ = tk.Frame(เอง.ราก, bg="#0f172a", padx=20, pady=20)
-        พื้นที่.pack(fill=tk.BOTH, expand=True)
+    def _register_core_plugins(self):
+        """ลงทะเบียนปลั๊กอินหลัก"""
+        self.register(ChatPlugin())
+        self.register(ImageGenPlugin())
+        self.register(KnowledgePlugin())
 
-        for ชื่อส่วน, ข้อมูล in ระบบข้อมูล["แดชบอร์ด"].items():
-            tk.Label(พื้นที่, text=f"📌 {ข้อมูล['ชื่อ']}", bg="#0f172a", fg="#60a5fa",
-                     font=("Sarabun", 12, "bold")).pack(anchor=tk.W, pady=(15, 8))
+    def register(self, plugin: BasePlugin):
+        """เพิ่มปลั๊กอินใหม่ — เรียกใช้ตรงนี้ครับ"""
+        self.plugins[plugin.plugin_id] = plugin
+        print(f"✅ เสียบปลั๊กอิน: {plugin.name} [{plugin.plugin_id}]")
 
-            แถว = tk.Frame(พื้นที่, bg="#0f172a")
-            แถว.pack(fill=tk.X)
-            for idx, บล็อก in enumerate(ข้อมูล["บล็อก"]):
-                สีพื้น = "#3b82f6" if บล็อก["สถานะ"] == "ใหม่" else "#1e293b"
-                กรอบ = tk.Frame(แถว, bg=สีพื้น, padx=15, pady=15, width=400, height=120)
-                กรอบ.pack(side=tk.LEFT, padx=(0 if idx == 0 else 15, 0), fill=tk.BOTH, expand=True)
-                กรอบ.pack_propagate(False)
-                tk.Label(กรอบ, text=บล็อก["ชื่อ"], bg=สีพื้น, fg="#fff",
-                         font=("Sarabun", 11, "bold")).pack(anchor=tk.W)
-                tk.Label(กรอบ, text=บล็อก["รายละเอียด"], bg=สีพื้น, fg="#94a3b8",
-                         font=("Sarabun", 9)).pack(anchor=tk.W, pady=(5, 0))
-                tk.Label(กรอบ, text=f"สถานะ: {บล็อก['สถานะ']}", bg=สีพื้น, fg="#4ade80",
-                         font=("Sarabun", 9)).pack(anchor=tk.W, pady=(8, 0))
+    def list_plugins(self) -> List[Dict]:
+        """ดูรายการปลั๊กอินทั้งหมด"""
+        return [p.get_info() for p in self.plugins.values()]
 
-        tk.Button(พื้นที่, text="➕ เพิ่มปลั๊กอิน/ฟังก์ชันใหม่จากสโตร์",
-                  bg="#7c3aed", fg="#fff", font=("Sarabun", 10, "bold"), padx=20, pady=8).pack(pady=(20, 0))
+    async def route_request(self, plugin_id: str, user_input: str, **kwargs) -> Dict:
+        """ส่งคำขอไปยังปลั๊กอินที่ถูกต้อง"""
+        if plugin_id not in self.plugins:
+            return {
+                "error": f"ไม่พบปลั๊กอิน: {plugin_id}",
+                "available": list(self.plugins.keys())
+            }
+        return await self.plugins[plugin_id].execute(user_input, **kwargs)
 
-    def สร้างแถบล่าง(เอง):
-        กรอบล่าง = tk.Frame(เอง.ราก, bg="#1e293b", padx=20, pady=12)
-        กรอบล่าง.pack(fill=tk.X, side=tk.BOTTOM)
-        ปุ่มล่าง = [
-            ("🏠 หน้าแรก", "#3b82f6"),
-            ("🤖 คลังบอทของฉัน", "#334155"),
-            ("🛒 ตลาดปลั๊กอิน", "#334155"),
-            ("📊 ประวัติงาน", "#334155")
-        ]
-        for ข้อ, สี in ปุ่มล่าง:
-            tk.Button(กรอบล่าง, text=ข้อ, bg=สี, fg="#fff",
-                      font=("Sarabun", 10, "bold"), padx=20).pack(side=tk.LEFT, padx=5)
-
-# ═══════════════ หน้าจอแชต ═══════════════
-class ห้องแชตทำงานร่วม:
-    def __init__(เอง, ราก):
-       เอง.ราก = ราก
-       เอง.ราก.title("🤖 ห้องแชตทำงานร่วม — Multi-Agent Tool")
-       เอง.ราก.geometry("900x700")
-       เอง.ราก.configure(bg="#0f172a")
-       เอง.สร้างส่วนหัว()
-       เอง.สร้างพื้นที่สนทนา()
-       เอง.สร้างแถบเครื่องมือ()
-       เอง.สร้างช่องสั่งงาน()
-
-    def สร้างส่วนหัว(เอง):
-        บน = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=10)
-        บน.pack(fill=tk.X)
-        tk.Button(บน, text="⬅️ ออก", bg="#334155", fg="#fff").pack(side=tk.LEFT)
-        tk.Label(บน, text=f"🤖 {ระบบข้อมูล['ห้องแชต']['ชื่อ']}",
-                 bg="#1e293b", fg="#facc15", font=("Sarabun", 13, "bold")).pack(side=tk.LEFT, expand=True)
-        tk.Label(บน, text=f"สถานะ: {ระบบข้อมูล['ห้องแชต']['สถานะ']}",
-                 bg="#1e293b", fg="#4ade80", font=("Sarabun", 10)).pack(side=tk.LEFT, padx=10)
-        tk.Button(บน, text="⚙️ จัดการบอท", bg="#334155", fg="#fff").pack(side=tk.RIGHT)
-
-    def สร้างพื้นที่สนทนา(เอง):
-        พื้นที่ = tk.Frame(เอง.ราก, bg="#0f172a", padx=20, pady=15)
-        พื้นที่.pack(fill=tk.BOTH, expand=True)
-       เอง.กล่องข้อความ = scrolledtext.ScrolledText(พื้นที่, wrap=tk.WORD, font=("Sarabun", 11),
-                                                         bg="#1e293b", fg="#e2e8f0", insertbackground="#fff")
-       เอง.กล่องข้อความ.pack(fill=tk.BOTH, expand=True)
-
-        # แสดงข้อความบอท
-        for บอท in ระบบข้อมูล["ห้องแชต"]["บอท"]:
-           เอง.กล่องข้อความ.insert(tk.END, f"{บอท['ไอคอน']} [{บอท['ชื่อ']}]: ", "ชื่อ")
-           เอง.กล่องข้อความ.insert(tk.END, f"{บอท['ข้อความ']}\n\n", "ข้อความ")
-
-        # แสดงเครื่องมือ
-       เอง.กล่องข้อความ.insert(tk.END, "🛠️ เครื่องมือที่เปิดใช้งานอยู่: ", "หัวข้อ")
-        รายการ = " ".join([f"[{('✔️' if t['สถานะ']=='เปิดใช้' else '➕')} {t['ชื่อ']}]"
-                           for t in ระบบข้อมูล["ห้องแชต"]["เครื่องมือ"]])
-       เอง.กล่องข้อความ.insert(tk.END, f"{รายการ}\n", "ข้อความ")
-
-       เอง.กล่องข้อความ.config(state=tk.DISABLED)
-       เอง.กล่องข้อความ.tag_config("ชื่อ", foreground="#60a5fa", font=("Sarabun", 11, "bold"))
-       เอง.กล่องข้อความ.tag_config("หัวข้อ", foreground="#facc15", font=("Sarabun", 11, "bold"))
-       เอง.กล่องข้อความ.tag_config("ข้อความ", foreground="#e2e8f0")
-
-    def สร้างแถบเครื่องมือ(เอง):
-        แถบ = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=8)
-        แถบ.pack(fill=tk.X)
-        tk.Label(แถบ, text="💡 คำแนะนำคำสั่ง:", bg="#1e293b", fg="#facc15").pack(side=tk.LEFT)
-        tk.Label(แถบ, text=" | ".join(ระบบข้อมูล["ห้องแชต"]["คำแนะนำ"]), bg="#1e293b", fg="#94a3b8").pack(side=tk.LEFT, padx=5)
-
-    def สร้างช่องสั่งงาน(เอง):
-        ล่าง = tk.Frame(เอง.ราก, bg="#1e293b", padx=15, pady=10)
-        ล่าง.pack(fill=tk.X)
-        tk.Button(ล่าง, text="📎 แนบไฟล์/ภาพ", bg="#334155", fg="#fff").pack(side=tk.LEFT, padx=(0, 8))
-       เอง.ช่องพิมพ์ = tk.Entry(ล่าง, font=("Sarabun", 11), bg="#334155", fg="#fff", insertbackground="#fff")
-       เอง.ช่องพิมพ์.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
-       เอง.ช่องพิมพ์.insert(0, "พิมพ์คำสั่งสั่งงาน AI ทุกตัวที่นี่...")
-        tk.Button(ล่าง, text="🎙️ สั่งด้วยเสียง", bg="#334155", fg="#fff").pack(side=tk.LEFT, padx=(8, 0))
-        tk.Button(ล่าง, text="ส่ง", bg="#3b82f6", fg="#fff", font=("Sarabun", 10, "bold"), width=8).pack(side=tk.RIGHT, padx=(8, 0))
-
-# ═══════════════ เริ่มทำงาน ═══════════════
-class หน้าเลือก:
-    def __init__(เอง, ราก):
-       เอง.ราก = ราก
-       เอง.ราก.title("เลือกหน้าจอ — ระบบซูเปอร์ AI บอท")
-       เอง.ราก.geometry("500x300")
-       เอง.ราก.configure(bg="#0f172a")
-        tk.Label(ราก, text="🤖 ระบบซูเปอร์ AI บอท", bg="#0f172a", fg="#facc15",
-                 font=("Sarabun", 18, "bold")).pack(pady=(40, 10))
-        tk.Label(ราก, text="เลือกหน้าจอที่ต้องการเปิด", bg="#0f172a", fg="#94a3b8").pack(pady=(0, 30))
-        tk.Button(ราก, text="🏠 เปิดแดชบอร์ดหลัก", command=เอง.เปิดแดช,
-                  bg="#3b82f6", fg="#fff", font=("Sarabun", 12, "bold"), padx=30, pady=12).pack(pady=8)
-        tk.Button(ราก, text="💬 เปิดห้องแชตทำงานร่วม", command=เอง.เปิดแชต,
-                  bg="#7c3aed", fg="#fff", font=("Sarabun", 12, "bold"), padx=30, pady=12).pack(pady=8)
-
-    def เปิดแดช(เอง):
-        หน้าต่าง = tk.Toplevel(เอง.ราก)
-        แดชบอร์ดหลัก(หน้าต่าง)
-
-    def เปิดแชต(เอง):
-        หน้าต่าง = tk.Toplevel(เอง.ราก)
-        ห้องแชตทำงานร่วม(หน้าต่าง)
-
+# ═════════════── ตัวอย่างการใช้งาน ═══════════════
 if __name__ == "__main__":
-    บันทึกข้อมูล()
-    รากหลัก = tk.Tk()
-    แอป = หน้าเลือก(รากหลัก)
-    รากหลัก.mainloop()
+    import asyncio
+
+    # สร้างระบบหลัก
+    orchestrator = AIAgentOrchestrator()
+
+    # 📋 ดูรายการปลั๊กอินที่มี
+    print("\n📋 ปลั๊กอินที่เสียบใช้งานอยู่:")
+    for p in orchestrator.list_plugins():
+        print(f"  • {p['id']:20} | {p['name']} | {p['status']}")
+
+    # ✅ ส่งคำสั่งไปที่แชต
+    async def demo():
+        result = await orchestrator.route_request(
+            "chat_general",
+            "สวัสดีครับ ระบบทำงานอยู่ไหม"
+        )
+        print("\n📤 ผลลัพธ์จากแชต:")
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+
+    asyncio.run(demo())
+
+    # ➕ เพิ่มปลั๊กอินใหม่ — แค่เขียนคลาสแล้ว register()
+    print("\n➕ เพิ่มปลั๊กอินใหม่ได้ตลอดเวลาครับ...")
