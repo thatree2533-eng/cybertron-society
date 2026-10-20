@@ -3,35 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Super App - Web Edition</title>
+    <title>AI Super App - Production Edition</title>
     <style>
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
         .container { width: 100%; max-width: 600px; }
         
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header h1 { color: #38bdf8; margin: 0; font-size: 24px; }
         .header p { color: #94a3b8; font-size: 14px; }
+
+        /* กล่องตั้งค่า API Key */
+        .api-box { background: #1e293b; border: 1px dashed #38bdf8; padding: 12px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        .api-box input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 12px; }
+        .api-box label { font-size: 12px; color: #38bdf8; font-weight: bold; }
+        .api-box a { color: #10b981; font-size: 11px; text-decoration: none; }
         
-        /* ส่วนแสดงผลเมนู (Server-Driven UI จำลอง) */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .menu-card { background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: center; }
         .menu-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+        .menu-card.active { border-color: #38bdf8; background: #1e293b; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
         .menu-card .icon { font-size: 24px; margin-bottom: 8px; display: block; }
         .menu-card .title { font-size: 14px; font-weight: bold; }
         .menu-card .status { font-size: 11px; color: #10b981; margin-top: 5px; }
         
-        /* ส่วนแชท */
-        .chat-container { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; height: 400px; }
-        .chat-header { background: #0f172a; padding: 15px; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; }
-        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-container { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; height: 420px; }
+        .chat-header { background: #0f172a; padding: 15px; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; display: flex; justify-content: space-between; }
+        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #111827; }
         
-        .msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 14px; line-height: 1.4; }
-        .msg.system { background: #334155; align-self: flex-start; border-bottom-left-radius: 0; }
+        .msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .msg.system { background: #1f2937; align-self: flex-start; border-bottom-left-radius: 0; color: #f3f4f6; border: 1px solid #374151; }
         .msg.user { background: #0284c7; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg img { max-width: 100%; border-radius: 5px; margin-top: 5px; display: block; }
         
-        .chat-input-area { display: flex; padding: 15px; border-top: 1px solid #334155; background: #0f172a; }
+        .chat-input-area { display: flex; padding: 12px; border-top: 1px solid #334155; background: #0f172a; gap: 8px; align-items: center; }
         .chat-input-area input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; }
-        .chat-input-area button { padding: 10px 20px; background: #38bdf8; color: #0f172a; border: none; border-radius: 5px; margin-left: 10px; cursor: pointer; font-weight: bold; }
+        
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; }
+        .btn-blue { background: #38bdf8; color: #0f172a; }
+        .btn-blue:hover { background: #7dd3fc; }
+        .btn-gray { background: #334155; color: white; display: flex; align-items: center; justify-content: center; }
+        
+        #preview-container { display: none; padding: 8px 15px; background: #1f2937; border-top: 1px solid #334155; font-size: 12px; color: #38bdf8; }
     </style>
 </head>
 <body>
@@ -39,110 +51,127 @@
     <div class="container">
         <div class="header">
             <h1>🤖 AI Super App</h1>
-            <p>Server-Driven UI Simulation (Web Edition)</p>
+            <p>ระบบบอทพหุโมดูลทำงานจริง (Multi-Modal Orchestrator)</p>
         </div>
 
-        <!-- เมนูที่วาดจาก Config -->
-        <div class="menu-grid" id="menu-container">
-            <!-- จะถูกสร้างด้วย JavaScript -->
+        <!-- กล่องใส่ API Key เพื่อให้บอทคุยได้จริง -->
+        <div class="api-box">
+            <label>Gemini API Key:</label>
+            <input type="password" id="api-key-input" placeholder="ใสคีย์เพื่อเปิดใช้งานระบบแชตและวิเคราะห์รูปภาพ..." onchange="saveApiKey()">
+            <a href="https://google.com" target="_blank">🔗 รับคีย์ฟรีที่นี่</a>
         </div>
 
-        <!-- หน้าต่างแชท -->
+        <!-- เมนูวาดจากสถาปัตยกรรมคุมหน้าจอ -->
+        <div class="menu-grid" id="menu-container"></div>
+
+        <!-- หน้าต่างแชทและประมวลผลอัจฉริยะ -->
         <div class="chat-container">
-            <div class="chat-header" id="chat-header">💬 บอทแชตทั่วไป</div>
-            <div class="chat-log" id="chat-log">
-                <div class="msg system">ระบบพร้อมใช้งาน พิมพ์คำสั่งเพื่อทดสอบได้เลยครับ</div>
+            <div class="chat-header">
+                <span id="chat-header-text">💬 บอทแชตทั่วไป</span>
+                <span style="font-size: 11px; color: #94a3b8;" id="engine-status">Engine: Local Router</span>
             </div>
+            <div class="chat-log" id="chat-log">
+                <div class="msg system">ยินดีต้อนรับสู่โปรแกรมต้นแบบแอป AI!<br>• ฟังก์ชัน <b>"เจนรูปภาพ"</b> ใช้งานได้ทันทีฟรี!<br>• ฟังก์ชัน <b>"แชต" และ "วิเคราะห์ภาพ"</b> โปรดใส่คีย์ Gemini ด้านบนเพื่อเปิดระบบจริงครับ</div>
+            </div>
+            
+            <!-- ตัวพรีวิวรูปภาพก่อนส่งให้ AI วิเคราะห์ -->
+            <div id="preview-container">📎 เตรียมส่งรูปภาพ: <span id="file-name"></span></div>
+
             <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="พิมพ์คำสั่ง เช่น วาดรูปแมวอวกาศ..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">ส่ง</button>
+                <!-- อัปโหลดรูปภาพเพื่อทำ AI Vision -->
+                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
+                <button id="upload-btn" class="btn btn-gray" onclick="document.getElementById('file-input').click()" title="แนบภาพเพื่อวิเคราะห์">📷</button>
+                
+                <input type="text" id="chat-input" placeholder="พิมพ์คำสั่งงาน..." onkeypress="handleKeyPress(event)">
+                <button class="btn btn-blue" onclick="sendMessage()">ส่งคำสั่ง</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. จำลอง Config จาก Backend (Server-Driven UI)
+        // 1. โครงสร้างข้อมูลคุมแอป (Server-Driven UI Config) พร้อมอัปเดต
         const appConfig = {
             features: [
-                { id: "chat", title: "แชตถาม-ตอบ", icon: "💬", status: "active" },
-                { id: "image", title: "เจนรูปภาพ", icon: "🎨", status: "active" },
-                { id: "video", title: "เจนวิดีโอ", icon: "🎬", status: "beta" },
-                { id: "file", title: "วิเคราะห์ไฟล์", icon: "📄", status: "active" }
+                { id: "chat", title: "แชตถาม-ตอบอัจฉริยะ", icon: "💬", status: "active", placeholder: "ถามคำถามเรื่องแมวหรือคุยทั่วไป..." },
+                { id: "image", title: "เจนรูปภาพฟรี", icon: "🎨", status: "active", placeholder: "พิมพ์รูปที่อยากได้ (ภาษาอังกฤษ) เช่น cute orange cat running..." },
+                { id: "file", title: "วิเคราะห์ไฟล์ภาพ", icon: "📷", status: "active", placeholder: "เลือกรูปภาพด้วยปุ่มกล้อง แล้วพิมพ์สั่งให้บอทวิเคราะห์ที่นี่..." },
+                { id: "video", title: "เจนวิดีโอ (Coming Soon)", icon: "🎬", status: "beta", placeholder: "โมดูลนี้ระบบกำลังอัปเดต..." }
             ]
         };
 
-        let currentAgent = "Core_LLM_Chat";
-        let currentTitle = "💬 บอทแชตทั่วไป";
+        let currentAgent = "chat";
+        let attachedImageData = null; // เก็บ Base64 ของรูปภาพเพื่อส่งเข้า AI Vision
 
-        // 2. ฟังก์ชันวาดเมนู (เหมือน React ฝั่ง Frontend)
+        // โหลด API Key ที่เคยบันทึกไว้
+        window.onload = () => {
+            if(localStorage.getItem('gemini_api_key')) {
+                document.getElementById('api-key-input').value = localStorage.getItem('gemini_api_key');
+            }
+            renderMenu();
+            selectAgent(appConfig.features[0]);
+        };
+
+        function saveApiKey() {
+            localStorage.setItem('gemini_api_key', document.getElementById('api-key-input').value.trim());
+        }
+
+        // 2. เอนจิ้นวาดหน้าจออัตโนมัติ
         function renderMenu() {
             const container = document.getElementById('menu-container');
             container.innerHTML = '';
-            
             appConfig.features.forEach(feature => {
                 const card = document.createElement('div');
-                card.className = 'menu-card';
+                card.className = `menu-card ${currentAgent === feature.id ? 'active' : ''}`;
                 card.onclick = () => selectAgent(feature);
-                
                 card.innerHTML = `
                     <span class="icon">${feature.icon}</span>
                     <div class="title">${feature.title}</div>
-                    <div class="status">${feature.status === 'active' ? '✅ พร้อมใช้งาน' : '🟡 ทดลอง'}</div>
+                    <div class="status">${feature.status === 'active' ? '✅ ทำงานจริง' : '🟡 รออัปเดต'}</div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // 3. ฟังก์ชันเปลี่ยน Agent (เหมือนระบบ Orchestrator)
+        // 3. ระบบคัดแยกบอททำงาน (Dynamic Agent Switcher)
         function selectAgent(feature) {
             currentAgent = feature.id;
-            currentTitle = `${feature.icon} ${feature.title}`;
-            document.getElementById('chat-header').innerText = currentTitle;
+            document.getElementById('chat-header-text').innerText = `${feature.icon} ${feature.title}`;
+            document.getElementById('chat-input').placeholder = feature.placeholder;
             
-            const log = document.getElementById('chat-log');
-            log.innerHTML = `<div class="msg system">เชื่อมต่อกับ ${feature.title} สำเร็จ (จำลอง)</div>`;
+            // แสดง/ซ่อน ปุ่มอัปโหลดรูปตามฟังก์ชัน
+            document.getElementById('upload-btn').style.display = (currentAgent === 'file') ? 'block' : 'none';
+            
+            renderMenu();
         }
 
-        // 4. ฟังก์ชันส่งข้อความ (จำลอง Orchestrator Routing)
-        function sendMessage() {
+        // 4. การจัดการระบบอ่านไฟล์รูปภาพของเบราว์เซอร์
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('file-name').innerText = file.name;
+            document.getElementById('preview-container').style.display = 'block';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                attachedImageData = e.target.result.split(',')[1]; // เก็บเฉพาะเนื้อโค้ด Base64
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 5. ระบบส่งข้อมูลและกระจายคำสั่งจริง (Orchestrator Core)
+        async function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
-            if (!text) return;
+            const apiKey = localStorage.getItem('gemini_api_key');
+            
+            if (!text && !attachedImageData) return;
 
             const log = document.getElementById('chat-log');
             
-            // โชว์ข้อความ User
-            log.innerHTML += `<div class="msg user">${text}</div>`;
-            input.value = '';
-            log.scrollTop = log.scrollHeight;
-
-            // จำลองการตอบกลับของ Orchestrator (ตามคำที่พิมพ์)
-            setTimeout(() => {
-                let reply = "";
-                let agentName = "Core_LLM_Chat";
-
-                const lowerText = text.toLowerCase();
-                if (lowerText.includes("วาด") || lowerText.includes("รูป") || lowerText.includes("ภาพ")) {
-                    agentName = "Image_Agent_v2";
-                    reply = `รับคำสั่งสร้างภาพ: "${text}"\n(จำลองการทำงานของ Image Agent)`;
-                } else if (lowerText.includes("วิดีโอ") || lowerText.includes("คลิป")) {
-                    agentName = "Video_Agent_v1";
-                    reply = `รับคำสั่งสร้างวิดีโอ: "${text}"\n(จำลองการทำงานของ Video Agent)`;
-                } else {
-                    reply = `บอทแชตตอบกลับ: ได้รับข้อความ "${text}" แล้วครับ`;
-                }
-
-                log.innerHTML += `<div class="msg system">[${agentName}]<br>${reply}</div>`;
-                log.scrollTop = log.scrollHeight;
-            }, 1000);
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        // เริ่มระบบ
-        renderMenu();
-    </script>
-</body>
-</html>
+            // 1. แสดงข้อความฝั่งผู้ใช้ลงบนจอ
+            let userMsgHtml = `<div class="msg user">${text}`;
+            if (currentAgent === 'file' && attachedImageData) {
+                userMsgHtml += `<br><img src="data:image/jpeg;base64,${attachedImageData}" />`;
+            }
+            userMsgHtml += `</div>`;
