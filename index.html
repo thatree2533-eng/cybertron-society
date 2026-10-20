@@ -12,7 +12,7 @@ import threading
 from pathlib import Path
 from datetime import datetime
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Dict
 from dataclasses import dataclass
 
 # ==========================================
@@ -68,7 +68,7 @@ def load_app_info() -> dict:
 APP_INFO = load_app_info()
 
 # ==========================================
-# 2. คลาสพื้นฐานของปลั๊กอิน (Plugin Base Class)
+# 2. คลาสพื้นฐานของปลั๊กอิน
 # ==========================================
 @dataclass
 class PluginResult:
@@ -78,7 +78,6 @@ class PluginResult:
     time: str
 
 class BasePlugin(ABC):
-    """แม่แบบปลั๊กอิน — เปลี่ยนเครื่องเล่นได้ตามใจ"""
     def __init__(self, plugin_id: str, name: str, desc: str, api: str):
         self.plugin_id = plugin_id
         self.name = name
@@ -91,7 +90,7 @@ class BasePlugin(ABC):
         pass
 
 # ==========================================
-# 3. ปลั๊กอินแต่ละตัว (Plugins)
+# 3. ปลั๊กอินแต่ละตัว
 # ==========================================
 class ChatPlugin(BasePlugin):
     def __init__(self):
@@ -99,10 +98,9 @@ class ChatPlugin(BasePlugin):
     
     def run(self, user_text: str) -> PluginResult:
         try:
-            # ยิง API ไปที่ Ollama ในเครื่อง (พอร์ต 11434)
             url = "http://localhost:11434/api/generate"
             data = {
-                "model": "kluen", # ใช้โมเดลคลื่นของคุณ
+                "model": "kluen",
                 "prompt": user_text,
                 "stream": False
             }
@@ -127,13 +125,13 @@ class FilePlugin(BasePlugin):
     def __init__(self):
         super().__init__("file_analyzer", "📄 สรุปและวิเคราะห์ไฟล์", "รองรับ PDF, Excel, Word", "/api/v1/analyze")
     def run(self, user_text: str) -> PluginResult:
-        return PluginResult(self.name, user_text, f"📄 ระบบพร้อมวิเคราะห์ไฟล์: {user_text}\n(ฟีเจอร์นี้จะเชื่อมต่อในอนาคต)", datetime.now().strftime("%H:%M:%S"))
+        return PluginResult(self.name, user_text, f"📄 ระบบพร้อมวิเคราะห์ไฟล์: {user_text}", datetime.now().strftime("%H:%M:%S"))
 
 class ImagePlugin(BasePlugin):
     def __init__(self):
         super().__init__("image_gen", "🎨 เจนรูปภาพ & กราฟิก", "Midjourney / DALL-E 4 / Flux", "/api/v1/image-gen")
     def run(self, user_text: str) -> PluginResult:
-        return PluginResult(self.name, user_text, f"🎨 กำลังสร้างภาพ: {user_text}\n(ใช้เวลาประมวลผล 10-30 วินาที)", datetime.now().strftime("%H:%M:%S"))
+        return PluginResult(self.name, user_text, f"🎨 กำลังสร้างภาพ: {user_text}", datetime.now().strftime("%H:%M:%S"))
 
 class VideoPlugin(BasePlugin):
     def __init__(self):
@@ -155,7 +153,7 @@ class SchedulePlugin(BasePlugin):
         return PluginResult(self.name, user_text, f"📅 ตั้งเวลาเรียบร้อย: {user_text}", datetime.now().strftime("%H:%M:%S"))
 
 # ==========================================
-# 4. ตัวจัดการปลั๊กอิน (Plugin Manager)
+# 4. ตัวจัดการปลั๊กอิน
 # ==========================================
 class PluginManager:
     def __init__(self):
@@ -177,7 +175,7 @@ class PluginManager:
         return self.plugins.get(plugin_id)
 
 # ==========================================
-# 5. หน้าจอ GUI หลัก (Main Application)
+# 5. หน้าจอ GUI หลัก
 # ==========================================
 class CybertronApp:
     def __init__(self, root: tk.Tk):
@@ -280,19 +278,17 @@ class CybertronApp:
             output.see(tk.END)
             output.config(state=tk.DISABLED)
 
-            # แสดงสถานะโหลด
             output.config(state=tk.NORMAL)
             output.insert(tk.END, "ระบบ: กำลังประมวลผล...\n")
             output.see(tk.END)
             output.config(state=tk.DISABLED)
 
-            # ใช้ Thread เพื่อไม่ให้ GUI ค้าง
             def process():
                 plugin = self.manager.get(fid)
                 if plugin:
                     res = plugin.run(txt)
                     output.config(state=tk.NORMAL)
-                    output.delete("end-2l", "end-1l") # ลบข้อความโหลด
+                    output.delete("end-2l", "end-1l") 
                     output.insert(tk.END, f"ระบบ: {res.reply}\n\n")
                     output.see(tk.END)
                     output.config(state=tk.DISABLED)
@@ -306,7 +302,6 @@ class CybertronApp:
 # 6. จุดเริ่มต้นโปรแกรม
 # ==========================================
 if __name__ == "__main__":
-    # สร้างไฟล์ JSON เริ่มต้นถ้ายังไม่มี
     if not DATA_FILE.exists():
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(DEFAULT_APP_INFO, f, ensure_ascii=False, indent=2)
