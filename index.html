@@ -3,170 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron AI — Web Edition</title>
+    <title>AI Super App - Web Edition</title>
     <style>
-        :root {
-            --bg: #12171f; --panel: #1a202c; --card: #1e293b;
-            --text: #e2e8f0; --muted: #94a3b8; --primary: #0ea5e9;
-            --active: #2563eb; --beta: #d97706; --success: #22c55e;
-        }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Sarabun', sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 600px; }
         
-        /* Header */
-        header { padding: 15px 20px; background: var(--panel); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; }
-        .logo { font-size: 18px; font-weight: bold; color: #facc15; display: flex; align-items: center; gap: 10px; }
-        .version { font-size: 12px; color: var(--muted); margin-left: 5px;}
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #38bdf8; margin: 0; font-size: 24px; }
+        .header p { color: #94a3b8; font-size: 14px; }
         
-        /* Content */
-        .content { flex: 1; padding: 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-content: start; }
+        /* ส่วนแสดงผลเมนู (Server-Driven UI จำลอง) */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .menu-card { background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 10px; cursor: pointer; transition: 0.2s; text-align: center; }
+        .menu-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
+        .menu-card .icon { font-size: 24px; margin-bottom: 8px; display: block; }
+        .menu-card .title { font-size: 14px; font-weight: bold; }
+        .menu-card .status { font-size: 11px; color: #10b981; margin-top: 5px; }
         
-        .section-title { grid-column: 1 / -1; font-size: 16px; color: var(--muted); margin-top: 10px; margin-bottom: -10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        /* ส่วนแชท */
+        .chat-container { background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; height: 400px; }
+        .chat-header { background: #0f172a; padding: 15px; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; }
+        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         
-        /* Cards */
-        .card { background: var(--card); border: 1px solid #334155; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: 0.2s; }
-        .card:hover { border-color: var(--primary); }
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .card-title { font-size: 16px; font-weight: bold; }
-        .badge { font-size: 10px; padding: 3px 8px; border-radius: 12px; font-weight: bold; }
-        .badge.active { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
-        .badge.beta { background: rgba(217, 119, 6, 0.2); color: #fbbf24; }
-        .card-desc { font-size: 13px; color: var(--muted); }
-        .card-api { font-size: 11px; font-family: monospace; color: #64748b; margin-top: auto; }
+        .msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+        .msg.system { background: #334155; align-self: flex-start; border-bottom-left-radius: 0; }
+        .msg.user { background: #0284c7; color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         
-        .btn-open { background: var(--active); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .btn-open:hover { background: var(--primary); }
-        .btn-open.beta { background: var(--beta); }
-
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--panel); width: 90%; max-width: 700px; height: 80vh; border-radius: 10px; display: flex; flex-direction: column; border: 1px solid #334155; }
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-        .modal-title { font-size: 18px; font-weight: bold; color: #facc15; }
-        .close-btn { background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; }
-        
-        .chat-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { padding: 12px; border-radius: 8px; max-width: 80%; line-height: 1.5; font-size: 14px; }
-        .msg.user { background: var(--active); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
-        .msg.system { background: var(--card); color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
-        
-        .chat-input { padding: 15px; border-top: 1px solid #334155; display: flex; gap: 10px; }
-        .chat-input input { flex: 1; padding: 10px; border-radius: 5px; border: none; background: var(--bg); color: white; outline: none; }
-        .chat-input button { padding: 0 20px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .chat-input-area { display: flex; padding: 15px; border-top: 1px solid #334155; background: #0f172a; }
+        .chat-input-area input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; }
+        .chat-input-area button { padding: 10px 20px; background: #38bdf8; color: #0f172a; border: none; border-radius: 5px; margin-left: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            🤖 Cybertron AI <span class="version">V.2026.4 (Web)</span>
-        </div>
-        <button style="background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">ตั้งค่า/อัปเดต</button>
-    </header>
-
-    <!-- Main Content -->
-    <div class="content" id="main-content">
-        <!-- Section 1 -->
-        <div class="section-title">ส่วนที่ 1: แชตและวิเคราะห์อัจฉริยะ</div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">💬 แชตถาม-ตอบทั่วไป</div>
-                <div class="badge active">Active</div>
-            </div>
-            <div class="card-desc">สลับโมเดล AI ได้อิสระ (จำลอง Web API)</div>
-            <div class="card-api">API: /api/v1/chat</div>
-            <button class="btn-open" onclick="openModal('chat', 'แชตถาม-ตอบทั่วไป')">✅ เปิดใช้งาน</button>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">📄 สรุปและวิเคราะห์ไฟล์</div>
-                <div class="badge active">Active</div>
-            </div>
-            <div class="card-desc">รองรับ PDF, Excel, Word</div>
-            <div class="card-api">API: /api/v1/analyze</div>
-            <button class="btn-open" onclick="openModal('file', 'สรุปและวิเคราะห์ไฟล์')">✅ เปิดใช้งาน</button>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Super App</h1>
+            <p>Server-Driven UI Simulation (Web Edition)</p>
         </div>
 
-        <!-- Section 2 -->
-        <div class="section-title">ส่วนที่ 2: งานสร้างสรรค์ขั้นสูง</div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">🎨 เจนรูปภาพ & กราฟิก</div>
-                <div class="badge active">Active</div>
-            </div>
-            <div class="card-desc">Midjourney / DALL-E 4 / Flux</div>
-            <div class="card-api">API: /api/v1/image-gen</div>
-            <button class="btn-open" onclick="openModal('image', 'เจนรูปภาพ & กราฟิก')">✅ เปิดใช้งาน</button>
+        <!-- เมนูที่วาดจาก Config -->
+        <div class="menu-grid" id="menu-container">
+            <!-- จะถูกสร้างด้วย JavaScript -->
         </div>
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title">🎬 เจนวิดีโอ & แอนิเมชัน</div>
-                <div class="badge beta">Beta</div>
-            </div>
-            <div class="card-desc">ฟังก์ชันอัปเดตล่าสุด!</div>
-            <div class="card-api">API: /api/v1/video-gen</div>
-            <button class="btn-open beta" onclick="openModal('video', 'เจนวิดีโอ & แอนิเมชัน')">🟡 ทดลองใช้</button>
-        </div>
-    </div>
 
-    <!-- Modal Chat -->
-    <div class="modal" id="chatModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle">แชต</div>
-                <button class="close-btn" onclick="closeModal()">×</button>
+        <!-- หน้าต่างแชท -->
+        <div class="chat-container">
+            <div class="chat-header" id="chat-header">💬 บอทแชตทั่วไป</div>
+            <div class="chat-log" id="chat-log">
+                <div class="msg system">ระบบพร้อมใช้งาน พิมพ์คำสั่งเพื่อทดสอบได้เลยครับ</div>
             </div>
-            <div class="chat-log" id="chatLog">
-                <div class="msg system">ยินดีต้อนรับ! ระบบพร้อมใช้งาน (จำลอง)</div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="พิมพ์คำสั่ง เช่น วาดรูปแมวอวกาศ..." onkeypress="handleKeyPress(event)">
                 <button onclick="sendMessage()">ส่ง</button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentPlugin = '';
+        // 1. จำลอง Config จาก Backend (Server-Driven UI)
+        const appConfig = {
+            features: [
+                { id: "chat", title: "แชตถาม-ตอบ", icon: "💬", status: "active" },
+                { id: "image", title: "เจนรูปภาพ", icon: "🎨", status: "active" },
+                { id: "video", title: "เจนวิดีโอ", icon: "🎬", status: "beta" },
+                { id: "file", title: "วิเคราะห์ไฟล์", icon: "📄", status: "active" }
+            ]
+        };
 
-        function openModal(pluginId, title) {
-            currentPlugin = pluginId;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('chatModal').style.display = 'flex';
-            document.getElementById('chatLog').innerHTML = `<div class="msg system">ยินดีต้อนรับสู่ ${title}</div>`;
+        let currentAgent = "Core_LLM_Chat";
+        let currentTitle = "💬 บอทแชตทั่วไป";
+
+        // 2. ฟังก์ชันวาดเมนู (เหมือน React ฝั่ง Frontend)
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+            
+            appConfig.features.forEach(feature => {
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.onclick = () => selectAgent(feature);
+                
+                card.innerHTML = `
+                    <span class="icon">${feature.icon}</span>
+                    <div class="title">${feature.title}</div>
+                    <div class="status">${feature.status === 'active' ? '✅ พร้อมใช้งาน' : '🟡 ทดลอง'}</div>
+                `;
+                container.appendChild(card);
+            });
         }
 
-        function closeModal() {
-            document.getElementById('chatModal').style.display = 'none';
+        // 3. ฟังก์ชันเปลี่ยน Agent (เหมือนระบบ Orchestrator)
+        function selectAgent(feature) {
+            currentAgent = feature.id;
+            currentTitle = `${feature.icon} ${feature.title}`;
+            document.getElementById('chat-header').innerText = currentTitle;
+            
+            const log = document.getElementById('chat-log');
+            log.innerHTML = `<div class="msg system">เชื่อมต่อกับ ${feature.title} สำเร็จ (จำลอง)</div>`;
         }
 
-        function handleEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
+        // 4. ฟังก์ชันส่งข้อความ (จำลอง Orchestrator Routing)
         function sendMessage() {
-            const input = document.getElementById('chatInput');
+            const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (!text) return;
 
-            const log = document.getElementById('chatLog');
+            const log = document.getElementById('chat-log');
             
-            // โชว์ข้อความ user
+            // โชว์ข้อความ User
             log.innerHTML += `<div class="msg user">${text}</div>`;
             input.value = '';
             log.scrollTop = log.scrollHeight;
 
-            // จำลองการตอบกลับ
+            // จำลองการตอบกลับของ Orchestrator (ตามคำที่พิมพ์)
             setTimeout(() => {
                 let reply = "";
-                if (currentPlugin === 'chat') reply = "ระบบได้รับข้อความแล้ว (ในเวอร์ชันเว็บจะไม่สามารถเชื่อมต่อ Ollama ในเครื่องได้โดยตรง)";
-                else if (currentPlugin === 'image') reply = `กำลังสร้างภาพ: "${text}" (จำลอง)`;
-                else reply = `ระบบได้รับคำสั่ง: ${text}`;
+                let agentName = "Core_LLM_Chat";
 
-                log.innerHTML += `<div class="msg system">${reply}</div>`;
+                const lowerText = text.toLowerCase();
+                if (lowerText.includes("วาด") || lowerText.includes("รูป") || lowerText.includes("ภาพ")) {
+                    agentName = "Image_Agent_v2";
+                    reply = `รับคำสั่งสร้างภาพ: "${text}"\n(จำลองการทำงานของ Image Agent)`;
+                } else if (lowerText.includes("วิดีโอ") || lowerText.includes("คลิป")) {
+                    agentName = "Video_Agent_v1";
+                    reply = `รับคำสั่งสร้างวิดีโอ: "${text}"\n(จำลองการทำงานของ Video Agent)`;
+                } else {
+                    reply = `บอทแชตตอบกลับ: ได้รับข้อความ "${text}" แล้วครับ`;
+                }
+
+                log.innerHTML += `<div class="msg system">[${agentName}]<br>${reply}</div>`;
                 log.scrollTop = log.scrollHeight;
             }, 1000);
         }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        // เริ่มระบบ
+        renderMenu();
     </script>
 </body>
 </html>
