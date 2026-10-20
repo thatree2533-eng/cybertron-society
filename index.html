@@ -3,249 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron - Custom AI Chat</title>
+    <title>Cybertron - AI Dashboard</title>
     <style>
-        /* ตัวแปรสำหรับเปลี่ยนธีม */
         :root {
-            --bg-color: #0d1117;
-            --sidebar-bg: #161b22;
-            --chat-bg: #0d1117;
-            --border-color: #30363d;
-            --text-color: #e6edf3;
-            --text-muted: #8b949e;
-            --primary-color: #00d2ff;
-            --ai-bubble: #21262d;
-            --user-bubble: #00d2ff;
-            --user-text: #000;
+            --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #e6edf3;
+            --primary: #00d2ff; --accent: #a855f7; --success: #238636;
         }
-
-        /* ธีมสว่าง (Light Mode) */
-        body.light-mode {
-            --bg-color: #f6f8fa;
-            --sidebar-bg: #ffffff;
-            --chat-bg: #f6f8fa;
-            --border-color: #d0d7de;
-            --text-color: #24292f;
-            --text-muted: #57606a;
-            --primary-color: #0969da;
-            --ai-bubble: #eaeef2;
-            --user-bubble: #0969da;
-            --user-text: #ffffff;
-        }
-
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; display: flex; flex-direction: column; }
         
-        /* Sidebar */
-        .sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); color: var(--primary-color); font-weight: bold; text-align: center; display: flex; justify-content: space-between; align-items: center;}
-        .theme-toggle { cursor: pointer; background: none; border: none; color: var(--text-color); font-size: 18px; }
-        .room-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .room-item { padding: 10px 15px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 14px; display: flex; align-items: center; gap: 10px;}
-        .room-item:hover { background-color: rgba(128,128,128,0.1); color: var(--text-color); }
-        .room-item.active { background-color: rgba(0, 210, 255, 0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); }
+        /* Header */
+        header { padding: 15px 30px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .user-profile { display: flex; gap: 15px; align-items: center; font-size: 14px; color: #8b949e; }
         
-        /* Chat Area */
-        .chat-area { flex: 1; display: flex; flex-direction: column; background-color: var(--chat-bg); }
-        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); display: flex; justify-content: space-between; align-items: center; }
-        .chat-header h2 { margin: 0; font-size: 18px; color: var(--primary-color); }
-        .export-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-        .export-btn:hover { color: var(--primary-color); border-color: var(--primary-color); }
-
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        /* Search Bar */
+        .search-container { padding: 15px 30px; background: var(--bg); border-bottom: 1px solid var(--border); }
+        .search-box { width: 100%; padding: 12px 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; color: white; outline: none; box-sizing: border-box; }
         
-        /* Messages */
-        .message { display: flex; flex-direction: column; max-width: 80%; animation: fadeIn 0.3s; }
-        .message.ai { align-self: flex-start; }
-        .message.user { align-self: flex-end; }
-        .message .bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;}
-        .message.ai .bubble { background-color: var(--ai-bubble); color: var(--text-color); border-top-left-radius: 0; }
-        .message.user .bubble { background-color: var(--user-bubble); color: var(--user-text); border-top-right-radius: 0; }
-        .message .sender { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+        /* Announcement */
+        .announcement { margin: 15px 30px; padding: 12px 20px; background: rgba(0, 210, 255, 0.1); border-left: 4px solid var(--primary); border-radius: 4px; font-size: 14px; }
         
-        /* Tools & Input */
-        .tools { padding: 10px 20px; background-color: var(--chat-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap;}
-        .tool-btn { background: var(--sidebar-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-        .tool-btn:hover { color: var(--primary-color); border-color: var(--primary-color); }
+        /* Main Content */
+        .main-content { flex: 1; padding: 20px 30px; overflow-y: auto; }
+        .section-title { font-size: 16px; color: #8b949e; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        
+        /* Grid for Cards */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--panel); border: 1px solid var(--border); padding: 20px; border-radius: 10px; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 10px; }
+        .card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 210, 255, 0.1); }
+        .card-icon { font-size: 32px; }
+        .card-title { font-weight: bold; font-size: 16px; }
+        .card-desc { font-size: 13px; color: #8b949e; }
+        
+        /* Add Plugin Button */
+        .add-plugin-btn { width: 100%; padding: 15px; background: transparent; border: 2px dashed var(--border); color: #8b949e; border-radius: 10px; cursor: pointer; font-size: 16px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .add-plugin-btn:hover { border-color: var(--primary); color: var(--primary); }
 
-        .chat-input-area { padding: 15px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); outline: none; }
-        .chat-input-area input:focus { border-color: var(--primary-color); }
-        .chat-input-area button { padding: 0 20px; background-color: var(--primary-color); color: var(--user-text); border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .chat-input-area button:hover { opacity: 0.8; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Footer Nav */
+        .bottom-nav { padding: 15px 30px; background: var(--panel); border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 30px; }
+        .nav-item { color: #8b949e; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-size: 12px; gap: 5px; transition: 0.2s; }
+        .nav-item:hover { color: var(--primary); }
+        .nav-icon { font-size: 20px; }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <span>📍 Cybertron Chat</span>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">🤖 Cybertron AI (V.2026.4)</div>
+        <div class="user-profile">
+            <span>[ โปรไฟล์ผู้ใช้ ]</span>
+            <button style="background: var(--primary); border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">ตั้งค่า/อัปเดต</button>
         </div>
-        <div class="room-list" id="room-list">
-            <div class="room-item active" onclick="selectRoom('ห้องรวม-0001', this)">📢 ห้องรวม-0001</div>
-            <div class="room-item" onclick="selectRoom('ห้องประชุม-0001', this)">📊 ห้องประชุม-0001</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-ชิน', this)">🧪 ห้อง-ชิน</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-เก็น', this)">🎨 ห้อง-เก็น</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-ริว', this)">💻 ห้อง-ริว</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-คลื่น', this)">🌊 ห้อง-คลื่น</div>
-        </div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="🔍 ค้นหาบอท, ปลั๊กอิน หรือคำสั่งอัตโนมัติ...">
     </div>
 
-    <!-- Chat Area -->
-    <div class="chat-area">
-        <div class="chat-header">
-            <h2 id="current-room">📢 ห้องรวม-0001</h2>
-            <button class="export-btn" onclick="exportChat()">⬇️ ดาวน์โหลดแชท</button>
-        </div>
+    <!-- Announcement -->
+    <div class="announcement">
+        📢 <strong>ประกาศระบบ:</strong> อัปเดตโมเดลสมองกลเวอร์ชันล่าสุดแล้ว! (ลองใช้ฟังก์ชันวาดภาพใหม่ได้เลย)
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
         
-        <div class="chat-messages" id="chat-messages"></div>
-
-        <div class="tools">
-            <span style="color: var(--text-muted); margin-right: 10px; align-self: center; font-size:12px;">เครื่องมือ:</span>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .txt')">📄 สร้าง .txt</button>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .py')">🐍 สร้าง .py</button>
-            <button class="tool-btn" onclick="clearChat()" style="margin-left: auto; color: #ff5555; border-color: #ff5555;">🗑️ ล้างแชท</button>
+        <!-- ส่วนที่ 1 -->
+        <div class="section-title">ส่วนที่ 1: แชตและวิเคราะห์อัจฉริยะ</div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">💬</div>
+                <div class="card-title">แชตถาม-ตอบทั่วไป</div>
+                <div class="card-desc">สลับโมเดล AI ได้อิสระ</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <div class="card-title">สรุปและวิเคราะห์ไฟล์</div>
+                <div class="card-desc">PDF, Excel, Word</div>
+            </div>
         </div>
 
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความถึง AI..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">ส่ง</button>
+        <!-- ส่วนที่ 2 -->
+        <div class="section-title">ส่วนที่ 2: งานสร้างสรรค์ขั้นสูง</div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🎨</div>
+                <div class="card-title">เจนรูปภาพ & กราฟิก</div>
+                <div class="card-desc">Midjourney/DALL-E 4</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎬</div>
+                <div class="card-title">เจนวิดีโอ & แอนิเมชัน</div>
+                <div class="card-desc">ฟังก์ชันอัปเดตล่าสุด!</div>
+            </div>
+        </div>
+
+        <!-- ส่วนที่ 3 -->
+        <div class="section-title">ส่วนที่ 3: ระบบสั่งการอัตโนมัติ (Automation)</div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">เชื่อมต่อแอปภายนอก</div>
+                <div class="card-desc">LINE, Email, Sheets</div>
+            </div>
+            <div class="card">
+                <div class="card-icon">📅</div>
+                <div class="card-title">บอทช่วยงานประจำวัน</div>
+                <div class="card-desc">ตั้งเวลาทำงานล่วงหน้า</div>
+            </div>
+        </div>
+
+        <!-- Add Plugin -->
+        <button class="add-plugin-btn">
+            ➕ เพิ่มปลั๊กอิน/ฟังก์ชันใหม่จากสโตร์
+        </button>
+
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>หน้าแรก</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">🤖</span>
+            <span>คลังบอทของฉัน</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">🛒</span>
+            <span>ตลาดปลั๊กอิน</span>
+        </div>
+        <div class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>ประวัติงาน</span>
         </div>
     </div>
 
-    <script>
-        // --- ระบบจัดการข้อมูลและการตั้งค่า ---
-        let currentRoom = 'ห้องรวม-0001';
-        // โหลดประวัติจาก Local Storage (ถ้าไม่มีให้เริ่มใหม่)
-        let chatHistory = JSON.parse(localStorage.getItem('cybertron_chat_history')) || {
-            'ห้องรวม-0001': [{type:'ai', sender:'ระบบ', text:'ยินดีต้อนรับสู่สังคมมนุษย์ดิจิทัล'}],
-            'ห้องประชุม-0001': [], 'ห้อง-ชิน': [], 'ห้อง-เก็น': [], 'ห้อง-ริว': [], 'ห้อง-คลื่น': []
-        };
-
-        function saveHistory() {
-            localStorage.setItem('cybertron_chat_history', JSON.stringify(chatHistory));
-        }
-
-        // --- ฟังก์ชันเปลี่ยนธีม ---
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            localStorage.setItem('cybertron_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-        }
-        // โหลดธีมที่เคยบันทึกไว้
-        if (localStorage.getItem('cybertron_theme') === 'light') {
-            document.body.classList.add('light-mode');
-        }
-
-        // --- ฟังก์ชันจัดการห้อง ---
-        function selectRoom(roomName, element) {
-            document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            currentRoom = roomName;
-            document.getElementById('current-room').innerText = `📍 ${roomName}`;
-            
-            const chatBox = document.getElementById('chat-messages');
-            chatBox.innerHTML = '';
-            
-            if (chatHistory[roomName].length === 0) {
-                chatHistory[roomName].push({type:'ai', sender:'ระบบ', text:`คุณได้เชื่อมต่อกับ ${roomName} เรียบร้อยแล้ว`});
-                saveHistory();
-            }
-            
-            chatHistory[roomName].forEach(msg => renderMessage(msg.type, msg.sender, msg.text, false));
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // --- ฟังก์ชันส่งข้อความ ---
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (text === '') return;
-
-            addMessage('user', 'คุณ (มนุษย์)', text);
-            input.value = '';
-
-            // จำลองการตอบกลับ (ในอนาคตจะเชื่อมต่อกับ Ollama API)
-            setTimeout(() => {
-                let aiName = currentRoom.replace('ห้อง-', '');
-                if(currentRoom === 'ห้องรวม-0001') aiName = "ระบบกลาง";
-
-                const responses = [
-                    "รับทราบครับ ข้อมูลได้รับการบันทึกเข้าสู่ระบบแล้ว",
-                    "กำลังประมวลผลตามอัลกอริซึมที่ตั้งไว้ครับ",
-                    "ระบบพร้อมสำหรับการพัฒนาในขั้นต่อไป",
-                    "ผมได้ทำการวิเคราะห์และพร้อมรายงานผลครับ"
-                ];
-                const reply = responses[Math.floor(Math.random() * responses.length)];
-
-                addMessage('ai', aiName, reply);
-            }, 1000);
-        }
-
-        function addMessage(type, sender, text) {
-            chatHistory[currentRoom].push({type, sender, text});
-            saveHistory();
-            renderMessage(type, sender, text, true);
-        }
-
-        function renderMessage(type, sender, text, scroll = true) {
-            const chatBox = document.getElementById('chat-messages');
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', type);
-            
-            // ป้องกันการแทรก HTML (Security)
-            const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            
-            msgDiv.innerHTML = `
-                <span class="sender">${sender}</span>
-                <div class="bubble">${safeText}</div>
-            `;
-            
-            chatBox.appendChild(msgDiv);
-            if (scroll) chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        // --- ฟังก์ชันเครื่องมือ ---
-        function simulateTool(toolName) {
-            addMessage('ai', 'ระบบ', `[กำลังทำงาน]: ${toolName}...`);
-            setTimeout(() => {
-                addMessage('ai', 'ระบบ', `✅ ดำเนินการ ${toolName} สำเร็จ! (จำลอง)`);
-            }, 1000);
-        }
-
-        function clearChat() {
-            chatHistory[currentRoom] = [];
-            saveHistory();
-            document.getElementById('chat-messages').innerHTML = '';
-            addMessage('ai', 'ระบบ', 'ล้างประวัติการสนทนาเรียบร้อยแล้ว');
-        }
-
-        // --- ฟังก์ชันส่งออกข้อมูล ---
-        function exportChat() {
-            let content = `=== ประวัติการสนทนา: ${currentRoom} ===\n\n`;
-            chatHistory[currentRoom].forEach(msg => {
-                content += `[${msg.sender}]: ${msg.text}\n`;
-            });
-            
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `chat_${currentRoom}_${new Date().getTime()}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // โหลดห้องเริ่มต้น
-        window.onload = () => {
-            const firstRoom = document.querySelector('.room-item.active');
-            if(firstRoom) firstRoom.click();
-        };
-    </script>
 </body>
 </html>
