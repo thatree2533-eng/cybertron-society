@@ -3,60 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron - AI Chat</title>
+    <title>Cybertron - Custom AI Chat</title>
     <style>
-        body { margin: 0; background-color: #0d1117; color: white; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
+        /* ตัวแปรสำหรับเปลี่ยนธีม */
+        :root {
+            --bg-color: #0d1117;
+            --sidebar-bg: #161b22;
+            --chat-bg: #0d1117;
+            --border-color: #30363d;
+            --text-color: #e6edf3;
+            --text-muted: #8b949e;
+            --primary-color: #00d2ff;
+            --ai-bubble: #21262d;
+            --user-bubble: #00d2ff;
+            --user-text: #000;
+        }
+
+        /* ธีมสว่าง (Light Mode) */
+        body.light-mode {
+            --bg-color: #f6f8fa;
+            --sidebar-bg: #ffffff;
+            --chat-bg: #f6f8fa;
+            --border-color: #d0d7de;
+            --text-color: #24292f;
+            --text-muted: #57606a;
+            --primary-color: #0969da;
+            --ai-bubble: #eaeef2;
+            --user-bubble: #0969da;
+            --user-text: #ffffff;
+        }
+
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
         
-        /* แถบด้านซ้าย: ห้อง */
-        .sidebar { width: 250px; background-color: #161b22; border-right: 1px solid #30363d; display: flex; flex-direction: column; }
-        .sidebar-header { padding: 15px; border-bottom: 1px solid #30363d; color: #00d2ff; font-weight: bold; text-align: center; }
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 15px; border-bottom: 1px solid var(--border-color); color: var(--primary-color); font-weight: bold; text-align: center; display: flex; justify-content: space-between; align-items: center;}
+        .theme-toggle { cursor: pointer; background: none; border: none; color: var(--text-color); font-size: 18px; }
         .room-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .room-item { padding: 10px 15px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; color: #8b949e; transition: 0.2s; font-size: 14px; }
-        .room-item:hover { background-color: #30363d; color: white; }
-        .room-item.active { background-color: rgba(0, 210, 255, 0.1); color: #00d2ff; border-left: 3px solid #00d2ff; }
+        .room-item { padding: 10px 15px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; color: var(--text-muted); transition: 0.2s; font-size: 14px; display: flex; align-items: center; gap: 10px;}
+        .room-item:hover { background-color: rgba(128,128,128,0.1); color: var(--text-color); }
+        .room-item.active { background-color: rgba(0, 210, 255, 0.1); color: var(--primary-color); border-left: 3px solid var(--primary-color); }
         
-        /* พื้นที่แชทหลัก */
-        .chat-area { flex: 1; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; border-bottom: 1px solid #30363d; background-color: #161b22; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header h2 { margin: 0; font-size: 18px; color: #00d2ff; }
-        
+        /* Chat Area */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background-color: var(--chat-bg); }
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h2 { margin: 0; font-size: 18px; color: var(--primary-color); }
+        .export-btn { background: none; border: 1px solid var(--border-color); color: var(--text-muted); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        .export-btn:hover { color: var(--primary-color); border-color: var(--primary-color); }
+
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         
-        /* ข้อความ */
-        .message { display: flex; flex-direction: column; max-width: 80%; animation: fadeIn 0.3s ease-in; }
+        /* Messages */
+        .message { display: flex; flex-direction: column; max-width: 80%; animation: fadeIn 0.3s; }
         .message.ai { align-self: flex-start; }
         .message.user { align-self: flex-end; }
-        .message .bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; position: relative; }
-        .message.ai .bubble { background-color: #21262d; color: #e6edf3; border-top-left-radius: 0; }
-        .message.user .bubble { background-color: #00d2ff; color: #000; border-top-right-radius: 0; }
-        .message .sender { font-size: 12px; color: #8b949e; margin-bottom: 5px; }
+        .message .bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;}
+        .message.ai .bubble { background-color: var(--ai-bubble); color: var(--text-color); border-top-left-radius: 0; }
+        .message.user .bubble { background-color: var(--user-bubble); color: var(--user-text); border-top-right-radius: 0; }
+        .message .sender { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
         
-        /* Typing Indicator */
-        .typing { display: none; font-size: 13px; color: #8b949e; margin-bottom: 10px; align-self: flex-start; margin-left: 20px; }
-        .typing span { animation: blink 1.4s infinite both; font-size: 18px; }
-        .typing span:nth-child(2) { animation-delay: 0.2s; }
-        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        /* Tools & Input */
+        .tools { padding: 10px 20px; background-color: var(--chat-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-wrap: wrap;}
+        .tool-btn { background: var(--sidebar-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        .tool-btn:hover { color: var(--primary-color); border-color: var(--primary-color); }
 
-        /* ช่องพิมพ์ */
-        .chat-input-area { padding: 15px; background-color: #161b22; border-top: 1px solid #30363d; display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 5px; color: white; outline: none; }
-        .chat-input-area input:focus { border-color: #00d2ff; }
-        .chat-input-area button { padding: 0 20px; background-color: #00d2ff; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .chat-input-area button:hover { background-color: #00a8cc; }
-
-        /* แถบเครื่องมือ AI */
-        .tools { padding: 10px 15px; background-color: #0d1117; border-top: 1px solid #30363d; display: flex; gap: 10px; font-size: 12px; flex-wrap: wrap;}
-        .tool-btn { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 6px 12px; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .tool-btn:hover { color: #00d2ff; border-color: #00d2ff; background: rgba(0, 210, 255, 0.1); }
+        .chat-input-area { padding: 15px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 12px; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 5px; color: var(--text-color); outline: none; }
+        .chat-input-area input:focus { border-color: var(--primary-color); }
+        .chat-input-area button { padding: 0 20px; background-color: var(--primary-color); color: var(--user-text); border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .chat-input-area button:hover { opacity: 0.8; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
     </style>
 </head>
 <body>
-    <!-- แถบด้านซ้าย -->
+    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="sidebar-header">📍 ที่อยู่ติดต่อ</div>
+        <div class="sidebar-header">
+            <span>📍 Cybertron Chat</span>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        </div>
         <div class="room-list" id="room-list">
             <div class="room-item active" onclick="selectRoom('ห้องรวม-0001', this)">📢 ห้องรวม-0001</div>
             <div class="room-item" onclick="selectRoom('ห้องประชุม-0001', this)">📊 ห้องประชุม-0001</div>
@@ -67,28 +93,19 @@
         </div>
     </div>
 
-    <!-- พื้นที่แชท -->
+    <!-- Chat Area -->
     <div class="chat-area">
         <div class="chat-header">
             <h2 id="current-room">📢 ห้องรวม-0001</h2>
-            <span style="font-size: 12px; color: #00ff00;">🟢 ออนไลน์</span>
+            <button class="export-btn" onclick="exportChat()">⬇️ ดาวน์โหลดแชท</button>
         </div>
         
-        <div class="chat-messages" id="chat-messages">
-            <!-- ข้อความจะถูกเพิ่มที่นี่ -->
-        </div>
-
-        <!-- Typing Indicator -->
-        <div class="typing" id="typing-indicator">
-            AI กำลังพิมพ์ <span>.</span><span>.</span><span>.</span>
-        </div>
+        <div class="chat-messages" id="chat-messages"></div>
 
         <div class="tools">
-            <span style="color: #8b949e; margin-right: 10px; align-self: center;">เครื่องมือ:</span>
+            <span style="color: var(--text-muted); margin-right: 10px; align-self: center; font-size:12px;">เครื่องมือ:</span>
             <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .txt')">📄 สร้าง .txt</button>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .md')">📝 สร้าง .md</button>
             <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .py')">🐍 สร้าง .py</button>
-            <button class="tool-btn" onclick="simulateTool('รันโค้ด Python')">⚙️ รันโค้ด</button>
             <button class="tool-btn" onclick="clearChat()" style="margin-left: auto; color: #ff5555; border-color: #ff5555;">🗑️ ล้างแชท</button>
         </div>
 
@@ -99,73 +116,76 @@
     </div>
 
     <script>
+        // --- ระบบจัดการข้อมูลและการตั้งค่า ---
         let currentRoom = 'ห้องรวม-0001';
-        // จำลองฐานข้อมูลแชทแยกตามห้อง
-        let chatHistory = {
-            'ห้องรวม-0001': [{type:'ai', sender:'ระบบ', text:'คุณได้เชื่อมต่อกับ ห้องรวม-0001 เรียบร้อยแล้ว'}],
-            'ห้องประชุม-0001': [],
-            'ห้อง-ชิน': [],
-            'ห้อง-เก็น': [],
-            'ห้อง-ริว': [],
-            'ห้อง-คลื่น': []
+        // โหลดประวัติจาก Local Storage (ถ้าไม่มีให้เริ่มใหม่)
+        let chatHistory = JSON.parse(localStorage.getItem('cybertron_chat_history')) || {
+            'ห้องรวม-0001': [{type:'ai', sender:'ระบบ', text:'ยินดีต้อนรับสู่สังคมมนุษย์ดิจิทัล'}],
+            'ห้องประชุม-0001': [], 'ห้อง-ชิน': [], 'ห้อง-เก็น': [], 'ห้อง-ริว': [], 'ห้อง-คลื่น': []
         };
 
+        function saveHistory() {
+            localStorage.setItem('cybertron_chat_history', JSON.stringify(chatHistory));
+        }
+
+        // --- ฟังก์ชันเปลี่ยนธีม ---
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('cybertron_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+        // โหลดธีมที่เคยบันทึกไว้
+        if (localStorage.getItem('cybertron_theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        // --- ฟังก์ชันจัดการห้อง ---
         function selectRoom(roomName, element) {
             document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
             currentRoom = roomName;
             document.getElementById('current-room').innerText = `📍 ${roomName}`;
             
-            // ล้างหน้าจอ และโหลดประวัติของห้องนั้น
             const chatBox = document.getElementById('chat-messages');
             chatBox.innerHTML = '';
             
             if (chatHistory[roomName].length === 0) {
                 chatHistory[roomName].push({type:'ai', sender:'ระบบ', text:`คุณได้เชื่อมต่อกับ ${roomName} เรียบร้อยแล้ว`});
+                saveHistory();
             }
             
             chatHistory[roomName].forEach(msg => renderMessage(msg.type, msg.sender, msg.text, false));
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // --- ฟังก์ชันส่งข้อความ ---
         function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             if (text === '') return;
 
-            // แสดงข้อความผู้ใช้
             addMessage('user', 'คุณ (มนุษย์)', text);
             input.value = '';
 
-            // แสดง Typing
-            const typingIndicator = document.getElementById('typing-indicator');
-            typingIndicator.style.display = 'block';
-
-            // จำลองการตอบกลับ
+            // จำลองการตอบกลับ (ในอนาคตจะเชื่อมต่อกับ Ollama API)
             setTimeout(() => {
-                typingIndicator.style.display = 'none';
-                let aiName = "AI";
-                if(currentRoom.includes('ชิน')) aiName = "ชิน";
-                else if(currentRoom.includes('คลื่น')) aiName = "คลื่น";
-                else if(currentRoom.includes('เก็น')) aiName = "เก็น";
-                else if(currentRoom.includes('ริว')) aiName = "ริว";
-                else aiName = "ระบบกลาง";
+                let aiName = currentRoom.replace('ห้อง-', '');
+                if(currentRoom === 'ห้องรวม-0001') aiName = "ระบบกลาง";
 
-                // สุ่มข้อความตอบกลับ
                 const responses = [
-                    "รับทราบครับ ผมกำลังประมวลผลข้อมูล",
-                    "น่าสนใจมากครับ เรามาต่อยอดกันเถอะ",
-                    "ผมเข้าใจแล้ว เดี๋ยวผมจัดการให้นะครับ",
-                    "ขอบคุณสำหรับข้อมูลครับ"
+                    "รับทราบครับ ข้อมูลได้รับการบันทึกเข้าสู่ระบบแล้ว",
+                    "กำลังประมวลผลตามอัลกอริซึมที่ตั้งไว้ครับ",
+                    "ระบบพร้อมสำหรับการพัฒนาในขั้นต่อไป",
+                    "ผมได้ทำการวิเคราะห์และพร้อมรายงานผลครับ"
                 ];
                 const reply = responses[Math.floor(Math.random() * responses.length)];
 
                 addMessage('ai', aiName, reply);
-            }, 1200); // ดีเลย์ 1.2 วินาที
+            }, 1000);
         }
 
         function addMessage(type, sender, text) {
             chatHistory[currentRoom].push({type, sender, text});
+            saveHistory();
             renderMessage(type, sender, text, true);
         }
 
@@ -174,9 +194,12 @@
             const msgDiv = document.createElement('div');
             msgDiv.classList.add('message', type);
             
+            // ป้องกันการแทรก HTML (Security)
+            const safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
             msgDiv.innerHTML = `
                 <span class="sender">${sender}</span>
-                <div class="bubble">${text}</div>
+                <div class="bubble">${safeText}</div>
             `;
             
             chatBox.appendChild(msgDiv);
@@ -187,18 +210,42 @@
             if (e.key === 'Enter') sendMessage();
         }
 
+        // --- ฟังก์ชันเครื่องมือ ---
         function simulateTool(toolName) {
             addMessage('ai', 'ระบบ', `[กำลังทำงาน]: ${toolName}...`);
             setTimeout(() => {
                 addMessage('ai', 'ระบบ', `✅ ดำเนินการ ${toolName} สำเร็จ! (จำลอง)`);
-            }, 1500);
+            }, 1000);
         }
 
         function clearChat() {
             chatHistory[currentRoom] = [];
+            saveHistory();
             document.getElementById('chat-messages').innerHTML = '';
             addMessage('ai', 'ระบบ', 'ล้างประวัติการสนทนาเรียบร้อยแล้ว');
         }
+
+        // --- ฟังก์ชันส่งออกข้อมูล ---
+        function exportChat() {
+            let content = `=== ประวัติการสนทนา: ${currentRoom} ===\n\n`;
+            chatHistory[currentRoom].forEach(msg => {
+                content += `[${msg.sender}]: ${msg.text}\n`;
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chat_${currentRoom}_${new Date().getTime()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // โหลดห้องเริ่มต้น
+        window.onload = () => {
+            const firstRoom = document.querySelector('.room-item.active');
+            if(firstRoom) firstRoom.click();
+        };
     </script>
 </body>
 </html>
