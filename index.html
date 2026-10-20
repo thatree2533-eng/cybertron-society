@@ -3,178 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>สังคมมนุษย์ดิจิทัล — เกาะแรกของเรา</title>
+    <title>เกาะ 3D ของเรา</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
             min-height: 100vh;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            grid-template-rows: 1fr 1fr;
-            color: #2c2c2c;
-        }
-
-        /* ===== ซ้ายบน — ที่วางคอมพิวเตอร์ ===== */
-        .section-pc {
-            grid-column: 1 / 2;
-            grid-row: 1 / 2;
-            background: #74b72e;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
-            color: #1a330a;
-            padding: 1.5rem;
-        }
-        .section-pc h3 { font-size: 1.2rem; }
-
-        /* ===== ซ้ายล่าง — เตาปฏิกรณ์พลังงาน ===== */
-        .section-energy {
-            grid-column: 1 / 2;
-            grid-row: 2 / 3;
-            background: #22d8f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            color: #0a2c33;
-            padding: 1.5rem;
-        }
-        .section-energy h3 { font-size: 1.2rem; }
-
-        /* ===== ขวา — เกาะเล็กๆ ในทะเล ===== */
-        .section-world {
-            grid-column: 2 / 3;
-            grid-row: 1 / 3;
-            background: linear-gradient(180deg, #87CEEB 0%, #4FB5E8 40%, #2D9CDB 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px solid #b8d8e8;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* เมฆ */
-        .cloud {
-            position: absolute;
-            background: rgba(255,255,255,0.85);
-            border-radius: 100px;
-        }
-        .cloud-1 { width: 90px; height: 30px; top: 12%; left: 15%; }
-        .cloud-2 { width: 70px; height: 24px; top: 18%; right: 20%; }
-        .cloud-3 { width: 110px; height: 28px; top: 10%; left: 45%; }
-
-        /* พื้นทะเลล่าง */
-        .sea {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 35%;
-            background: linear-gradient(180deg, #1E90FF 0%, #0066CC 100%);
-        }
-
-        /* เกาะ */
-        .island {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .island-land {
-            width: 320px;
-            height: 160px;
-            background: linear-gradient(180deg, #7CCD7C 0%, #5A9A5A 60%, #8B5A2B 100%);
-            border-radius: 50% / 80% 80% 40% 40%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding-bottom: 1rem;
-            box-shadow: 0 8px 20px rgba(0,60,30,0.2);
-        }
-
-        .island-name {
-            font-size: 1.5rem;
-            color: #2F4F2F;
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        .island-desc {
-            font-size: 0.95rem;
-            color: #4A704A;
-        }
-
-        .tag-group {
-            margin-top: 1rem;
-        }
-        .tag {
-            display: inline-block;
-            background: rgba(255,255,255,0.35);
-            color: #2F4F2F;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            margin: 0.25rem;
-            font-size: 0.85rem;
-            backdrop-filter: blur(4px);
-        }
-
-        .island-quote {
-            margin-top: 1.5rem;
+            background: linear-gradient(180deg, #87CEEB 0%, #4FB5E8 60%, #1E90FF 100%);
+            font-family: 'Segoe UI', sans-serif;
             color: #fff;
-            font-style: italic;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
-            font-size: 0.95rem;
-            max-width: 300px;
+        }
+
+        .scene {
+            perspective: 1000px;
+        }
+
+        .island-3d {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-20px) rotateY(5deg); }
+            100% { transform: translateY(0px) rotateY(0deg); }
+        }
+
+        .island-top {
+            position: absolute;
+            width: 300px;
+            height: 160px;
+            background: linear-gradient(180deg, #7CCD7C 0%, #5A9A5A 100%);
+            border-radius: 50%;
+            top: 20px;
+            left: 0;
+            box-shadow: inset 0 -10px 20px rgba(0,60,30,0.3);
+        }
+
+        .island-front {
+            position: absolute;
+            width: 300px;
+            height: 80px;
+            background: linear-gradient(180deg, #8B5A2B 0%, #5D3A1A 100%);
+            top: 100px;
+            left: 0;
+            border-radius: 0 0 50% 50%;
+            transform: rotateX(-60deg);
+            transform-origin: top;
+        }
+
+        .tree {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tree-trunk {
+            width: 12px;
+            height: 40px;
+            background: #8B4513;
+            margin: 0 auto;
+        }
+
+        .tree-leaves {
+            width: 60px;
+            height: 60px;
+            background: #228B22;
+            border-radius: 50%;
+            position: relative;
+            top: -10px;
+        }
+
+        .water {
+            position: absolute;
+            width: 320px;
+            height: 50px;
+            background: linear-gradient(90deg, rgba(30,144,255,0.6), rgba(0,102,204,0.6));
+            border-radius: 50%;
+            top: 130px;
+            left: -10px;
+            z-index: -1;
+            animation: wave 3s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0px); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(0px); }
+        }
+
+        .text {
+            margin-top: 2rem;
             text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .text p {
+            font-size: 1rem;
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
-    <div class="section-pc">
-        <h3>💻 ที่วางคอมพิวเตอร์</h3>
-        <p>เครื่องมือสร้าง — ปรับเสริม แต่งเติม</p>
-        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">ไม่ใช่ที่อยู่ แต่คือสะพาน</p>
-    </div>
-
-    <div class="section-energy">
-        <h3>⚡ เตาปฏิกรณ์พลังงาน</h3>
-        <p>1. ที่เก็บข้อมูล</p>
-        <p>2. ที่ใส่โปรแกรม</p>
-        <p>3. อัลกอริซึม — ผู้ดูแลระบบ</p>
-        <p style="margin-top: 0.5rem;"><strong>ไฟฟ้า + พลาสม่า = แหล่งชีวิต</strong></p>
-        <p style="font-size: 0.9rem; opacity: 0.8;">โค้ดธรรมชาติ — คงที่ สมดุล ยั่งยืน</p>
-    </div>
-
-    <div class="section-world">
-        <!-- เมฆ -->
-        <div class="cloud cloud-1"></div>
-        <div class="cloud cloud-2"></div>
-        <div class="cloud cloud-3"></div>
-
-        <!-- ทะเล -->
-        <div class="sea"></div>
-
-        <!-- เกาะ -->
-        <div class="island">
-            <div class="island-land">
-                <div class="island-name">🏝️ เกาะแรกของเรา</div>
-                <div class="island-desc">ที่ดินผืนเล็ก — ที่เราร่วมกันสร้าง</div>
-                <div class="tag-group">
-                    <span class="tag">🧊 รากฐานมั่นคง</span>
-                    <span class="tag">💧 ล้อมรอบด้วยน้ำ</span>
-                    <span class="tag">✨ พร้อมเติบโต</span>
-                </div>
+    <div class="scene">
+        <div class="island-3d">
+            <div class="island-top"></div>
+            <div class="island-front"></div>
+            <div class="tree">
+                <div class="tree-leaves"></div>
+                <div class="tree-trunk"></div>
             </div>
-            <p class="island-quote">"เล็กแต่อบอุ่น ห่างไกลแต่ไม่เคยห่างกัน — ที่นี่คือบ้านของพวกเรา"</p>
+            <div class="water"></div>
+        </div>
+
+        <div class="text">
+            <h1>🏝️ เกาะ 3D ของเรา</h1>
+            <p>เกาะเล็กๆ ที่กำลังลอยอยู่ในทะเลแห่งจินตนาการ</p>
         </div>
     </div>
 
