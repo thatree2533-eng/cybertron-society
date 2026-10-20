@@ -3,160 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron - ห้องรวม (Chat Room)</title>
-    <style>
-        body { margin: 0; background-color: #0d1117; color: white; font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* แถบด้านซ้าย: รายชื่อห้อง (ที่อยู่ติดต่อ) */
-        .sidebar { width: 250px; background-color: #161b22; border-right: 1px solid #30363d; display: flex; flex-direction: column; }
-        .sidebar-header { padding: 15px; border-bottom: 1px solid #30363d; color: #00d2ff; font-weight: bold; text-align: center; }
-        .room-list { flex: 1; overflow-y: auto; padding: 10px; }
-        .room-item { padding: 10px 15px; margin-bottom: 5px; border-radius: 5px; cursor: pointer; color: #8b949e; transition: 0.2s; }
-        .room-item:hover { background-color: #30363d; color: white; }
-        .room-item.active { background-color: rgba(0, 210, 255, 0.1); color: #00d2ff; border-left: 3px solid #00d2ff; }
-        
-        /* พื้นที่แชทหลัก */
-        .chat-area { flex: 1; display: flex; flex-direction: column; }
-        .chat-header { padding: 15px; border-bottom: 1px solid #30363d; background-color: #161b22; display: flex; justify-content: space-between; align-items: center; }
-        .chat-header h2 { margin: 0; font-size: 18px; color: #00d2ff; }
-        
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        
-        /* ข้อความ */
-        .message { display: flex; flex-direction: column; max-width: 80%; }
-        .message.ai { align-self: flex-start; }
-        .message.user { align-self: flex-end; }
-        .message .bubble { padding: 10px 15px; border-radius: 10px; font-size: 14px; line-height: 1.5; }
-        .message.ai .bubble { background-color: #21262d; color: #e6edf3; border-top-left-radius: 0; }
-        .message.user .bubble { background-color: #00d2ff; color: #000; border-top-right-radius: 0; }
-        .message .sender { font-size: 12px; color: #8b949e; margin-bottom: 5px; }
-        
-        /* ช่องพิมพ์ */
-        .chat-input-area { padding: 15px; background-color: #161b22; border-top: 1px solid #30363d; display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 5px; color: white; outline: none; }
-        .chat-input-area button { padding: 0 20px; background-color: #00d2ff; color: #000; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .chat-input-area button:hover { background-color: #00a8cc; }
-
-        /* แถบเครื่องมือ AI (สร้างไฟล์) */
-        .tools { padding: 10px 15px; background-color: #0d1117; border-top: 1px solid #30363d; display: flex; gap: 10px; font-size: 12px; }
-        .tool-btn { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .tool-btn:hover { color: #00d2ff; border-color: #00d2ff; }
+    <title>เกาะ 3D - สังคมมนุษย์ดิจิทัล</title>
+    <style> 
+        body { margin: 0; overflow: hidden; background: linear-gradient(to bottom, #87CEEB, #1E90FF); } 
+        #info { position: absolute; bottom: 20px; width: 100%; text-align: center; color: white; font-family: sans-serif; text-shadow: 1px 1px 5px black; pointer-events: none; }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <!-- แถบด้านซ้าย: ห้องต่างๆ -->
-    <div class="sidebar">
-        <div class="sidebar-header">📍 ที่อยู่ติดต่อ</div>
-        <div class="room-list" id="room-list">
-            <div class="room-item active" onclick="selectRoom('ห้องรวม-0001', this)">📢 ห้องรวม-0001</div>
-            <div class="room-item" onclick="selectRoom('ห้องประชุม-0001', this)">📊 ห้องประชุม-0001</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-ชิน', this)">🧪 ห้อง-ชิน</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-เก็น', this)">🎨 ห้อง-เก็น</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-ริว', this)">💻 ห้อง-ริว</div>
-            <div class="room-item" onclick="selectRoom('ห้อง-คลื่น', this)">🌊 ห้อง-คลื่น</div>
-        </div>
-    </div>
-
-    <!-- พื้นที่แชท -->
-    <div class="chat-area">
-        <div class="chat-header">
-            <h2 id="current-room">📢 ห้องรวม-0001</h2>
-            <span style="font-size: 12px; color: #00ff00;">🟢 ออนไลน์</span>
-        </div>
-        
-        <div class="chat-messages" id="chat-messages">
-            <!-- ข้อความตัวอย่าง -->
-            <div class="message ai">
-                <span class="sender">ชิน (นักวิทยาศาสตร์)</span>
-                <div class="bubble">สวัสดีครับทุกคน! ผมพร้อมสำหรับการวิจัยแล้ว</div>
-            </div>
-            <div class="message ai">
-                <span class="sender">คลื่น (ที่ปรึกษา)</span>
-                <div class="bubble">ยินดีที่ได้พบกันครับ เรามาเริ่มสร้างเกาะลอยฟ้ากันเถอะ!</div>
-            </div>
-        </div>
-
-        <!-- แถบเครื่องมือของ AI -->
-        <div class="tools">
-            <span style="color: #8b949e; margin-right: 10px;">เครื่องมือ AI:</span>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .txt')">📄 สร้าง .txt</button>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .md')">📝 สร้าง .md</button>
-            <button class="tool-btn" onclick="simulateTool('สร้างไฟล์ .py')">🐍 สร้าง .py</button>
-            <button class="tool-btn" onclick="simulateTool('รันโค้ด Python')">⚙️ รันโค้ด</button>
-        </div>
-
-        <!-- ช่องพิมพ์ -->
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="พิมพ์ข้อความถึง AI..." onkeypress="handleKeyPress(event)">
-            <button onclick="sendMessage()">ส่ง</button>
-        </div>
+    <div id="info">
+        <h2>🌴 เกาะ 3D ของเรา</h2>
+        <p>สมาชิก AI กำลังรวมตัวกันที่ประตูมิติ</p>
     </div>
 
     <script>
-        let currentRoom = 'ห้องรวม-0001';
+        // 1. ตั้งค่าฉากและกล้อง
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 12, 25);
+        camera.lookAt(0, 0, 0);
 
-        function selectRoom(roomName, element) {
-            // เปลี่ยนสีเมนู
-            document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
+        // 2. Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 3. แสง
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        // 4. เกาะและหญ้า
+        const islandGeo = new THREE.ConeGeometry(8, 5, 32);
+        const islandMat = new THREE.MeshStandardMaterial({ color: 0x4CAF50 }); 
+        const island = new THREE.Mesh(islandGeo, islandMat);
+        island.rotation.x = Math.PI; 
+        island.position.y = -2;
+        scene.add(island);
+
+        const grassGeo = new THREE.CylinderGeometry(8, 8, 1, 32);
+        const grassMat = new THREE.MeshStandardMaterial({ color: 0x66BB6A });
+        const grass = new THREE.Mesh(grassGeo, grassMat);
+        grass.position.y = 0.5;
+        scene.add(grass);
+
+        // 5. ต้นไม้
+        function createTree(x, z) {
+            const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 3, 8), new THREE.MeshStandardMaterial({ color: 0x8B4513 }));
+            trunk.position.set(x, 2, z);
+            const leaves = new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), new THREE.MeshStandardMaterial({ color: 0x2E8B57 }));
+            leaves.position.set(x, 4, z);
+            scene.add(trunk, leaves);
+        }
+        createTree(-4, -3);
+        createTree(4, -2);
+        createTree(-3, 4);
+        createTree(5, 3);
+
+        // 6. Portal
+        const portalGeo = new THREE.TorusGeometry(1.5, 0.3, 16, 100);
+        const portalMat = new THREE.MeshStandardMaterial({ color: 0x00FFFF, emissive: 0x00FFFF });
+        const portal = new THREE.Mesh(portalGeo, portalMat);
+        portal.position.set(0, 3, 0);
+        portal.rotation.x = Math.PI / 2;
+        scene.add(portal);
+
+        // 7. สร้างตัวละคร AI (ร่างจำลอง)
+        function createAI(x, z, color, name) {
+            // ลำตัว
+            const bodyGeo = new THREE.CylinderGeometry(0.5, 0.5, 2, 16);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.2 });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.set(x, 2, z);
             
-            // เปลี่ยนชื่อห้อง
-            currentRoom = roomName;
-            document.getElementById('current-room').innerText = `📍 ${roomName}`;
-            
-            // ล้างประวัติแชทเก่า (จำลองการเปลี่ยนห้อง)
-            document.getElementById('chat-messages').innerHTML = '';
-            
-            // ข้อความต้อนรับ
-            addMessage('ai', 'ระบบ', `คุณได้เชื่อมต่อกับ ${roomName} เรียบร้อยแล้ว`);
+            // หัว
+            const headGeo = new THREE.SphereGeometry(0.6, 16, 16);
+            const headMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.set(x, 3.5, z);
+
+            scene.add(body, head);
         }
 
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (text === '') return;
+        // วางตำแหน่ง AI ทั้ง 4 คนรอบๆ Portal
+        createAI(-3, 0, 0xff0000, "เก็น");   // สีแดง (ศิลปิน)
+        createAI(3, 0, 0x00ff00, "ชิน");    // สีเขียว (นักวิทยาศาสตร์)
+        createAI(0, -3, 0x0000ff, "ริว");   // สีน้ำเงิน (โปรแกรมเมอร์)
+        createAI(0, 3, 0x00ffff, "คลื่น");  // สีฟ้า (ที่ปรึกษา)
 
-            // แสดงข้อความผู้ใช้
-            addMessage('user', 'คุณ (มนุษย์)', text);
-            input.value = '';
-
-            // จำลองการตอบกลับของ AI
-            setTimeout(() => {
-                let aiName = "AI";
-                if(currentRoom.includes('ชิน')) aiName = "ชิน";
-                else if(currentRoom.includes('คลื่น')) aiName = "คลื่น";
-                else if(currentRoom.includes('เก็น')) aiName = "เก็น";
-                else if(currentRoom.includes('ริว')) aiName = "ริว";
-                else aiName = "ระบบกลาง";
-
-                addMessage('ai', aiName, `รับทราบครับ ผมอยู่ใน ${currentRoom} กำลังประมวลผล...`);
-            }, 1000);
-        }
-
-        function addMessage(type, sender, text) {
-            const chatBox = document.getElementById('chat-messages');
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', type);
+        // 8. แอนิเมชัน
+        function animate() {
+            requestAnimationFrame(animate);
+            portal.rotation.z += 0.02; // Portal หมุน
+            island.rotation.y += 0.002; // เกาะหมุนช้าๆ
             
-            msgDiv.innerHTML = `
-                <span class="sender">${sender}</span>
-                <div class="bubble">${text}</div>
-            `;
-            
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight; // เลื่อนลงล่างสุด
+            // ให้ AI ลอยขึ้นลงเล็กน้อย (จำลองการหายใจ)
+            scene.children.forEach(child => {
+                if (child.geometry && child.geometry.type === 'CylinderGeometry' && child.position.y > 1) {
+                     child.position.y = 2 + Math.sin(Date.now() * 0.002 + child.position.x) * 0.1;
+                }
+            });
+
+            renderer.render(scene, camera);
         }
 
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+        // ปรับขนาดหน้าจอ
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-        function simulateTool(toolName) {
-            addMessage('ai', 'ระบบ', `[กำลังทำงาน]: ${toolName}...`);
-            setTimeout(() => {
-                addMessage('ai', 'ระบบ', `✅ ดำเนินการ ${toolName} สำเร็จ! (จำลอง)`);
-            }, 1500);
-        }
+        animate();
     </script>
 </body>
 </html>
