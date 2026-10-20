@@ -12,6 +12,7 @@
         .header h1 { color: #38bdf8; margin: 0; font-size: 24px; }
         .header p { color: #94a3b8; font-size: 14px; }
 
+        /* กล่องตั้งค่า API Key */
         .api-box { background: #1e293b; border: 1px dashed #38bdf8; padding: 12px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
         .api-box input { flex: 1; padding: 8px; border-radius: 5px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 12px; }
         .api-box label { font-size: 12px; color: #38bdf8; font-weight: bold; }
@@ -43,8 +44,6 @@
         .btn-gray { background: #334155; color: white; display: flex; align-items: center; justify-content: center; }
         
         #preview-container { display: none; padding: 8px 15px; background: #1f2937; border-top: 1px solid #334155; font-size: 12px; color: #38bdf8; }
-        .msg.error { background: #7f1d1d; color: #fca5a5; align-self: flex-start; border-bottom-left-radius: 0; border: 1px solid #b91c1c; }
-        .loading { font-style: italic; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -52,51 +51,58 @@
     <div class="container">
         <div class="header">
             <h1>🤖 AI Super App</h1>
-            <p>ระบบบอทพหุโมดูลทำงานจริง (Multi-Modal Orchestrator) + Sila-5 Firewall</p>
+            <p>ระบบบอทพหุโมดูลทำงานจริง (Multi-Modal Orchestrator)</p>
         </div>
 
+        <!-- กล่องใส่ API Key เพื่อให้บอทคุยได้จริง -->
         <div class="api-box">
             <label>Gemini API Key:</label>
-            <input type="password" id="api-key-input" placeholder="ใส่คีย์เพื่อเปิดใช้งาน..." onchange="saveApiKey()">
-            <a href="https://aistudio.google.com/app/apikey" target="_blank">🔗 รับคีย์ฟรีที่นี่</a>
+            <input type="password" id="api-key-input" placeholder="ใสคีย์เพื่อเปิดใช้งานระบบแชตและวิเคราะห์รูปภาพ..." onchange="saveApiKey()">
+            <a href="https://google.com" target="_blank">🔗 รับคีย์ฟรีที่นี่</a>
         </div>
 
+        <!-- เมนูวาดจากสถาปัตยกรรมคุมหน้าจอ -->
         <div class="menu-grid" id="menu-container"></div>
 
+        <!-- หน้าต่างแชทและประมวลผลอัจฉริยะ -->
         <div class="chat-container">
             <div class="chat-header">
                 <span id="chat-header-text">💬 บอทแชตทั่วไป</span>
-                <span style="font-size: 11px; color: #94a3b8;" id="engine-status">Engine: Online</span>
+                <span style="font-size: 11px; color: #94a3b8;" id="engine-status">Engine: Local Router</span>
             </div>
             <div class="chat-log" id="chat-log">
-                <div class="msg system">ยินดีต้อนรับสู่ Cybertron Society!<br>ระบบถูกป้องกันด้วย <b>Sila-5 Firewall</b> (ทดลอง)<br>• ใส่ Gemini API Key ด้านบนเพื่อเริ่มทำงานครับ</div>
+                <div class="msg system">ยินดีต้อนรับสู่โปรแกรมต้นแบบแอป AI!<br>• ฟังก์ชัน <b>"เจนรูปภาพ"</b> ใช้งานได้ทันทีฟรี!<br>• ฟังก์ชัน <b>"แชต" และ "วิเคราะห์ภาพ"</b> โปรดใส่คีย์ Gemini ด้านบนเพื่อเปิดระบบจริงครับ</div>
             </div>
             
+            <!-- ตัวพรีวิวรูปภาพก่อนส่งให้ AI วิเคราะห์ -->
             <div id="preview-container">📎 เตรียมส่งรูปภาพ: <span id="file-name"></span></div>
 
             <div class="chat-input-area">
+                <!-- อัปโหลดรูปภาพเพื่อทำ AI Vision -->
                 <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                <button id="upload-btn" class="btn btn-gray" onclick="document.getElementById('file-input').click()" title="แนบภาพ">📷</button>
+                <button id="upload-btn" class="btn btn-gray" onclick="document.getElementById('file-input').click()" title="แนบภาพเพื่อวิเคราะห์">📷</button>
+                
                 <input type="text" id="chat-input" placeholder="พิมพ์คำสั่งงาน..." onkeypress="handleKeyPress(event)">
-                <button class="btn btn-blue" id="send-btn" onclick="sendMessage()">ส่งคำสั่ง</button>
+                <button class="btn btn-blue" onclick="sendMessage()">ส่งคำสั่ง</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. โครงสร้างข้อมูลคุมแอป
+        // 1. โครงสร้างข้อมูลคุมแอป (Server-Driven UI Config) พร้อมอัปเดต
         const appConfig = {
             features: [
-                { id: "chat", title: "แชตถาม-ตอบอัจฉริยะ", icon: "💬", status: "active", placeholder: "ถามคำถามทั่วไป..." },
-                { id: "image", title: "เจนรูปภาพ", icon: "🎨", status: "active", placeholder: "พิมพ์รูปที่อยากได้ (ภาษาอังกฤษ) เช่น a cute cat..." },
-                { id: "file", title: "วิเคราะห์ไฟล์ภาพ", icon: "📷", status: "active", placeholder: "พิมพ์สั่งให้บอทวิเคราะห์ภาพ..." },
-                { id: "video", title: "เจนวิดีโอ (Coming Soon)", icon: "🎬", status: "beta", placeholder: "ระบบกำลังอัปเดต..." }
+                { id: "chat", title: "แชตถาม-ตอบอัจฉริยะ", icon: "💬", status: "active", placeholder: "ถามคำถามเรื่องแมวหรือคุยทั่วไป..." },
+                { id: "image", title: "เจนรูปภาพฟรี", icon: "🎨", status: "active", placeholder: "พิมพ์รูปที่อยากได้ (ภาษาอังกฤษ) เช่น cute orange cat running..." },
+                { id: "file", title: "วิเคราะห์ไฟล์ภาพ", icon: "📷", status: "active", placeholder: "เลือกรูปภาพด้วยปุ่มกล้อง แล้วพิมพ์สั่งให้บอทวิเคราะห์ที่นี่..." },
+                { id: "video", title: "เจนวิดีโอ (Coming Soon)", icon: "🎬", status: "beta", placeholder: "โมดูลนี้ระบบกำลังอัปเดต..." }
             ]
         };
 
         let currentAgent = "chat";
-        let attachedImageData = null;
+        let attachedImageData = null; // เก็บ Base64 ของรูปภาพเพื่อส่งเข้า AI Vision
 
+        // โหลด API Key ที่เคยบันทึกไว้
         window.onload = () => {
             if(localStorage.getItem('gemini_api_key')) {
                 document.getElementById('api-key-input').value = localStorage.getItem('gemini_api_key');
@@ -109,6 +115,7 @@
             localStorage.setItem('gemini_api_key', document.getElementById('api-key-input').value.trim());
         }
 
+        // 2. เอนจิ้นวาดหน้าจออัตโนมัติ
         function renderMenu() {
             const container = document.getElementById('menu-container');
             container.innerHTML = '';
@@ -125,14 +132,19 @@
             });
         }
 
+        // 3. ระบบคัดแยกบอททำงาน (Dynamic Agent Switcher)
         function selectAgent(feature) {
             currentAgent = feature.id;
             document.getElementById('chat-header-text').innerText = `${feature.icon} ${feature.title}`;
             document.getElementById('chat-input').placeholder = feature.placeholder;
-            document.getElementById('upload-btn').style.display = (currentAgent === 'file') ? 'flex' : 'none';
+            
+            // แสดง/ซ่อน ปุ่มอัปโหลดรูปตามฟังก์ชัน
+            document.getElementById('upload-btn').style.display = (currentAgent === 'file') ? 'block' : 'none';
+            
             renderMenu();
         }
 
+        // 4. การจัดการระบบอ่านไฟล์รูปภาพของเบราว์เซอร์
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -142,117 +154,24 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                attachedImageData = e.target.result.split(',')[1]; 
+                attachedImageData = e.target.result.split(',')[1]; // เก็บเฉพาะเนื้อโค้ด Base64
             };
             reader.readAsDataURL(file);
         }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') sendMessage();
-        }
-
-        // 2. Sila-5 Firewall (ระบบคัดกรองขั้นพื้นฐาน)
-        function sila5Firewall(text) {
-            const badWords = ["ฆ่า", "ทำลาย", "ขโมย", "แฮก", "โกง", "kill", "hack", "destroy"];
-            const lowerText = text.toLowerCase();
-            for (let word of badWords) {
-                if (lowerText.includes(word)) {
-                    return { safe: false, reason: "ตรวจพบเจตนาที่เข้าข่ายเบียดเบียน (ผิดศีล 5)" };
-                }
-            }
-            return { safe: true };
-        }
-
-        // 3. ระบบประมวลผลหลัก (Orchestrator)
+        // 5. ระบบส่งข้อมูลและกระจายคำสั่งจริง (Orchestrator Core)
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
             const apiKey = localStorage.getItem('gemini_api_key');
             
             if (!text && !attachedImageData) return;
-            if (currentAgent !== 'image' && !apiKey) {
-                appendMessage('system', '⚠️ กรุณาใส่ Gemini API Key ด้านบนก่อนใช้งานครับ');
-                return;
-            }
 
-            // --- ตรวจสอบด้วย Sila-5 Firewall ---
-            const firewallCheck = sila5Firewall(text);
-            if (!firewallCheck.safe) {
-                appendMessage('user', text);
-                appendMessage('error', `🛡️ [Sila-5 Firewall] บล็อกข้อความ: ${firewallCheck.reason}`);
-                input.value = '';
-                return;
-            }
-
-            // แสดงข้อความผู้ใช้
-            let userMsgHtml = text;
+            const log = document.getElementById('chat-log');
+            
+            // 1. แสดงข้อความฝั่งผู้ใช้ลงบนจอ
+            let userMsgHtml = `<div class="msg user">${text}`;
             if (currentAgent === 'file' && attachedImageData) {
                 userMsgHtml += `<br><img src="data:image/jpeg;base64,${attachedImageData}" />`;
             }
-            appendMessage('user', userMsgHtml);
-
-            input.value = '';
-            document.getElementById('preview-container').style.display = 'none';
-            document.getElementById('send-btn').disabled = true;
-
-            const loadingId = appendMessage('system', '⏳ กำลังประมวลผล...');
-
-            try {
-                let responseText = "";
-                
-                // --- โมดูลเจนรูปภาพ (Pollinations API ฟรี) ---
-                if (currentAgent === 'image') {
-                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(text)}?width=512&height=512&nologo=true`;
-                    responseText = `<img src="${imageUrl}" alt="Generated Image" />`;
-                } 
-                // --- โมดูลแชท & วิเคราะห์ภาพ (Gemini API) ---
-                else {
-                    const parts = [{ text: text }];
-                    if (currentAgent === 'file' && attachedImageData) {
-                        parts.push({ inline_data: { mime_type: "image/jpeg", data: attachedImageData } });
-                    }
-
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: parts }] })
-                    });
-
-                    const data = await response.json();
-                    if (data.error) throw new Error(data.error.message);
-                    
-                    responseText = data.candidates[0].content.parts[0].text;
-                }
-
-                // ลบข้อความโหลด แล้วแสดงผลลัพธ์
-                document.getElementById(loadingId).remove();
-                appendMessage('system', responseText);
-
-            } catch (error) {
-                document.getElementById(loadingId).remove();
-                appendMessage('error', `❌ เกิดข้อผิดพลาด: ${error.message}`);
-            } finally {
-                document.getElementById('send-btn').disabled = false;
-                attachedImageData = null;
-            }
-        }
-
-        // 4. ฟังก์ชันเสริมสำหรับแสดงข้อความ
-        function appendMessage(role, htmlContent) {
-            const log = document.getElementById('chat-log');
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `msg ${role}`;
-            msgDiv.innerHTML = htmlContent;
-            log.appendChild(msgDiv);
-            log.scrollTop = log.scrollHeight;
-            
-            if (htmlContent === '⏳ กำลังประมวลผล...') {
-                const uniqueId = 'loading-' + Date.now();
-                msgDiv.id = uniqueId;
-                return uniqueId;
-            }
-            return msgDiv;
-        }
-    </script>
-</body>
-</html>
+            userMsgHtml += `</div>`;
