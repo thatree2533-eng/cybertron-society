@@ -1,371 +1,227 @@
 """
 Cybertron AI — V.2026.4
-ออกแบบ: Plugin-Based Architecture
-ระบบ 3 ดี : เก่ง · ดี · มีสุข
+หลักการ: เก่ง · ดี · มีสุข
+หมายเหตุ: ใช้ Python มาตรฐานเท่านั้น (ไม่ต้อง pip install)
 """
-
 import tkinter as tk
-from tkinter import ttk, scrolledtext, messagebox
+from tkinter import scrolledtext
 import json
 from pathlib import Path
 from datetime import datetime
-from abc import ABC, abstractmethod
-from typing import Dict, List
+import urllib.request
+import urllib.error
 
-# ═══════════════ ตั้งค่าพื้นฐาน ═══════════════
 APP_DIR = Path(__file__).parent.resolve()
 DATA_FILE = APP_DIR / "cybertron_data.json"
 
+# ==========================================
+# 1. ข้อมูลระบบ (สามารถแก้ไขในไฟล์ JSON ได้)
+# ==========================================
 APP_INFO = {
     "version": "V.2026.4",
     "name": "Cybertron AI",
-    "announcement": "อัปเดตโมเดลสมองกลเวอร์ชันล่าสุดแล้ว! ลองใช้ฟังก์ชันใหม่ได้เลยครับ",
+    "announcement": "อัปเดตแล้ว! ลองใช้ฟีเจอร์ใหม่ได้เลยครับ",
     "sections": [
         {
             "title": "ส่วนที่ 1: แชตและวิเคราะห์อัจฉริยะ",
             "features": [
-                {
-                    "id": "chat_general",
-                    "name": "💬 แชตถาม-ตอบทั่วไป",
-                    "desc": "สลับโมเดล AI ได้อิสระ",
-                    "status": "active",
-                    "api": "/api/v1/chat"
-                },
-                {
-                    "id": "file_analyzer",
-                    "name": "📄 สรุปและวิเคราะห์ไฟล์",
-                    "desc": "รองรับ PDF, Excel, Word",
-                    "status": "active",
-                    "api": "/api/v1/analyze"
-                }
+                {"id": "chat", "name": "💬 แชตถาม-ตอบทั่วไป", "desc": "คุยกับ AI", "status": "active", "api": "/api/v1/chat"},
+                {"id": "file", "name": "📄 สรุปและวิเคราะห์ไฟล์", "desc": "PDF, Excel, Word", "status": "active", "api": "/api/v1/file"}
             ]
         },
         {
             "title": "ส่วนที่ 2: งานสร้างสรรค์ขั้นสูง",
             "features": [
-                {
-                    "id": "image_gen",
-                    "name": "🎨 เจนรูปภาพ & กราฟิก",
-                    "desc": "Midjourney / DALL-E 4 / Flux",
-                    "status": "active",
-                    "api": "/api/v1/image-gen"
-                },
-                {
-                    "id": "video_gen",
-                    "name": "🎬 เจนวิดีโอ & แอนิเมชัน",
-                    "desc": "ฟังก์ชันอัปเดตล่าสุด!",
-                    "status": "beta",
-                    "api": "/api/v1/video-gen"
-                }
+                {"id": "image", "name": "🎨 เจนรูปภาพ & กราฟิก", "desc": "สร้างภาพตามคำบรรยาย", "status": "active", "api": "/api/v1/image"},
+                {"id": "video", "name": "🎬 เจนวิดีโอ & แอนิเมชัน", "desc": "ทดลองใช้", "status": "beta", "api": "/api/v1/video"}
             ]
         },
         {
             "title": "ส่วนที่ 3: ระบบสั่งการอัตโนมัติ",
             "features": [
-                {
-                    "id": "connect_apps",
-                    "name": "🔗 เชื่อมต่อแอปภายนอก",
-                    "desc": "LINE, Email, Sheets",
-                    "status": "active",
-                    "api": "/api/v1/connect"
-                },
-                {
-                    "id": "daily_helper",
-                    "name": "📅 บอทช่วยงานประจำวัน",
-                    "desc": "ตั้งเวลาทำงานล่วงหน้า",
-                    "status": "active",
-                    "api": "/api/v1/schedule"
-                }
+                {"id": "connect", "name": "🔗 เชื่อมต่อแอปภายนอก", "desc": "LINE, Email, Sheets", "status": "active", "api": "/api/v1/connect"},
+                {"id": "schedule", "name": "📅 บอทช่วยงานประจำวัน", "desc": "ตั้งเวลาแจ้งเตือน", "status": "active", "api": "/api/v1/schedule"}
             ]
         }
     ],
     "nav": [
         {"name": "หน้าแรก", "icon": "🏠", "active": True},
-        {"name": "คลังบอทของฉัน", "icon": "🤖", "active": False},
+        {"name": "คลังบอท", "icon": "🤖", "active": False},
         {"name": "ตลาดปลั๊กอิน", "icon": "🛒", "active": False},
         {"name": "ประวัติงาน", "icon": "📊", "active": False}
     ]
 }
 
-# ═════════════── ระบบปลั๊กอิน ═══════════════
-class BasePlugin(ABC):
-    """แม่แบบปลั๊กอิน — เขียนเสร็จก็เสียบได้ทันที"""
-    def __init__(self, plugin_id: str, name: str, desc: str, api: str):
-        self.id = plugin_id
+# โหลดข้อมูลจาก JSON ถ้ามี
+if DATA_FILE.exists():
+    try:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
+            APP_INFO = json.load(f)
+    except Exception as e:
+        print(f"ไม่สามารถโหลดไฟล์ JSON ได้: {e}")
+
+# ==========================================
+# 2. ระบบจัดการปลั๊กอิน (Plugins)
+# ==========================================
+class BasePlugin:
+    def __init__(self, pid, name, desc, api):
+        self.id = pid
         self.name = name
         self.desc = desc
         self.api = api
         self.status = "active"
+    def run(self, text):
+        raise NotImplementedError
 
-    @abstractmethod
-    def run(self, user_text: str) -> Dict:
-        """ทำงานตามที่ปลั๊กอินออกแบบไว้"""
-        pass
-
-    def info(self) -> Dict:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "desc": self.desc,
-            "api": self.api,
-            "status": self.status
-        }
-
-# --- ปลั๊กอินแต่ละตัว ---
 class ChatPlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("chat_general", "💬 แชตถาม-ตอบทั่วไป", 
-                        "สลับโมเดล AI ได้อิสระ", "/api/v1/chat")
-
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"ได้รับข้อความ: {user_text}\n\nระบบกำลังประมวลผล...",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
+    def __init__(self): super().__init__("chat", "💬 แชตถาม-ตอบทั่วไป", "คุยกับ AI", "/api/v1/chat")
+    def run(self, text): 
+        try:
+            # ใช้ urllib ยิง API ไปที่ Ollama (Localhost) โดยไม่ต้องใช้ library เพิ่ม
+            url = "http://localhost:11434/api/generate"
+            data = {
+                "model": "kluen", # ใช้โมเดลคลื่นที่เราสร้างไว้
+                "prompt": text,
+                "stream": False
+            }
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(data).encode('utf-8'),
+                headers={'Content-Type': 'application/json'}
+            )
+            with urllib.request.urlopen(req, timeout=30) as response:
+                result = json.loads(response.read().decode('utf-8'))
+                reply_text = result.get('response', 'ไม่ได้รับการตอบกลับ')
+                return {"reply": reply_text, "time": datetime.now().strftime("%H:%M:%S")}
+        except urllib.error.URLError:
+            return {"reply": "❌ ไม่สามารถเชื่อมต่อ Ollama ได้ (กรุณาเปิดโปรแกรม Ollama ทิ้งไว้ก่อนครับ)", "time": datetime.now().strftime("%H:%M:%S")}
+        except Exception as e:
+            return {"reply": f"❌ เกิดข้อผิดพลาด: {str(e)}", "time": datetime.now().strftime("%H:%M:%S")}
 
 class FilePlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("file_analyzer", "📄 สรุปและวิเคราะห์ไฟล์",
-                        "รองรับ PDF, Excel, Word", "/api/v1/analyze")
-
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"พร้อมวิเคราะห์ไฟล์: {user_text}\n\nรองรับไฟล์ .pdf .xlsx .docx",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
+    def __init__(self): super().__init__("file", "📄 สรุปและวิเคราะห์ไฟล์", "รองรับ PDF, Excel, Word", "/api/v1/file")
+    def run(self, text): return {"reply": f"พร้อมวิเคราะห์: {text}", "time": datetime.now().strftime("%H:%M:%S")}
 
 class ImagePlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("image_gen", "🎨 เจนรูปภาพ & กราฟิก",
-                        "Midjourney / DALL-E 4 / Flux", "/api/v1/image-gen")
-
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"กำลังสร้างภาพ: {user_text}\n\nอาจใช้เวลา 10-30 วินาที...",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
+    def __init__(self): super().__init__("image", "🎨 เจนรูปภาพ & กราฟิก", "สร้างภาพตามคำบรรยาย", "/api/v1/image")
+    def run(self, text): return {"reply": f"กำลังสร้างภาพ: {text}\n(ฟีเจอร์นี้จะเปิดใช้งานในเวอร์ชันถัดไป)", "time": datetime.now().strftime("%H:%M:%S")}
 
 class VideoPlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("video_gen", "🎬 เจนวิดีโอ & แอนิเมชัน",
-                        "ฟังก์ชันอัปเดตล่าสุด!", "/api/v1/video-gen")
-        self.status = "beta"
-
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"[ทดลอง] กำลังสร้างวิดีโอ: {user_text}\n\nฟังก์ชันนี้ยังอยู่ระหว่างทดสอบ",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
+    def __init__(self): super().__init__("video", "🎬 เจนวิดีโอ & แอนิเมชัน", "ทดลองใช้", "/api/v1/video"); self.status = "beta"
+    def run(self, text): return {"reply": f"[ทดลอง] กำลังสร้างวิดีโอ: {text}", "time": datetime.now().strftime("%H:%M:%S")}
 
 class ConnectPlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("connect_apps", "🔗 เชื่อมต่อแอปภายนอก",
-                        "LINE, Email, Sheets", "/api/v1/connect")
-
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"กำลังเชื่อมต่อ: {user_text}\n\nรองรับการส่งข้อมูลไปยังแอปภายนอก",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
+    def __init__(self): super().__init__("connect", "🔗 เชื่อมต่อแอปภายนอก", "LINE, Email, Sheets", "/api/v1/connect")
+    def run(self, text): return {"reply": f"กำลังเชื่อมต่อ: {text}", "time": datetime.now().strftime("%H:%M:%S")}
 
 class SchedulePlugin(BasePlugin):
-    def __init__(self):
-        super().__init__("daily_helper", "📅 บอทช่วยงานประจำวัน",
-                        "ตั้งเวลาทำงานล่วงหน้า", "/api/v1/schedule")
+    def __init__(self): super().__init__("schedule", "📅 บอทช่วยงานประจำวัน", "ตั้งเวลาแจ้งเตือน", "/api/v1/schedule")
+    def run(self, text): return {"reply": f"ตั้งเวลาเรียบร้อย: {text}", "time": datetime.now().strftime("%H:%M:%S")}
 
-    def run(self, user_text: str) -> Dict:
-        return {
-            "plugin": self.name,
-            "input": user_text,
-            "reply": f"ตั้งเวลา: {user_text}\n\nระบบจะแจ้งเตือนตามกำหนดเวลา",
-            "time": datetime.now().strftime("%H:%M:%S")
-        }
-
-# ═════════════── ตัวจัดการกลาง ═══════════════
 class PluginManager:
-    """จัดการปลั๊กอินทั้งหมด — เพิ่มตรงนี้ได้ตลอด"""
     def __init__(self):
-        self.plugins: Dict[str, BasePlugin] = {}
-        self._register_all()
+        self.plugins = {}
+        self._register()
+    def _register(self):
+        self.add(ChatPlugin()); self.add(FilePlugin()); self.add(ImagePlugin())
+        self.add(VideoPlugin()); self.add(ConnectPlugin()); self.add(SchedulePlugin())
+    def add(self, p): self.plugins[p.id] = p
+    def get(self, pid): return self.plugins.get(pid)
 
-    def _register_all(self):
-        """ลงทะเบียนปลั๊กอินทั้งหมด"""
-        self.add(ChatPlugin())
-        self.add(FilePlugin())
-        self.add(ImagePlugin())
-        self.add(VideoPlugin())
-        self.add(ConnectPlugin())
-        self.add(SchedulePlugin())
-
-    def add(self, plugin: BasePlugin):
-        """เพิ่มปลั๊กอินใหม่"""
-        self.plugins[plugin.id] = plugin
-
-    def get(self, plugin_id: str) -> BasePlugin:
-        return self.plugins.get(plugin_id)
-
-    def all(self) -> List[Dict]:
-        return [p.info() for p in self.plugins.values()]
-
-# ═════════════── หน้าจอหลัก ═══════════════
+# ==========================================
+# 3. หน้าจอการทำงาน (GUI)
+# ==========================================
 class CybertronApp:
     def __init__(self, root):
         self.root = root
         self.root.title(f"{APP_INFO['name']} — {APP_INFO['version']}")
         self.root.geometry("1000x720")
         self.root.configure(bg="#12171f")
-
         self.manager = PluginManager()
         self.windows = {}
-
-        self._build_header()
-        self._build_search()
-        self._build_announce()
-        self._build_sections()
-        self._build_nav()
-
-    def _build_header(self):
-        top = tk.Frame(self.root, bg="#1a202c", padx=15, pady=10)
-        top.pack(fill=tk.X)
-
-        tk.Label(top, text=APP_INFO["name"], bg="#1a202c", 
-                 fg="#facc15", font=("Sarabun", 14, "bold")).pack(side=tk.LEFT)
-        tk.Label(top, text=APP_INFO["version"], bg="#1a202c", 
-                 fg="#94a3b8", font=("Sarabun", 10)).pack(side=tk.LEFT, padx=8)
-
-        tk.Button(top, text="ตั้งค่า/อัปเดต", bg="#0ea5e9", fg="#fff",
-                  font=("Sarabun", 10, "bold"), padx=15, pady=5).pack(side=tk.RIGHT)
-
-    def _build_search(self):
-        frame = tk.Frame(self.root, bg="#12171f", padx=15, pady=10)
-        frame.pack(fill=tk.X)
-
-        self.search = tk.Entry(frame, font=("Sarabun", 11), bg="#1e293b",
-                               fg="#cbd5e1", insertbackground="#fff")
-        self.search.insert(0, "ค้นหาบอท, ปลั๊กอิน หรือคำสั่ง...")
-        self.search.pack(fill=tk.X, ipady=8)
-
-    def _build_announce(self):
-        frame = tk.Frame(self.root, bg="#0c4a6e", padx=15, pady=10)
-        frame.pack(fill=tk.X, padx=15, pady=(0, 15))
-
-        tk.Label(frame, text="📢 ประกาศ:", bg="#0c4a6e", fg="#fef08a",
-                 font=("Sarabun", 10, "bold")).pack(side=tk.LEFT)
-        tk.Label(frame, text=APP_INFO["announcement"], bg="#0c4a6e", fg="#e0f2fe",
-                 font=("Sarabun", 10)).pack(side=tk.LEFT, padx=8)
-
-    def _build_sections(self):
-        container = tk.Frame(self.root, bg="#12171f", padx=15, pady=5)
-        container.pack(fill=tk.BOTH, expand=True)
-
-        for section in APP_INFO["sections"]:
-            tk.Label(container, text=section["title"], bg="#12171f",
-                     fg="#94a3b8", font=("Sarabun", 11, "bold")).pack(anchor=tk.W, pady=(15, 8))
-
-            row = tk.Frame(container, bg="#12171f")
-            row.pack(fill=tk.X)
-
-            for idx, feat in enumerate(section["features"]):
-                border = "#d97706" if feat["status"] == "beta" else "#2563eb"
-                card = tk.Frame(row, bg=border, padx=2, pady=2)
-                card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, 
-                          padx=(0 if idx == 0 else 12, 0))
-
-                inner = tk.Frame(card, bg="#1e293b", padx=18, pady=20)
-                inner.pack(fill=tk.BOTH, expand=True)
-
-                tk.Label(inner, text=feat["name"], bg="#1e293b", fg="#fff",
-                         font=("Sarabun", 13, "bold")).pack(anchor=tk.W)
-                tk.Label(inner, text=feat["desc"], bg="#1e293b", fg="#94a3b8",
-                         font=("Sarabun", 10)).pack(anchor=tk.W, pady=(4, 12))
-
-                btn_text = "🟡 ทดลองใช้" if feat["status"] == "beta" else "✅ เปิดใช้งาน"
-                btn_bg = "#d97706" if feat["status"] == "beta" else "#2563eb"
-                tk.Button(inner, text=btn_text, bg=btn_bg, fg="#fff",
-                          font=("Sarabun", 10, "bold"), padx=20, pady=6,
-                          command=lambda f=feat: self._open_feature(f)).pack(anchor=tk.W)
-
-    def _open_feature(self, feat):
-        """เปิดหน้าจอทำงานของฟีเจอร์"""
-        fid = feat["id"]
-        if fid in self.windows and self.windows[fid].winfo_exists():
-            self.windows[fid].lift()
-            return
-
-        win = tk.Toplevel(self.root)
-        win.title(f"{feat['name']} — {APP_INFO['name']}")
-        win.geometry("700x550")
-        win.configure(bg="#12171f")
-        self.windows[fid] = win
-
-        # ส่วนหัว
-        tk.Label(win, text=feat["name"], bg="#12171f", fg="#facc15",
-                 font=("Sarabun", 16, "bold")).pack(pady=(20, 5))
-        tk.Label(win, text=f"API: {feat['api']} | สถานะ: {feat['status']}",
-                 bg="#12171f", fg="#94a3b8", font=("Sarabun", 10)).pack(pady=(0, 15))
-
-        # พื้นที่แสดงผล
-        output = scrolledtext.ScrolledText(win, wrap=tk.WORD, font=("Sarabun", 11),
-                                            bg="#1e293b", fg="#e2e8f0", insertbackground="#fff")
-        output.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
-        output.insert(tk.END, f"ยินดีต้อนรับสู่ {feat['name']}\n")
-        output.insert(tk.END, "═" * 45 + "\n\n")
-        output.config(state=tk.DISABLED)
-
-        # ช่องส่งคำสั่ง
-        bottom = tk.Frame(win, bg="#1a202c", padx=15, pady=12)
-        bottom.pack(fill=tk.X, side=tk.BOTTOM)
-
-        entry = tk.Entry(bottom, font=("Sarabun", 11), bg="#1e293b",
-                         fg="#fff", insertbackground="#fff")
-        entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10), ipady=6)
-
-        def send():
-            text = entry.get().strip()
-            if not text:
-                return
-            plugin = self.manager.get(fid)
-            if not plugin:
-                return
-            res = plugin.run(text)
-            output.config(state=tk.NORMAL)
-            output.insert(tk.END, f"คุณ: {text}\n")
-            output.insert(tk.END, f"ระบบ: {res['reply']}\n\n")
-            output.see(tk.END)
-            output.config(state=tk.DISABLED)
-            entry.delete(0, tk.END)
-
-        tk.Button(bottom, text="ส่ง", bg="#2563eb", fg="#fff",
-                 font=("Sarabun", 10, "bold"), padx=20, command=send).pack(side=tk.RIGHT)
-        entry.bind("<Return>", lambda e: send())
-
-    def _build_nav(self):
-        nav = tk.Frame(self.root, bg="#1a202c", padx=20, pady=12)
-        nav.pack(fill=tk.X, side=tk.BOTTOM)
-
+        self._build_ui()
+        
+    def _build_ui(self):
+        # Top Bar
+        top = tk.Frame(self.root, bg="#1a202c", padx=15, pady=10); top.pack(fill=tk.X)
+        tk.Label(top, text=APP_INFO["name"], bg="#1a202c", fg="#facc15", font=("Sarabun",14,"bold")).pack(side=tk.LEFT)
+        tk.Label(top, text=APP_INFO["version"], bg="#1a202c", fg="#94a3b8", font=("Sarabun",10)).pack(side=tk.LEFT, padx=8)
+        tk.Button(top, text="ตั้งค่า/อัปเดต", bg="#0ea5e9", fg="#fff", font=("Sarabun",10,"bold"), padx=15, pady=5).pack(side=tk.RIGHT)
+        
+        # Search
+        f_search = tk.Frame(self.root, bg="#12171f", padx=15, pady=10); f_search.pack(fill=tk.X)
+        self.search = tk.Entry(f_search, font=("Sarabun",11), bg="#1e293b", fg="#cbd5e1")
+        self.search.insert(0, "ค้นหาบอท, ปลั๊กอิน หรือคำสั่ง..."); self.search.pack(fill=tk.X, ipady=8)
+        
+        # Announcement
+        f_ann = tk.Frame(self.root, bg="#0c4a6e", padx=15, pady=10); f_ann.pack(fill=tk.X, padx=15, pady=(0,15))
+        tk.Label(f_ann, text="📢 ประกาศ:", bg="#0c4a6e", fg="#fef08a", font=("Sarabun",10,"bold")).pack(side=tk.LEFT)
+        tk.Label(f_ann, text=APP_INFO["announcement"], bg="#0c4a6e", fg="#e0f2fe", font=("Sarabun",10)).pack(side=tk.LEFT, padx=8)
+        
+        # Main Content
+        container = tk.Frame(self.root, bg="#12171f", padx=15, pady=5); container.pack(fill=tk.BOTH, expand=True)
+        for sec in APP_INFO["sections"]:
+            tk.Label(container, text=sec["title"], bg="#12171f", fg="#94a3b8", font=("Sarabun",11,"bold")).pack(anchor=tk.W, pady=(15,8))
+            row = tk.Frame(container, bg="#12171f"); row.pack(fill=tk.X)
+            for idx, feat in enumerate(sec["features"]):
+                border = "#d97706" if feat["status"]=="beta" else "#2563eb"
+                card = tk.Frame(row, bg=border, padx=2, pady=2); card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0 if idx==0 else 12,0))
+                inner = tk.Frame(card, bg="#1e293b", padx=18, pady=20); inner.pack(fill=tk.BOTH, expand=True)
+                tk.Label(inner, text=feat["name"], bg="#1e293b", fg="#fff", font=("Sarabun",13,"bold")).pack(anchor=tk.W)
+                tk.Label(inner, text=feat["desc"], bg="#1e293b", fg="#94a3b8", font=("Sarabun",10)).pack(anchor=tk.W, pady=(4,12))
+                btn_txt = "🟡 ทดลองใช้" if feat["status"]=="beta" else "✅ เปิดใช้งาน"
+                btn_bg = "#d97706" if feat["status"]=="beta" else "#2563eb"
+                tk.Button(inner, text=btn_txt, bg=btn_bg, fg="#fff", font=("Sarabun",10,"bold"), padx=20, pady=6, command=lambda f=feat: self._open(f)).pack(anchor=tk.W)
+        
+        # Bottom Nav
+        nav = tk.Frame(self.root, bg="#1a202c", padx=20, pady=12); nav.pack(fill=tk.X, side=tk.BOTTOM)
         for item in APP_INFO["nav"]:
             bg = "#2563eb" if item["active"] else "#1e293b"
-            tk.Button(nav, text=f"{item['icon']} {item['name']}",
-                      bg=bg, fg="#fff", font=("Sarabun", 10, "bold"),
-                      padx=18, pady=8).pack(side=tk.LEFT, padx=5)
+            tk.Button(nav, text=f"{item['icon']} {item['name']}", bg=bg, fg="#fff", font=("Sarabun",10,"bold"), padx=18, pady=8).pack(side=tk.LEFT, padx=5)
+    
+    def _open(self, feat):
+        fid = feat["id"]
+        if fid in self.windows and self.windows[fid].winfo_exists(): self.windows[fid].lift(); return
+        win = tk.Toplevel(self.root); win.title(f"{feat['name']} — {APP_INFO['name']}"); win.geometry("700x550"); win.configure(bg="#12171f")
+        self.windows[fid] = win
+        tk.Label(win, text=feat["name"], bg="#12171f", fg="#facc15", font=("Sarabun",16,"bold")).pack(pady=(20,5))
+        tk.Label(win, text=f"API: {feat['api']} | สถานะ: {feat['status']}", bg="#12171f", fg="#94a3b8", font=("Sarabun",10)).pack(pady=(0,15))
+        output = scrolledtext.ScrolledText(win, wrap=tk.WORD, font=("Sarabun",11), bg="#1e293b", fg="#e2e8f0"); output.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        output.insert(tk.END, f"ยินดีต้อนรับสู่ {feat['name']}\n{'═'*45}\n\n"); output.config(state=tk.DISABLED)
+        bottom = tk.Frame(win, bg="#1a202c", padx=15, pady=12); bottom.pack(fill=tk.X, side=tk.BOTTOM)
+        entry = tk.Entry(bottom, font=("Sarabun",11), bg="#1e293b", fg="#fff"); entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0,10), ipady=6)
+        
+        def send():
+            txt = entry.get().strip()
+            if not txt: return
+            entry.delete(0, tk.END)
+            
+            # แสดงข้อความผู้ใช้
+            output.config(state=tk.NORMAL); output.insert(tk.END, f"คุณ: {txt}\n"); output.see(tk.END); output.config(state=tk.DISABLED)
+            
+            # แสดงสถานะกำลังโหลด
+            output.config(state=tk.NORMAL); output.insert(tk.END, f"ระบบ: กำลังประมวลผล...\n"); output.see(tk.END); output.config(state=tk.DISABLED)
+            
+            # ใช้ Thread เพื่อไม่ให้ GUI ค้างระหว่างรอ AI ตอบ
+            import threading
+            def process():
+                res = self.manager.get(fid).run(txt)
+                output.config(state=tk.NORMAL); 
+                # ลบข้อความ "กำลังประมวลผล..." ออก (ย้อนกลับไป 1 บรรทัด)
+                output.delete("end-2l", "end-1l") 
+                output.insert(tk.END, f"ระบบ: {res['reply']}\n\n"); 
+                output.see(tk.END); 
+                output.config(state=tk.DISABLED)
+            
+            threading.Thread(target=process, daemon=True).start()
 
-# ═════════════── เริ่มทำงาน ═══════════════
+        tk.Button(bottom, text="ส่ง", bg="#2563eb", fg="#fff", font=("Sarabun",10,"bold"), padx=20, command=send).pack(side=tk.RIGHT)
+        entry.bind("<Return>", lambda e: send())
+
 if __name__ == "__main__":
-    # บันทึกข้อมูลระบบ
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(APP_INFO, f, ensure_ascii=False, indent=2)
-
-    # เปิดหน้าจอ
-    root = tk.Tk()
-    app = CybertronApp(root)
-    root.mainloop()
+    # สร้างไฟล์ JSON ถ้ายังไม่มี
+    if not DATA_FILE.exists():
+        with open(DATA_FILE, "w", encoding="utf-8") as f: 
+            json.dump(APP_INFO, f, ensure_ascii=False, indent=2)
+            
+    root = tk.Tk(); app = CybertronApp(root); root.mainloop()
