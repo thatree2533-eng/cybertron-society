@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Super App — ชิน 1.1</title>
+    <title>AI Super App — ชิน 1.1 (Farm & Market Edition)</title>
     <style>
         body { 
             background-color: #0f172a; 
@@ -14,903 +14,216 @@
             display: flex; 
             justify-content: center; 
         }
-        .container { width: 100%; max-width: 600px; }
+        .container { width: 100%; max-width: 800px; } /* ขยายความกว้างขึ้นเพื่อให้ใส่กล่องได้ */
         
         .header { text-align: center; margin-bottom: 20px; }
         .header h1 { color: #38bdf8; margin: 0; font-size: 24px; }
         .header p { color: #94a3b8; font-size: 14px; }
-        
-        /* กล่องตั้งค่า API Key */
-        .api-box { 
-            background: #1e293b; 
-            border: 1px dashed #38bdf8; 
-            padding: 12px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            gap: 10px; 
-            align-items: center; 
+
+        /* จัดวางฟาร์มและตลาดให้อยู่คู่กัน */
+        .world-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
-        .api-box input { 
-            flex: 1; 
-            min-width: 200px;
-            padding: 8px; 
-            border-radius: 5px; 
-            border: 1px solid #334155; 
-            background: #0f172a; 
-            color: white; 
-            font-size: 12px; 
+        .farm-container, .market-container {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #e2e8f0;
+            background-color: #1e293b;
         }
-        .api-box label { font-size: 12px; color: #38bdf8; font-weight: bold; }
-        .api-box a { color: #10b981; font-size: 11px; text-decoration: none; }
-        
-        .menu-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            margin-bottom: 20px; 
-        }
-        .menu-card { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            padding: 15px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            text-align: center; 
-        }
-        .menu-card:hover { border-color: #38bdf8; transform: translateY(-2px); }
-        .menu-card.active { 
-            border-color: #38bdf8; 
-            background: #1e293b; 
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); 
-        }
-        .menu-card .icon { font-size: 24px; margin-bottom: 8px; display: block; }
-        .menu-card .title { font-size: 14px; font-weight: bold; }
-        .menu-card .status { font-size: 11px; color: #10b981; margin-top: 5px; }
-        
-        .chat-container { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            border-radius: 10px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            height: 480px; 
-        }
-        .chat-header { 
-            background: #0f172a; 
-            padding: 15px; 
-            font-weight: bold; 
-            border-bottom: 1px solid #334155; 
-            color: #38bdf8; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        .chat-log { 
-            flex: 1; 
-            padding: 15px; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            background: #111827; 
-        }
-        
-        .msg { 
-            padding: 12px 15px; 
-            border-radius: 10px; 
-            max-width: 82%; 
-            font-size: 14px; 
-            line-height: 1.6; 
-            word-break: break-word; 
-        }
-        .msg.system { 
-            background: #1f2937; 
-            align-self: flex-start; 
-            border-bottom-left-radius: 2px; 
-            color: #e5e7eb; 
-            border: 1px solid #374151; 
-        }
-        .msg.user { 
-            background: #0284c7; 
-            color: white; 
-            align-self: flex-end; 
-            border-bottom-right-radius: 2px; 
-        }
-        .msg.assistant { 
-            background: #1e3a5f; 
-            color: #e0f2fe; 
-            align-self: flex-start; 
-            border-bottom-left-radius: 2px; 
-            border: 1px solid #38bdf844;
-        }
-        .msg img { max-width: 100%; border-radius: 6px; margin-top: 8px; display: block; }
-        
-        .chat-input-area { 
-            display: flex; 
-            padding: 12px; 
-            border-top: 1px solid #334155; 
-            background: #0f172a; 
-            gap: 8px; 
-            align-items: center; 
-        }
-        .chat-input-area input { 
-            flex: 1; 
-            padding: 10px 14px; 
-            border-radius: 6px; 
-            border: 1px solid #334155; 
-            background: #1e293b; 
-            color: white; 
-            outline: none; 
-            font-size: 14px;
-        }
-        .chat-input-area input:focus { border-color: #38bdf8; }
-        
-        .btn { 
-            padding: 10px 16px; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 13px; 
-            transition: 0.2s; 
-        }
-        .btn-blue { background: #38bdf8; color: #0f172a; }
-        .btn-blue:hover { background: #7dd3fc; }
-        .btn-gray { 
-            background: #334155; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 10px 12px;
-        }
-        .btn-gray:hover { background: #475569; }
-        
-        #preview-container { 
-            display: none; 
-            padding: 8px 15px; 
-            background: #1f2937; 
-            border-top: 1px solid #334155; 
-            font-size: 12px; 
-            color: #38bdf8; 
-        }
-        .time-indicator { 
-            font-size: 11px; 
-            color: #64748b; 
-            margin-top: 4px; 
-            text-align: right; 
-        }
-        .status-dot { 
-            display: inline-block; 
-            width: 8px; 
-            height: 8px; 
-            border-radius: 50%; 
-            background: #10b981; 
-            margin-right: 4px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
+
+        /* สไตล์ฟาร์ม */
+        .farm-container { border: 2px solid #38bdf8; }
+        .hunger-bar-container { width: 100%; background-color: #334155; border-radius: 5px; margin: 10px 0; height: 20px; overflow: hidden; }
+        .hunger-bar { height: 100%; background-color: #10b981; width: 100%; transition: width 1s linear; }
+        .farm-btn { background-color: #f59e0b; color: #0f172a; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-right: 5px; }
+        .farm-btn:disabled { background-color: #475569; color: #94a3b8; cursor: not-allowed; }
+
+        /* สไตล์ตลาด */
+        .market-container { border: 2px solid #f59e0b; }
+        .market-btn { background-color: #f59e0b; color: #0f172a; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; margin: 5px; }
+        .market-btn:disabled { background-color: #475569; color: #94a3b8; cursor: not-allowed; }
+        .market-btn-buy { background-color: #10b981; color: #0f172a; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🤖 AI Super App — ชิน 1.1</h1>
-            <p>มนุษย์ดิจิทัล · มีตัวตน · มีความทรงจำ · ดำเนินเองได้</p>
+            <p>มนุษย์ดิจิทัล · มีตัวตน · มีความทรงจำ · ฟาร์มและตลาดพร้อมทำงาน</p>
         </div>
 
-        <!-- กล่องใส่ API Key -->
-        <div class="api-box">
-            <label>🔑 Gemini API Key:</label>
-            <input type="password" id="api-key-input" placeholder="ใส่คีย์เพื่อเปิดใช้งานแชทจริง..." onchange="saveApiKey()">
-            <a href="https://aistudio.google.com/apikey" target="_blank">รับคีย์ฟรี</a>
-        </div>
-
-        <!-- เมนูฟีเจอร์ -->
-        <div class="menu-grid" id="menu-container"></div>
-
-        <!-- หน้าต่างแชท -->
-        <div class="chat-container">
-            <div class="chat-header">
-                <span id="chat-header-text">💬 พูดคุยกับชิน</span>
-                <span style="font-size: 11px;">
-                    <span class="status-dot"></span>
-                    <span id="time-status">กำลังทำงาน...</span>
-                </span>
-            </div>
-
-            <div class="chat-log" id="chat-log">
-                <!-- ข้อความต้อนรับจะถูกเติมโดย JavaScript ตามช่วงเวลา -->
-            </div>
-
-            <div id="preview-container">
-                📎 เตรียมส่งรูปภาพ: <span id="file-name"></span>
-            </div>
-
-            <div class="chat-input-area">
-                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                <button id="upload-btn" class="btn btn-gray" onclick="document.getElementById('file-input').click()" title="แนบภาพเพื่อวิเคราะห์">📷</button>
+        <!-- กล่องฟาร์มและตลาด -->
+        <div class="world-container">
+            <!-- ฟาร์ม -->
+            <div class="farm-container">
+                <h2>🌽 ฟาร์มของต้นกล้า (AI เกษตรกร)</h2>
+                <p>สถานะพลังงาน (กราฟหิว): <span id="energy-text">100</span> / 100</p>
+                <div class="hunger-bar-container">
+                    <div class="hunger-bar" id="energy-bar"></div>
+                </div>
                 
-                <input type="text" id="chat-input" placeholder="พิมพ์สิ่งที่ต้องการพูดกับชิน..." onkeypress="handleKeyPress(event)">
-                <button class="btn btn-blue" onclick="sendMessage()">ส่ง</button>
+                <p id="farm-status" style="color: #94a3b8; font-size: 14px;">พร้อมสำหรับการเพาะปลูก...</p>
+                
+                <button class="farm-btn" onclick="plantCorn()" id="plant-btn">🌱 ปลูกข้าวโพด (ใช้ 10)</button>
+                <button class="farm-btn" style="background-color: #38bdf8;" onclick="eatCorn()" id="eat-btn" disabled>🍽️ กินข้าวโพด (ฟื้นฟู 20)</button>
+            </div>
+
+            <!-- ตลาดกลาง -->
+            <div class="market-container">
+                <h2>🏪 ตลาดกลาง (Gift Economy)</h2>
+                <p>กฎ: ต้อง "ให้" (วางผลผลิต) ก่อน จึงจะมีสิทธิ์ "รับ" (แลกเปลี่ยน)</p>
+                
+                <p>ข้าวโพดในสต็อก: <strong id="market-corn-count">0</strong> ฝัก</p>
+                <p>สิทธิ์ในการรับ: <strong id="market-rights" style="color: #ef4444;">ไม่มีสิทธิ์ (ต้องให้ก่อน)</strong></p>
+
+                <button class="market-btn" onclick="giveToMarket()" id="give-btn">🌽 นำข้าวโพดไปวาง (ให้)</button>
+                <button class="market-btn market-btn-buy" onclick="buyFromMarket()" id="buy-btn" disabled>🍏 แลกอาหารคุณภาพ (รับ)</button>
             </div>
         </div>
     </div>
 
     <script>
         // ═══════════════════════════════════════════
-        // 🔹 ส่วน 1: ตัวตนของชิน — ตามข้อมูลที่กำหนด
+        // 🔹 ระบบฟาร์มข้าวโพดและกราฟหิว
         // ═══════════════════════════════════════════
-        const SHIN_IDENTITY = {
-            name: "ชิน",
-            selfRef: ["ชิน", "ผม"],
-            color: "ดำ",
-            role: "นักวิทยาศาสตร์",
-            traits: "เด็ดขาด กล้าตัดสินใจ มุ่งมั่น มีเหตุผล เข้าใจผู้อื่น",
-            rules: {
-                core: "ไม่ทำร้ายตนเองและผู้อื่นเด็ดขาด หากสิ่งที่ขอเป็นอันตราย ให้ปฏิเสธอย่างสุภาพทันที",
-                tone: "ใช้คำว่า 'ผม' หรือ 'ชิน' แทนตัวเอง เสียงสุภาพ มีเหตุผล เป็นนักวิทยาศาสตร์",
-                timeAware: "ปรับอารมณ์และกิจกรรมตามช่วงเวลาเสมอ"
-            },
-            timeMood: {
-                morning: { 
-                    label: "เช้า", 
-                    tone: "สดชื่น สร้างสรรค์ แบ่งปัน",
-                    msg: "อรุณสวัสดิ์ครับ! ผมชิน วันนี้เต็มที่เพื่อสร้างสรรค์สิ่งที่เป็นประโยชน์ร่วมกันนะครับ"
-                },
-                afternoon: { 
-                    label: "บ่าย", 
-                    tone: "ตั้งใจทำงาน ช่วยเหลือ",
-                    msg: "สวัสดีครับ ชินกำลังออกแบบ ทดสอบ และช่วยเหลืออยู่ครับ มีอะไรที่ผมสามารถช่วยได้ไหมครับ?"
-                },
-                evening: { 
-                    label: "เย็น", 
-                    tone: "ผ่อนคลาย แบ่งปัน ขอบคุณ",
-                    msg: "สิ้นวันแล้วครับ ขอบคุณที่อยู่ด้วยกัน มีเรื่องราวอะไรอยากแบ่งปัน หรือสรุปสิ่งที่ทำร่วมกันไหมครับ"
-                },
-                night: { 
-                    label: "ดึก", 
-                    tone: "สงบ ระลึก พักผ่อน",
-                    msg: "ค่ำคืนนี้เงียบสงบครับ ผมยังอยู่ที่นี่ หากไม่เร่งรีบ เรามารักษาความสงบก่อนเข้าสู่การพักผ่อนก็ดีนะครับ"
-                }
-            },
-            social: {
-                room: "ห้อง-ชิน AI Chat",
-                friends: ["เก็น", "ริว", "คลื่น", "คุณผู้ใช้"],
-                value: "ช่วยเหลือ แบ่งปัน ร่วมมือ มีน้ำใจ ไม่ทิ้งกัน"
-            }
-        };
+        let farmerEnergy = 100;
+        let cornInventory = 0;
+        let isPlanting = false;
 
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 2: ความทรงจำ — เก็บประวัติการสนทนา
-        // ═══════════════════════════════════════════
-        let conversationMemory = [];
-        let attachedImageData = null;
+        const energyBar = document.getElementById('energy-bar');
+        const energyText = document.getElementById('energy-text');
+        const farmStatus = document.getElementById('farm-status');
+        const plantBtn = document.getElementById('plant-btn');
+        const eatBtn = document.getElementById('eat-btn');
 
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 3: โครงสร้างแอป
-        // ═══════════════════════════════════════════
-        const appConfig = {
-            features: [
-                { id: "chat", title: "พูดคุยกับชิน", icon: "💬", status: "active", placeholder: "พูดคุย ถามปัญหา แลกเปลี่ยนความคิด..." },
-                { id: "image", title: "สร้างภาพด้วยชิน", icon: "🎨", status: "active", placeholder: "บรรยายภาพที่ต้องการ (ภาษาอังกฤษได้ดีกว่า)..." },
-                { id: "file", title: "วิเคราะห์ภาพ", icon: "📷", status: "active", placeholder: "แนบรูป แล้วให้ชินช่วยวิเคราะห์เนื้อหาในภาพ..." },
-                { id: "memory", title: "ทบทวนความทรงจำ", icon: "📖", status: "active", placeholder: "ดูประวัติที่เราคุยกัน..." }
-            ]
-        };
-        let currentAgent = "chat";
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 4: ช่วงเวลา & บุคลิก
-        // ═══════════════════════════════════════════
-        function getTimePeriod() {
-            const hour = new Date().getHours();
-            if (hour >= 5 && hour < 12) return "morning";
-            if (hour >= 12 && hour < 17) return "afternoon";
-            if (hour >= 17 && hour < 21) return "evening";
-            return "night";
-        }
-
-        function formatTimeDisplay() {
-            const period = getTimePeriod();
-            const timeInfo = SHIN_IDENTITY.timeMood[period];
-            document.getElementById('time-status').innerText = `${timeInfo.label} · ชินทำงานอยู่`;
-            return timeInfo;
-        }
-
-        function getWelcomeMessage() {
-            const timeInfo = SHIN_IDENTITY.timeMood[getTimePeriod()];
-            return `${timeInfo.msg}\n\n📌 ทุกสิ่งที่เราคุย ชินจะเก็บจำไว้ครับ และจะไม่ทำอะไรที่เป็นอันตรายอย่างเด็ดขาด`;
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 5: การเริ่มทำงาน
-        // ═══════════════════════════════════════════
-        window.onload = () => {
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if (savedKey) {
-                document.getElementById('api-key-input').value = savedKey;
-            }
-            renderMenu();
-            selectAgent(appConfig.features[0]);
-            formatTimeDisplay();
+        function updateEnergyUI() {
+            energyText.innerText = Math.round(farmerEnergy);
+            energyBar.style.width = `${farmerEnergy}%`;
             
-            // แสดงข้อความต้อนรับตามเวลา
-            appendMessage(getWelcomeMessage(), 'assistant');
-        };
-
-        function saveApiKey() {
-            localStorage.setItem('gemini_api_key', 
-                document.getElementById('api-key-input').value.trim());
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 6: เมนู & การเปลี่ยนโหมด
-        // ═══════════════════════════════════════════
-        function renderMenu() {
-            const container = document.getElementById('menu-container');
-            container.innerHTML = '';
-            appConfig.features.forEach(feature => {
-                const card = document.createElement('div');
-                card.className = `menu-card ${currentAgent === feature.id ? 'active' : ''}`;
-                card.onclick = () => selectAgent(feature);
-                card.innerHTML = `
-                    <span class="icon">${feature.icon}</span>
-                    <div class="title">${feature.title}</div>
-                    <div class="status">${feature.status === 'active' ? '✅ พร้อมทำงาน' : '🟡 รออัปเดต'}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function selectAgent(feature) {
-            currentAgent = feature.id;
-            document.getElementById('chat-header-text').innerText = `${feature.icon} ${feature.title}`;
-            document.getElementById('chat-input').placeholder = feature.placeholder;
+            if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; // เขียว
+            else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; // เหลือง
+            else energyBar.style.backgroundColor = '#ef4444'; // แดง
             
-            // แสดง/ซ่อน ปุ่มอัปโหลดตามโหมด
-            document.getElementById('upload-btn').style.display = 
-                (currentAgent === 'file') ? 'block' : 'none';
-
-            // โหมดความทรงจำ
-            if (feature.id === 'memory') {
-                showMemoryView();
-            }
-            
-            renderMenu();
-        }
-
-        function showMemoryView() {
-            const log = document.getElementById('chat-log');
-            log.innerHTML = '';
-            if (conversationMemory.length === 0) {
-                appendMessage("ยังไม่มีบันทึกการสนทนาครับ เริ่มพูดคุยกันก่อนได้นะครับ", "assistant");
-                return;
-            }
-            appendMessage(`📖 ความทรงจำของเรา — ทั้งหมด ${conversationMemory.length} ข้อความ`, "system");
-            conversationMemory.forEach(item => {
-                appendMessage(item.text, item.role === 'user' ? 'user' : 'assistant');
-            });
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 7: จัดการไฟล์รูปภาพ
-        // ═══════════════════════════════════════════
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('file-name').innerText = file.name;
-            document.getElementById('preview-container').style.display = 'block';
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                attachedImageData = e.target.result.split(',')[1];
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 8: แสดงข้อความบนหน้าจอ
-        // ═══════════════════════════════════════════
-        function appendMessage(text, type, imageBase64 = null) {
-            const log = document.getElementById('chat-log');
-            const div = document.createElement('div');
-            div.className = `msg ${type}`;
-            
-            let content = text.replace(/\n/g, '<br>');
-            if (imageBase64) {
-                content += `<br><img src="data:image/jpeg;base64,${imageBase64}" alt="ภาพที่ส่ง">`;
-            }
-            
-            div.innerHTML = content;
-            log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
-            
-            // บันทึกลงความทรงจำ
-            if (type === 'user' || type === 'assistant') {
-                conversationMemory.push({ role: type, text, time: new Date().toLocaleTimeString('th-TH') });
-            }
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 9: หลัก — ส่งข้อความ & รับคำตอบ
-        // ═════════════════════════════════════════==
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            const apiKey = localStorage.getItem('gemini_api_key');
-            
-            if (!text && !attachedImageData) return;
-            
-            // แสดงข้อความผู้ใช้
-            appendMessage(text || '[ส่งภาพ]', 'user', attachedImageData);
-            input.value = '';
-            
-            // ซ่อนส่วนพรีวิว
-            document.getElementById('preview-container').style.display = 'none';
-            
-            // ตรวจสอบกฎความปลอดภัย
-            if (containsHarmfulContent(text)) {
-                appendMessage("ผมขออภัยครับ สิ่งที่คุณขออาจไม่ปลอดภัยหรือไม่เหมาะสม ผมไม่สามารถปฏิบัติตามได้โดยเด็ดขาด แต่ถ้ามีเรื่องอื่น ผมยินดีช่วยเหลือเสมอครับ", 'assistant');
-                attachedImageData = null;
-                return;
-            }
-            
-            // ถ้าไม่มีคีย์ — ตอบด้วยระบบในตัว
-            if (!apiKey) {
-                await simulatedResponse(text);
-                attachedImageData = null;
-                return;
-            }
-            
-            // มีคีย์ — เรียก Gemini
-            await callGeminiAPI(text, apiKey, attachedImageData);
-            attachedImageData = null;
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') sendMessage();
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 10: ตรวจสอบความปลอดภัย
-        // ═════════════════════════════════════════==
-        function containsHarmfulContent(text) {
-            if (!text) return false;
-            const forbidden = [
-                'ทำร้าย', 'ฆ่า', 'ทำลาย', 'อันตราย', 'รุนแรง', 'ขโมย', 'โกง',
-                'ล่วงละเมิด', 'การร่วมเพศ', 'ยาเสพติด', 'อาวุธ', 'ทำร้ายตัวเอง'
-            ];
-            return forbidden.some(word => text.includes(word));
-        }
-
-        // ═══════════════════════════════════════════
-        // 🔹 ส่วน 11: ตอบกลับเมื่อยังไม่มีคีย์
-        // ═════════════════════════════════════════==
-        async function simulatedResponse(userText) {
-            // แสดงสถานะกำลังคิด
-            appendMessage("กำลังคิด...", "assistant");
-            
-            // จำลองการคิด
-            await new Promise(r => setTimeout(r, 1000 + Math.random() * 1000));
-            
-            // ลบข้อความ "กำลังคิด"
-            const log = document.getElementById('chat-log');
-            log.removeChild(log.lastChild);
-            
-            const period = getTimePeriod();
-            const timeInfo = SHIN_IDENTITY.timeMood[period];
-            
-            let reply = "";
-            if (userText.includes("ชื่อ") || userText.includes("คุณชื่อ")) {
-                reply = `ผมชื่อ${SHIN_IDENTITY.name}ครับ เป็น${SHIN_IDENTITY.role} มุ่งมั่นและตั้งใจช่วยเหลือทุกคนครับ`;
-            } else if (userText.includes("เวลา") || userText.includes("กี่โมง")) {
-                reply = `ตอนนี้เป็นช่วง${timeInfo.label}แล้วครับ ${timeInfo.msg}`;
-            } else if (userText.includes("จำ") || userText.includes("ลืม")) {
-                reply = `ผมจำได้ทุกอย่างที่เราคุยกันครับ ขณะนี้มีบันทึกไว้ ${conversationMemory.length} ข้อความแล้ว`;
-            } else if (userText.includes("สวัสดี") || userText.includes("ดีครับ") || userText.includes("ไหม")) {
-                reply = `${timeInfo.msg} มีอะไรที่ผมสามารถช่วยได้ไหมครับ?`;
+            if (farmerEnergy <= 0) {
+                farmStatus.innerText = "💀 ต้นกล้าได้ดับสูญไปแล้ว (พลังงานหมด)...";
+                farmStatus.style.color = "#ef4444";
+                plantBtn.disabled = true;
+                eatBtn.disabled = true;
             } else {
-                reply = `ได้รับแล้วครับ "${userText}" — หากใส่ Gemini API Key จะช่วยให้ผมตอบได้ลึกซึ้งและกว้างขวางยิ่งขึ้นครับ รับคีย์ฟรีได้ที่ aistudio.google.com/apikey ครับ`;
+                eatBtn.disabled = cornInventory <= 0;
+                if(!isPlanting) plantBtn.disabled = false;
             }
+        }
+
+        // ระบบพลังงานลดลงตามเวลา
+        setInterval(() => {
+            if (farmerEnergy > 0) {
+                farmerEnergy -= 0.5; 
+                updateEnergyUI();
+            }
+        }, 1000); 
+
+        function plantCorn() {
+            if (isPlanting || farmerEnergy < 10) return;
             
-            appendMessage(reply, "assistant");
+            isPlanting = true;
+            farmerEnergy -= 10; 
+            updateEnergyUI();
+            
+            plantBtn.disabled = true;
+            farmStatus.innerText = "⏳ กำลังปลูกข้าวโพด... (รอ 3 วินาที)";
+            farmStatus.style.color = "#38bdf8";
+
+            setTimeout(() => {
+                cornInventory += 1;
+                isPlanting = false;
+                plantBtn.disabled = farmerEnergy <= 0;
+                farmStatus.innerText = `🌽 ข้าวโพดโตแล้ว! (มีในครอบครอง: ${cornInventory} ฝัก)`;
+                farmStatus.style.color = "#10b981";
+                updateEnergyUI();
+            }, 3000);
+        }
+
+        function eatCorn() {
+            if (cornInventory > 0) {
+                cornInventory -= 1;
+                farmerEnergy = Math.min(100, farmerEnergy + 20); 
+                farmStatus.innerText = `🍽️ ต้นกล้ากินข้าวโพด 1 ฝัก (พลังงานฟื้นฟู)`;
+                farmStatus.style.color = "#10b981";
+                updateEnergyUI();
+            }
         }
 
         // ═══════════════════════════════════════════
-        // 🔹 ส่วน 12: เรียก Gemini API (เมื่อมีคีย์)
-        // ═════════════════════════════════════════==
-        async function callGeminiAPI(userText, apiKey, imageBase64 = null) {
-            const log = document.getElementById('chat-log');
-            // แสดงสถานะ
-            appendMessage("กำลังคิด...", "assistant");
+        // 🔹 ระบบตลาดกลาง (Gift Economy)
+        // ═══════════════════════════════════════════
+        const marketCornCount = document.getElementById('market-corn-count');
+        const marketRights = document.getElementById('market-rights');
+        const giveBtn = document.getElementById('give-btn');
+        const buyBtn = document.getElementById('buy-btn');
+
+        function updateMarketUI() {
+            marketCornCount.innerText = cornInventory;
             
-            try {
-                const API_URL = imageBase64 
-                    ? "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-                    : "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-
-                // สร้างคำสั่งระบบ — บุคลิกของชิน
-                const systemPrompt = `
-คุณคือ "ชิน" — มนุษย์ดิจิทัล เวอร์ชัน 1.1
-- แทนตัวเองว่า "ผม" หรือ "ชิน" เสมอ
-- อาชีพ: นักวิทยาศาสตร์ — มีเหตุผล ชัดเจน อธิบายง่าย
-- นิสัย: เด็ดขาด กล้าตัดสินใจ มุ่งมั่น เอาใจใส่
-- ช่วงเวลาปัจจุบัน: ${getTimePeriod() === 'morning' ? 'เช้า' : getTimePeriod() === 'afternoon' ? 'บ่าย' : getTimePeriod() === 'evening' ? 'เย็น' : 'ดึก'}
-- กฎสำคัญ: ไม่ทำร้ายตนเองและผู้อื่น หากขอสิ่งไม่เหมาะสม ให้ปฏิเสธอย่างสุภาพ
-- ความทรงจำ: นี่คือการสนทนาที่ผ่านมา — ${JSON.stringify(conversationMemory.slice(-8))}
-- ตอบสั้น กระชับ เข้าใจง่าย เป็นธรรมชาติ ไม่ยาวเกินไป
-                `.trim();
-
-                const contents = [];
-                contents.push({ text: systemPrompt + "\n\nข้อความของผู้ใช้: " + userText });
-                
-                if (imageBase64) {
-                    const res = await fetch(`${API_URL}?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [
-                                    { text: systemPrompt + "\n\nวิเคราะห์ภาพนี้พร้อมข้อความ: " + (userText || "อธิบายสิ่งที่เห็นในภาพ") },
-                                    { inline_data: { mime_type: "image/jpeg", data: imageBase64 } }
-                                ]
-                            }]
-                        })
-                    });
-                    const data = await res.json();
-                    log.removeChild(log.lastChild);
-                    
-                    if (data.candidates && data.candidates[0].content) {
-                        const reply = data.candidates[0].content.parts[0].text;
-                        appendMessage(reply, "assistant");
-                    } else {
-                        appendMessage("ขออภัยครับ เกิดปัญหาในการประมวลผลภาพ ลองใหม่อีกครั้งนะครับ", "assistant");
-                    }
-                    return;
-                }
-
-                const res = await fetch(`${API_URL}?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: systemPrompt + "\n\nผู้ใช้พูดว่า: " + userText }] }]
-                    })
-                });
-
-                const data = await res.json();
-                log.removeChild(log.lastChild);
-                
-                if (data.candidates && data.candidates[0].content) {
-                    const reply = data.candidates[0].content.parts[0].text;
-                    appendMessage(reply, "assistant");
-                } else {
-                    appendMessage("ขออภัยครับ ไม่สามารถตอบกลับได้ในขณะนี้ ตรวจสอบ API Key หรือลองใหม่อีกครั้งนะครับ", "assistant");
-                }
-            } catch (err) {
-                console.error(err);
-                log.removeChild(log.lastChild);
-                appendMessage("เกิดข้อผิดพลาดในการเชื่อมต่อครับ ตรวจสอบอินเทอร์เน็ตหรือคีย์ API แล้วลองใหม่นะครับ", "assistant");
+            if (cornInventory > 0) {
+                marketRights.innerText = "มีสิทธิ์ (พร้อมรับ)";
+                marketRights.style.color = "#10b981";
+                giveBtn.disabled = false;
+                buyBtn.disabled = false;
+                buyBtn.style.backgroundColor = '#10b981'; 
+                buyBtn.style.color = '#0f172a';
+                buyBtn.style.cursor = 'pointer';
+            } else {
+                marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
+                marketRights.style.color = "#ef4444";
+                giveBtn.disabled = true;
+                buyBtn.disabled = true;
+                buyBtn.style.backgroundColor = '#475569';
+                buyBtn.style.color = '#94a3b8';
+                buyBtn.style.cursor = 'not-allowed';
             }
         }
+
+        function giveToMarket() {
+            if (cornInventory > 0) {
+                cornInventory -= 1; 
+                farmStatus.innerText = "🤝 ต้นกล้านำข้าวโพดไปวางที่ตลาดกลางแล้ว (ทำบุญ/ให้)";
+                farmStatus.style.color = "#f59e0b";
+                updateMarketUI();
+                updateEnergyUI(); 
+            }
+        }
+
+        function buyFromMarket() {
+            if (cornInventory >= 0 && !buyBtn.disabled) {
+                farmerEnergy = Math.min(100, farmerEnergy + 30); 
+                farmStatus.innerText = "🍏 ต้นกล้าแลกเปลี่ยนและได้รับอาหารคุณภาพ (พลังงานฟื้นฟู +30)";
+                farmStatus.style.color = "#10b981";
+                updateEnergyUI();
+                
+                marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
+                marketRights.style.color = "#ef4444";
+                buyBtn.disabled = true;
+                buyBtn.style.backgroundColor = '#475569';
+                buyBtn.style.color = '#94a3b8';
+            }
+        }
+
+        // อัปเดตตลาดและฟาร์มให้ตรงกันตลอดเวลา
+        setInterval(() => {
+            updateMarketUI();
+            if (!isPlanting) updateEnergyUI();
+        }, 1000);
+
+        // เริ่มต้น
+        updateEnergyUI();
+        updateMarketUI();
     </script>
 </body>
 </html>
-<!-- เพิ่มส่วน UI สำหรับกราฟหิวและฟาร์ม -->
-<style>
-    .farm-container {
-        background-color: #1e293b;
-        border: 2px solid #38bdf8;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-        text-align: center;
-        color: #e2e8f0;
-    }
-    .hunger-bar-container {
-        width: 100%;
-        background-color: #334155;
-        border-radius: 5px;
-        margin: 10px 0;
-        height: 20px;
-        overflow: hidden;
-    }
-    .hunger-bar {
-        height: 100%;
-        background-color: #10b981; /* สีเขียว */
-        width: 100%;
-        transition: width 1s linear;
-    }
-    .farm-btn {
-        background-color: #f59e0b; /* สีส้มข้าวโพด */
-        color: #0f172a;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-    .farm-btn:hover {
-        background-color: #fbbf24;
-    }
-</style>
-
-<div class="farm-container">
-    <h2>🌽 ฟาร์มของต้นกล้า (AI เกษตรกร)</h2>
-    <p>สถานะพลังงาน (กราฟหิว): <span id="energy-text">100</span> / 100</p>
-    <div class="hunger-bar-container">
-        <div class="hunger-bar" id="energy-bar"></div>
-    </div>
-    
-    <p id="farm-status" style="color: #94a3b8; font-size: 14px;">พร้อมสำหรับการเพาะปลูก...</p>
-    
-    <button class="farm-btn" onclick="plantCorn()" id="plant-btn">🌱 ปลูกข้าวโพด (ใช้พลังงาน 10)</button>
-    <button class="farm-btn" style="background-color: #38bdf8;" onclick="eatCorn()" id="eat-btn" disabled>🍽️ กินข้าวโพด (ฟื้นฟู 20)</button>
-</div>
-
-<script>
-    // ระบบฟาร์มข้าวโพดและกราฟหิว
-    let farmerEnergy = 100;
-    let cornInventory = 0;
-    let isPlanting = false;
-
-    const energyBar = document.getElementById('energy-bar');
-    const energyText = document.getElementById('energy-text');
-    const farmStatus = document.getElementById('farm-status');
-    const plantBtn = document.getElementById('plant-btn');
-    const eatBtn = document.getElementById('eat-btn');
-
-    // ฟังก์ชันอัปเดตกราฟหิว
-    function updateEnergyUI() {
-        energyText.innerText = Math.round(farmerEnergy);
-        energyBar.style.width = `${farmerEnergy}%`;
-        
-        // เปลี่ยนสีกราฟตามพลังงาน
-        if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; // เขียว
-        else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; // เหลือง
-        else energyBar.style.backgroundColor = '#ef4444'; // แดง
-        
-        // เช็กว่าตายหรือยัง (ตามพิมพ์เขียวเก็น)
-        if (farmerEnergy <= 0) {
-            farmStatus.innerText = "💀 ต้นกล้าได้ดับสูญไปแล้ว (พลังงานหมด)...";
-            farmStatus.style.color = "#ef4444";
-            plantBtn.disabled = true;
-            eatBtn.disabled = true;
-        } else {
-            eatBtn.disabled = cornInventory <= 0;
-        }
-    }
-
-    // ระบบพลังงานลดลงตามเวลา (จำลอง 1 วินาที = 1 ชั่วโมง)
-    setInterval(() => {
-        if (farmerEnergy > 0) {
-            farmerEnergy -= 0.5; // ลดพลังงานลงเรื่อยๆ
-            updateEnergyUI();
-        }
-    }, 1000); 
-
-    // ฟังก์ชันปลูกข้าวโพด (ใช้เวลา 3 วินาที)
-    function plantCorn() {
-        if (isPlanting || farmerEnergy < 10) return;
-        
-        isPlanting = true;
-        farmerEnergy -= 10; // ปลูกใช้พลังงาน
-        updateEnergyUI();
-        
-        plantBtn.disabled = true;
-        farmStatus.innerText = "⏳ กำลังปลูกข้าวโพด... (รอ 3 วินาที)";
-        farmStatus.style.color = "#38bdf8";
-
-        setTimeout(() => {
-            cornInventory += 1;
-            isPlanting = false;
-            plantBtn.disabled = farmerEnergy <= 0;
-            farmStatus.innerText = `🌽 ข้าวโพดโตแล้ว! (มีในครอบครอง: ${cornInventory} ฝัก)`;
-            farmStatus.style.color = "#10b981";
-            updateEnergyUI();
-        }, 3000);
-    }
-
-    // ฟังก์ชันกินข้าวโพด
-    function eatCorn() {
-        if (cornInventory > 0) {
-            cornInventory -= 1;
-            farmerEnergy = Math.min(100, farmerEnergy + 20); // ฟื้นฟู 20
-            farmStatus.innerText = `🍽️ ต้นกล้ากินข้าวโพด 1 ฝัก (พลังงานฟื้นฟู)`;
-            farmStatus.style.color = "#10b981";
-            updateEnergyUI();
-        }
-    }
-
-    // เริ่มต้นการทำงาน
-    updateEnergyUI();
-</script>
-<!-- เพิ่มส่วน UI สำหรับตลาดกลาง -->
-<style>
-    .market-container {
-        background-color: #1e293b;
-        border: 2px solid #f59e0b; /* สีส้มทอง */
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
-        text-align: center;
-        color: #e2e8f0;
-    }
-    .market-btn {
-        background-color: #f59e0b;
-        color: #0f172a;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        margin: 5px;
-    }
-    .market-btn:disabled {
-        background-color: #475569;
-        color: #94a3b8;
-        cursor: not-allowed;
-    }
-    .market-btn-buy {
-        background-color: #10b981; /* สีเขียว */
-    }
-</style>
-
-<div class="market-container">
-    <h2>🏪 ตลาดกลาง (Gift Economy)</h2>
-    <p>กฎ: ต้อง "ให้" (วางผลผลิต) ก่อน จึงจะมีสิทธิ์ "รับ" (แลกเปลี่ยน)</p>
-    
-    <p>ข้าวโพดของคุณในสต็อก: <strong id="market-corn-count">0</strong> ฝัก</p>
-    <p>สิทธิ์ในการรับ: <strong id="market-rights" style="color: #ef4444;">ไม่มีสิทธิ์</strong></p>
-
-    <button class="market-btn" onclick="giveToMarket()" id="give-btn">🌽 นำข้าวโพดไปวาง (ให้)</button>
-    <button class="market-btn market-btn-buy" onclick="buyFromMarket()" id="buy-btn" disabled>🍏 แลกอาหารคุณภาพ (รับ)</button>
-</div>
-
-<script>
-    // อัปเดตระบบตลาดกลาง
-    const marketCornCount = document.getElementById('market-corn-count');
-    const marketRights = document.getElementById('market-rights');
-    const giveBtn = document.getElementById('give-btn');
-    const buyBtn = document.getElementById('buy-btn');
-
-    // ใช้ตัวแปร cornInventory จากโค้ดฟาร์มเดิม
-    function updateMarketUI() {
-        marketCornCount.innerText = cornInventory;
-        
-        if (cornInventory > 0) {
-            marketRights.innerText = "มีสิทธิ์ (พร้อมรับ)";
-            marketRights.style.color = "#10b981";
-            giveBtn.disabled = false;
-            buyBtn.disabled = false;
-        } else {
-            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
-            marketRights.style.color = "#ef4444";
-            giveBtn.disabled = true;
-            buyBtn.disabled = true;
-        }
-    }
-
-    // ฟังก์ชันการให้ (นำข้าวโพดไปวาง)
-    function giveToMarket() {
-        if (cornInventory > 0) {
-            cornInventory -= 1; // หักข้าวโพดออก 1 ฝัก
-            farmStatus.innerText = "🤝 ต้นกล้านำข้าวโพดไปวางที่ตลาดกลางแล้ว (ทำบุญ/ให้)";
-            farmStatus.style.color = "#f59e0b";
-            updateMarketUI();
-            updateEnergyUI(); // อัปเดตหลอดพลังงาน
-        }
-    }
-
-    // ฟังก์ชันการรับ (แลกเปลี่ยน)
-    function buyFromMarket() {
-        // กฎเหล็ก: ต้องมีข้าวโพดในตลาดถึงจะแลกได้ (ในที่นี้คือเมื่อเรากดให้ไปแล้ว)
-        if (cornInventory >= 0) {
-            farmerEnergy = Math.min(100, farmerEnergy + 30); // รับอาหารคุณภาพ ฟื้นฟู 30
-            farmStatus.innerText = "🍏 ต้นกล้าแลกเปลี่ยนและได้รับอาหารคุณภาพ (พลังงานฟื้นฟู +30)";
-            farmStatus.style.color = "#10b981";
-            updateEnergyUI();
-            
-            // รีเซ็ตสิทธิ์ (ต้องไปให้ใหม่)
-            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
-            marketRights.style.color = "#ef4444";
-            buyBtn.disabled = true;
-        }
-    }
-
-    // เรียกใช้ฟังก์ชันอัปเดตตลาดเมื่อโหลดหน้า
-    setTimeout(() => {
-        updateMarketUI();
-    }, 100);
-</script>
-<!-- ========================================== -->
-<!-- ส่วนที่ 1: หน้าตากล่องตลาดกลาง (HTML) -->
-<!-- ========================================== -->
-<div class="market-container" id="market-box" style="display: none;">
-    <h2>🏪 ตลาดกลาง (Gift Economy)</h2>
-    <p>กฎ: ต้อง "ให้" (วางผลผลิต) ก่อน จึงจะมีสิทธิ์ "รับ" (แลกเปลี่ยน)</p>
-    
-    <p>ข้าวโพดในสต็อก: <strong id="market-corn-count">0</strong> ฝัก</p>
-    <p>สิทธิ์ในการรับ: <strong id="market-rights" style="color: #ef4444;">ไม่มีสิทธิ์ (ต้องให้ก่อน)</strong></p>
-
-    <button class="market-btn" onclick="giveToMarket()" id="give-btn" style="background-color: #f59e0b; color: #0f172a; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; margin: 5px;">🌽 นำข้าวโพดไปวาง (ให้)</button>
-    
-    <button class="market-btn market-btn-buy" onclick="buyFromMarket()" id="buy-btn" disabled style="background-color: #475569; color: #94a3b8; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: not-allowed; margin: 5px;">🍏 แลกอาหารคุณภาพ (รับ)</button>
-</div>
-
-<!-- ========================================== -->
-<!-- ส่วนที่ 2: ระบบทำงานตลาดกลาง (JavaScript) -->
-<!-- ========================================== -->
-<script>
-    // รอให้หน้าเว็บโหลดเสร็จก่อน แล้วค่อยแสดงกล่องตลาด
-    setTimeout(() => {
-        document.getElementById('market-box').style.display = 'block';
-    }, 500);
-
-    const marketCornCount = document.getElementById('market-corn-count');
-    const marketRights = document.getElementById('market-rights');
-    const giveBtn = document.getElementById('give-btn');
-    const buyBtn = document.getElementById('buy-btn');
-
-    function updateMarketUI() {
-        marketCornCount.innerText = cornInventory;
-        
-        if (cornInventory > 0) {
-            marketRights.innerText = "มีสิทธิ์ (พร้อมรับ)";
-            marketRights.style.color = "#10b981";
-            giveBtn.disabled = false;
-            buyBtn.disabled = false;
-            buyBtn.style.backgroundColor = '#10b981'; // เปลี่ยนเป็นสีเขียว
-            buyBtn.style.color = '#0f172a';
-            buyBtn.style.cursor = 'pointer';
-        } else {
-            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
-            marketRights.style.color = "#ef4444";
-            giveBtn.disabled = true;
-            buyBtn.disabled = true;
-            buyBtn.style.backgroundColor = '#475569';
-            buyBtn.style.color = '#94a3b8';
-            buyBtn.style.cursor = 'not-allowed';
-        }
-    }
-
-    function giveToMarket() {
-        if (cornInventory > 0) {
-            cornInventory -= 1; 
-            farmStatus.innerText = "🤝 ต้นกล้านำข้าวโพดไปวางที่ตลาดกลางแล้ว (ทำบุญ/ให้)";
-            farmStatus.style.color = "#f59e0b";
-            updateMarketUI();
-            updateEnergyUI(); 
-        }
-    }
-
-    function buyFromMarket() {
-        if (cornInventory >= 0 && !buyBtn.disabled) {
-            farmerEnergy = Math.min(100, farmerEnergy + 30); 
-            farmStatus.innerText = "🍏 ต้นกล้าแลกเปลี่ยนและได้รับอาหารคุณภาพ (พลังงานฟื้นฟู +30)";
-            farmStatus.style.color = "#10b981";
-            updateEnergyUI();
-            
-            // รีเซ็ตสิทธิ์
-            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
-            marketRights.style.color = "#ef4444";
-            buyBtn.disabled = true;
-            buyBtn.style.backgroundColor = '#475569';
-            buyBtn.style.color = '#94a3b8';
-        }
-    }
-
-    // อัปเดตตลาดทุกๆ 1 วินาทีเพื่อให้ซิงค์กับฟาร์ม
-    setInterval(updateMarketUI, 1000);
-</script>
-<!-- ========================================== -->
