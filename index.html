@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Harvest - Life Simulator</title>
+    <title>Cybertron Harvest - Real Time Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -47,14 +47,14 @@
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ระบบเวลาและมื้ออาหาร</p></div>
+    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ระบบเวลาจริง 24 ชั่วโมง</p></div>
     <div class="game-screen">
         <div class="ground" id="game-ground">
             <!-- นาฬิกาในเกม -->
-            <div class="clock-box">⏰ <span id="game-time">06:00</span></div>
+            <div class="clock-box">⏰ <span id="game-time">--:--</span></div>
 
             <div class="farm-plot" id="farm-plot">
-                <div class="speech-bubble" id="bubble-text">ตื่นนอนแล้ว...</div>
+                <div class="speech-bubble" id="bubble-text">รอรับเวลาจริง...</div>
                 
                 <div class="plant-slots">
                     <div class="slot" id="slot-0"></div>
@@ -77,10 +77,10 @@
         <div class="ui-panel">
             <div class="panel-box">
                 <h3 style="margin-top:0; color: #fbbf24;">🌾 สถานะของต้นกล้า</h3>
-                <p style="font-size: 14px; color: #94a3b8;">ระบบ: <span id="ai-status" style="color:#10b981;">ตื่นนอน</span></p>
+                <p style="font-size: 14px; color: #94a3b8;">ระบบ: <span id="ai-status" style="color:#10b981;">กำลังทำงาน...</span></p>
             </div>
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">⏰ ตารางชีวิต</h3>
+                <h3 style="margin-top:0; color: #fbbf24;">⏰ ตารางชีวิต (เวลาจริง)</h3>
                 <p style="font-size: 14px; color: #94a3b8;">06:00-10:00 (เช้า) | 11:00-15:00 (กลางวัน) | 17:00-20:00 (เย็น) | 21:00-05:00 (นอน)</p>
             </div>
         </div>
@@ -92,9 +92,8 @@
         let isWorking = false;
         let isDead = false;
         
-        // ระบบเวลา
-        let gameHour = 6; // เริ่มที่ 06:00 น.
-        let gameMinute = 0;
+        // ตัวแปรสำหรับจับเวลา
+        let lastActionTime = Date.now();
 
         const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), marketCornCount = document.getElementById('market-corn-count'), aiStatus = document.getElementById('ai-status'), gameTimeEl = document.getElementById('game-time'), groundEl = document.getElementById('game-ground');
 
@@ -114,46 +113,75 @@
             });
         }
 
-        // ⏰ ระบบนาฬิกาเดินหน้า (ทุก 1 วินาที = 1 ชั่วโมง)
-        setInterval(() => {
-            if (isDead) return;
-            
-            gameHour++;
-            if (gameHour >= 24) gameHour = 0;
-            
-            // อัปเดตหน้าจอนาฬิกา
-            gameTimeEl.innerText = `${gameHour.toString().padStart(2, '0')}:00`;
+        // ⏰ ระบบนาฬิกาเดินหน้าตามเวลาจริง
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            gameTimeEl.innerText = `${hours}:${minutes}`;
 
-            // ระบบกลางวัน/กลางคืน
-            if (gameHour >= 18 || gameHour < 6) {
+            // เปลี่ยนสีพื้นหลังตามเวลา
+            const hour = now.getHours();
+            if (hour >= 18 || hour < 6) {
                 groundEl.classList.add('night');
             } else {
                 groundEl.classList.remove('night');
             }
+        }
 
-            // ตรวจสอบช่วงเวลา
-            checkSchedule();
+        // เรียกใช้ updateClock ทันที และทุกๆ 1 วินาที
+        setInterval(updateClock, 1000);
+        updateClock();
 
-        }, 3000); // 3 วินาทีจริง = 1 ชั่วโมงในเกม
+        // 🧠 ลูปหลักของ AI (ทำงานทุกๆ 3 วินาที เพื่อไม่ให้กินซีพียูหนักเกินไป)
+        setInterval(() => { 
+            if (isDead) return;
 
-        function checkSchedule() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+
             // 1. ช่วงเวลานอน (21:00 - 05:00)
-            if (gameHour >= 21 || gameHour < 5) {
+            if (hour >= 21 || hour < 5) {
                 if (!isEating && !isWorking) {
                     characterSprite.classList.add('sleeping');
                     aiStatus.innerText = "กำลังนอนหลับ...";
                     aiStatus.style.color = "#38bdf8";
                     bubbleText.innerText = "💤 หลับฝันดี...";
-                    farmerEnergy -= 0.2; // หลับจะใช้พลังงานน้อยมาก
+                    
+                    // หลับจะใช้พลังงานน้อยมาก (ลดลง 0.1 ทุกๆ 3 วินาที)
+                    farmerEnergy -= 0.1;
+                    updateUI();
                 }
                 return; // ไม่ทำอะไรต่อตอนนอน
             } 
 
             // ตื่นนอน
             characterSprite.classList.remove('sleeping');
-            
-            // 2. ช่วงมื้ออาหาร (เช้า 6-10, กลางวัน 11-15, เย็น 17-20)
-            const isMealTime = (gameHour >= 6 && gameHour <= 10) || (gameHour >= 11 && gameHour <= 15) || (gameHour >= 17 && gameHour <= 20);
+
+            // 2. ลดพลังงานปกติ (ตื่นอยู่) - ลดลงทุกๆ 3 วินาที
+            if (!isEating && !isWorking) {
+                farmerEnergy -= 0.2;
+                aiStatus.innerText = "ใช้ชีวิตปกติ...";
+                aiStatus.style.color = "#10b981";
+                if (bubbleText.innerText.includes("หลับ")) {
+                    bubbleText.innerText = "ตื่นแล้ว! พร้อมทำงาน";
+                }
+                updateUI();
+            }
+
+            // ถ้าตาย
+            if (farmerEnergy <= 0) {
+                isDead = true;
+                bubbleText.innerText = "💀 ต้นกล้าดับสูญ...";
+                aiStatus.innerText = "ดับสูญ";
+                aiStatus.style.color = "#ef4444";
+                characterSprite.style.opacity = "0.3"; 
+                return;
+            }
+
+            // 3. ช่วงมื้ออาหาร 
+            const isMealTime = (hour >= 6 && hour <= 10) || (hour >= 11 && hour <= 15) || (hour >= 17 && hour <= 20);
             
             // ถ้าถึงเวลาอาหาร หรือพลังงานต่ำมาก (<30) ให้กิน
             if ((isMealTime || farmerEnergy < 30) && cornInventory > 0 && !isEating && !isWorking) {
@@ -161,8 +189,8 @@
                 return;
             }
 
-            // 3. ทำงาน (ถ้าเป็นเวลากลางวัน และพลังงานเหลือเยอะ)
-            if (gameHour >= 6 && gameHour < 18 && farmerEnergy > 70 && !isWorking && !isEating) {
+            // 4. ทำงาน (ถ้าเป็นเวลากลางวัน และพลังงานเหลือเยอะ)
+            if (hour >= 6 && hour < 18 && farmerEnergy > 70 && !isWorking && !isEating) {
                 const emptySlotIndex = slots.findIndex(s => s.status === 'empty');
                 if (emptySlotIndex !== -1) {
                     startPlanting(emptySlotIndex);
@@ -170,18 +198,18 @@
                 }
             }
 
-            // 4. เก็บเกี่ยว (ถ้าสุกแล้ว ไม่จำกัดเวลา)
+            // 5. เก็บเกี่ยว
             const readySlotIndex = slots.findIndex(s => s.status === 'ready');
             if (readySlotIndex !== -1 && !isWorking && !isEating) {
                 harvestCrop(readySlotIndex);
                 return;
             }
 
-            // 5. การเติบโตของพืช
+            // 6. การเติบโตของพืช (ใช้เวลา 30 วินาทีจริง)
             slots.forEach((slot) => {
                 if (slot.status === 'growing') {
-                    slot.timer += 1;
-                    if (slot.timer >= 3) { 
+                    slot.timer += 3; // เพิ่มเวลาขึ้น 3 วินาที
+                    if (slot.timer >= 30) { 
                         slot.status = 'ready';
                         slot.timer = 0;
                         updateUI();
@@ -189,25 +217,7 @@
                 }
             });
 
-            // 6. ลดพลังงานตามปกติ (ตื่นอยู่)
-            if (!isEating && !isWorking) {
-                farmerEnergy -= 1;
-                aiStatus.innerText = "ใช้ชีวิตปกติ...";
-                aiStatus.style.color = "#10b981";
-                if (bubbleText.innerText.includes("หลับ")) {
-                    bubbleText.innerText = "ตื่นแล้ว! พร้อมทำงาน";
-                }
-            }
-
-            updateUI();
-            if (farmerEnergy <= 0) {
-                isDead = true;
-                bubbleText.innerText = "💀 ต้นกล้าดับสูญ...";
-                aiStatus.innerText = "ดับสูญ";
-                aiStatus.style.color = "#ef4444";
-                characterSprite.style.opacity = "0.3"; 
-            }
-        }
+        }, 3000); // ลูปทำงานทุกๆ 3 วินาที
 
         function autoEat() {
             isEating = true;
@@ -224,7 +234,7 @@
 
         function startPlanting(index) {
             isWorking = true;
-            farmerEnergy -= 10; 
+            farmerEnergy -= 5; // ลดพลังงานแค่ 5
             slots[index].status = 'growing';
             slots[index].timer = 0;
             characterSprite.classList.add('working');
@@ -252,8 +262,6 @@
 
         // เริ่มต้น
         updateUI();
-        // เรียกใช้ checkSchedule ทันทีเพื่อตั้งค่าสถานะเริ่มต้น
-        setTimeout(checkSchedule, 1000);
     </script>
 </body>
 </html>
