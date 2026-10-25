@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Harvest - Real Time 24H</title>
+    <title>Cybertron Harvest - Work Schedule</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -47,7 +47,7 @@
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ระบบเวลาจริง 24 ชั่วโมง</p></div>
+    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ตารางทำงาน</p></div>
     <div class="game-screen">
         <div class="ground" id="game-ground">
             <div class="clock-box">⏰ <span id="game-time">--:--</span></div>
@@ -69,7 +69,7 @@
                 <div class="market-stall">
                     <div class="market-roof"></div>
                     <div style="color: white; text-align: center; margin-top: 10px; font-size: 24px; text-shadow: 1px 1px 0 #000;">🏪 ตลาด</div>
-                    <div style="color: #fef08a; text-align: center; font-size: 16px; margin-top: 10px;">ข้าวโพด: <span id="market-corn-count">0</span></div>
+                    <div style="color: #fef08a; text-align: center; font-size: 16px; margin-top: 10px;">ข้าวโพด: <span id="market-corn-count">0</span> / 40</div>
                 </div>
             </div>
         </div>
@@ -79,20 +79,28 @@
                 <p style="font-size: 14px; color: #94a3b8;">ระบบ: <span id="ai-status" style="color:#10b981;">กำลังทำงาน...</span></p>
             </div>
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">⏰ ตารางชีวิต (เวลาจริง)</h3>
-                <p style="font-size: 14px; color: #94a3b8;">00:00-06:00 (นอนหลับ)<br>06:00-23:59 (ตื่น กิน 1 มื้อ และทำงาน)</p>
+                <h3 style="margin-top:0; color: #fbbf24;">⏰ ตารางชีวิต</h3>
+                <p style="font-size: 14px; color: #94a3b8;">06:00-12:00 (ปลูก 2 นาที)<br>12:00-18:00 (เก็บ 3 นาที/แปลง)<br>00:00-06:00 (นอนหลับ)</p>
             </div>
         </div>
     </div>
     <script>
         let farmerEnergy = 100, cornInventory = 0;
+        let marketInventory = 0; 
         let slots = [{status: 'empty', timer: 0}, {status: 'empty', timer: 0}, {status: 'empty', timer: 0}];
+        
         let isEating = false;
         let isWorking = false;
         let isDead = false;
         
-        let hasEatenToday = false; // ตัวแปรเช็กว่าวันนี้กินข้าวหรือยัง
-        let lastDay = new Date().getDate(); // เก็บวันที่เพื่อรีเซ็ตการกิน
+        let hasEatenToday = false; 
+        let hasPlantedToday = false; 
+        let hasHarvestedToday = false; 
+        let lastDay = new Date().getDate();
+
+        // ตัวแปรสำหรับจับเวลาการทำงาน
+        let workTimer = 0;
+        let currentWorkType = ""; // "planting" หรือ "harvesting"
 
         const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), marketCornCount = document.getElementById('market-corn-count'), aiStatus = document.getElementById('ai-status'), gameTimeEl = document.getElementById('game-time'), groundEl = document.getElementById('game-ground');
 
@@ -102,7 +110,7 @@
             
             if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; else energyBar.style.backgroundColor = '#ef4444';
             
-            marketCornCount.innerText = cornInventory;
+            marketCornCount.innerText = marketInventory;
             
             slots.forEach((slot, index) => {
                 const el = document.getElementById(`slot-${index}`);
@@ -112,35 +120,32 @@
             });
         }
 
-        // ⏰ ระบบนาฬิกา (อัปเดตทุกวินาที)
+        // ⏰ ระบบนาฬิกา
         setInterval(() => {
             const now = new Date();
             gameTimeEl.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             
-            // รีเซ็ตสถานะการกินเมื่อขึ้นวันใหม่
             if (now.getDate() !== lastDay) {
                 hasEatenToday = false;
+                hasPlantedToday = false;
+                hasHarvestedToday = false;
                 lastDay = now.getDate();
             }
         }, 1000);
 
-        // 🧠 ลูปหลักของ AI (ทำงานทุกๆ 3 วินาที)
+        // 🧠 ลูปหลักของ AI (ทุก 1 วินาที เพื่อให้จับเวลาเป๊ะๆ)
         setInterval(() => { 
             if (isDead) return;
 
             const now = new Date();
             const hour = now.getHours();
-            const isNightTime = (hour >= 0 && hour < 6); // 00:00 - 06:00 น.
 
             // เปลี่ยนสีพื้นหลัง
-            if (hour >= 18 || hour < 6) {
-                groundEl.classList.add('night');
-            } else {
-                groundEl.classList.remove('night');
-            }
+            if (hour >= 18 || hour < 6) groundEl.classList.add('night');
+            else groundEl.classList.remove('night');
 
             // 1. ช่วงเวลานอน (00:00 - 06:00)
-            if (isNightTime) {
+            if (hour >= 0 && hour < 6) {
                 if (!isEating && !isWorking) {
                     characterSprite.classList.add('sleeping');
                     aiStatus.innerText = "กำลังนอนหลับ...";
@@ -151,21 +156,15 @@
                 return; 
             } 
 
-            // ตื่นนอน
             characterSprite.classList.remove('sleeping');
             
-            // 2. ลดพลังงานปกติ (ตื่นอยู่)
+            // 2. ลดพลังงานปกติ
             if (!isEating && !isWorking) {
-                farmerEnergy -= 1; 
-                aiStatus.innerText = "ใช้ชีวิตปกติ...";
-                aiStatus.style.color = "#10b981";
-                if (bubbleText.innerText.includes("หลับ")) {
-                    bubbleText.innerText = "ตื่นแล้ว! พร้อมทำงาน";
-                }
+                farmerEnergy -= 0.5; 
+                if (!bubbleText.innerText.includes("ทำงาน")) aiStatus.innerText = "ใช้ชีวิตปกติ...";
                 updateUI();
             }
 
-            // ถ้าตาย
             if (farmerEnergy <= 0) {
                 isDead = true;
                 bubbleText.innerText = "💀 ต้นกล้าดับสูญ...";
@@ -175,37 +174,89 @@
                 return;
             }
 
-            // 3. ระบบการกิน (วันละ 1 มื้อ กินตอนไหนก็ได้)
-            if (!hasEatenToday && cornInventory > 0 && !isEating && !isWorking) {
-                // ถ้าพลังงานเหลือน้อยกว่า 60 แล้ว ถึงจะยอมกิน
-                if (farmerEnergy < 60) {
-                    autoEat();
+            // 3. ระบบการกิน (วันละ 1 มื้อ)
+            if (!hasEatenToday && !isEating && !isWorking && farmerEnergy < 60) {
+                if (marketInventory > 0) {
+                    marketInventory -= 1;
+                    autoEat("จากตลาด");
                     hasEatenToday = true; 
-                    return;
+                } else if (cornInventory > 0) {
+                    cornInventory -= 1;
+                    autoEat("จากกระเป๋า");
+                    hasEatenToday = true; 
                 }
             }
 
-            // 4. ทำงาน (ถ้าพลังงานเหลือเยอะ)
-            if (farmerEnergy > 30 && !isWorking && !isEating) {
-                const emptySlotIndex = slots.findIndex(s => s.status === 'empty');
-                if (emptySlotIndex !== -1) {
-                    startPlanting(emptySlotIndex);
-                    return;
+            // 4. ระบบการทำงาน (มี Timer)
+            if (isWorking) {
+                workTimer++;
+                
+                // --- ทำงานปลูก (ใช้เวลา 120 วินาที) ---
+                if (currentWorkType === "planting") {
+                    aiStatus.innerText = `กำลังปลูก... (${workTimer}/120 วินาที)`;
+                    if (workTimer >= 120) {
+                        // ปลูกเสร็จ
+                        slots.forEach(slot => { if(slot.status === 'empty') slot.status = 'growing'; });
+                        bubbleText.innerText = "🌱 ปลูกเสร็จแล้ว!";
+                        isWorking = false;
+                        workTimer = 0;
+                        characterSprite.classList.remove('working');
+                        updateUI();
+                    }
+                } 
+                // --- ทำงานเก็บเกี่ยว (ใช้เวลา 180 วินาที ต่อ 1 แปลง) ---
+                else if (currentWorkType === "harvesting") {
+                    aiStatus.innerText = `กำลังเก็บเกี่ยว... (${workTimer}/180 วินาที)`;
+                    if (workTimer >= 180) {
+                        // เก็บเสร็จ 1 แปลง
+                        const readySlotIndex = slots.findIndex(s => s.status === 'ready');
+                        if (readySlotIndex !== -1) {
+                            slots[readySlotIndex].status = 'empty';
+                            marketInventory += 1;
+                            if (marketInventory > 40) marketInventory = 40; // ลบส่วนเกินทิ้ง
+                            bubbleText.innerText = `🌽 เก็บได้ 1 ฝัก!`;
+                            updateUI();
+                        }
+                        
+                        // เช็กว่ามีแปลงที่สุกเหลืออีกไหม
+                        const nextReady = slots.findIndex(s => s.status === 'ready');
+                        if (nextReady !== -1) {
+                            workTimer = 0; // เริ่มจับเวลาแปลงต่อไป
+                        } else {
+                            // เก็บครบทุกแปลงแล้ว
+                            bubbleText.innerText = "🌽 เก็บเกี่ยวเสร็จหมดแล้ว!";
+                            isWorking = false;
+                            workTimer = 0;
+                            characterSprite.classList.remove('working');
+                        }
+                    }
                 }
+                return; // ถ้ากำลังทำงานอยู่ ไม่ต้องทำอย่างอื่น
             }
 
-            // 5. เก็บเกี่ยว
-            const readySlotIndex = slots.findIndex(s => s.status === 'ready');
-            if (readySlotIndex !== -1 && !isWorking && !isEating) {
-                harvestCrop(readySlotIndex);
+            // 5. เช็กตารางเวลาเพื่อเริ่มทำงาน
+            // ช่วงเช้า 06:00 - 11:59 (เริ่มปลูก)
+            if (hour >= 6 && hour < 12 && !hasPlantedToday) {
+                startWork("planting");
+                hasPlantedToday = true;
                 return;
             }
 
-            // 6. การเติบโตของพืช (ใช้เวลา 15 วินาทีจริง)
+            // ช่วงเย็น 12:00 - 17:59 (เริ่มเก็บ)
+            if (hour >= 12 && hour < 18 && !hasHarvestedToday) {
+                const readyExists = slots.some(s => s.status === 'ready');
+                if (readyExists) {
+                    startWork("harvesting");
+                    hasHarvestedToday = true;
+                    return;
+                }
+            }
+
+            // 6. การเติบโตของพืช (โตเองตามธรรมชาติ)
             slots.forEach((slot) => {
                 if (slot.status === 'growing') {
-                    slot.timer += 3; 
-                    if (slot.timer >= 15) { 
+                    slot.timer += 1; 
+                    if (slot.timer >= 60) { // ใช้เวลา 60 วินาทีในการโต
                         slot.status = 'ready';
                         slot.timer = 0;
                         updateUI();
@@ -213,14 +264,13 @@
                 }
             });
 
-        }, 3000);
+        }, 1000); // ลูปทำงานทุกๆ 1 วินาที
 
-        function autoEat() {
+        function autoEat(source) {
             isEating = true;
-            cornInventory -= 1;
             farmerEnergy = Math.min(100, farmerEnergy + 40); 
             characterSprite.classList.add('eating');
-            bubbleText.innerText = "😋 กินข้าวมื้ออร่อย!";
+            bubbleText.innerText = `😋 กินข้าวมื้ออร่อย (${source})`;
             updateUI();
             setTimeout(() => {
                 characterSprite.classList.remove('eating');
@@ -228,32 +278,20 @@
             }, 2000);
         }
 
-        function startPlanting(index) {
+        function startWork(type) {
             isWorking = true;
-            farmerEnergy -= 5; 
-            slots[index].status = 'growing';
-            slots[index].timer = 0;
+            workTimer = 0;
+            currentWorkType = type;
             characterSprite.classList.add('working');
-            bubbleText.innerText = "🌱 ปลูกข้าวโพด...";
-            updateUI();
             
-            setTimeout(() => {
-                characterSprite.classList.remove('working');
-                isWorking = false;
-            }, 1500);
-        }
-
-        function harvestCrop(index) {
-            isWorking = true;
-            slots[index].status = 'empty';
-            cornInventory += 1;
-            characterSprite.classList.add('working');
-            bubbleText.innerText = "🌽 เก็บเกี่ยวข้าวโพด!";
+            if (type === "planting") {
+                farmerEnergy -= 15; // ใช้พลังงานปลูก
+                bubbleText.innerText = "🌱 เริ่มลงมือปลูกข้าวโพด...";
+            } else {
+                farmerEnergy -= 10; // ใช้พลังงานเก็บเกี่ยว
+                bubbleText.innerText = "🌽 เริ่มลงมือเก็บเกี่ยว...";
+            }
             updateUI();
-            setTimeout(() => {
-                characterSprite.classList.remove('working');
-                isWorking = false;
-            }, 1000);
         }
 
         // เริ่มต้น
