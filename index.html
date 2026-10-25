@@ -3,193 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Village - Pixel Edition</title>
+    <title>Cybertron Harvest - Pixel Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .header h1 { font-family: 'Press Start 2P', cursive; color: #fbbf24; text-align: center; font-size: 20px; text-shadow: 3px 3px 0 #b45309, -1px -1px 0 #000; margin-bottom: 5px; }
         .header p { color: #94a3b8; font-size: 18px; margin-top: 0; text-align: center; }
         
-        .game-screen { width: 100%; max-width: 1000px; background: #87CEEB; border: 8px solid #5c4033; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
-        .ground { height: 400px; background: linear-gradient(to bottom, #a3e635 0%, #65a30d 20%, #854d0e 40%, #451a03 100%); position: relative; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 20px; flex-wrap: wrap;}
-        
-        /* ฟาร์ม */
-        .farm-plot { width: 220px; height: 280px; background-color: #78350f; border: 4px solid #451a03; border-radius: 10px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); margin-bottom: 10px;}
+        .game-screen { width: 100%; max-width: 900px; background: #87CEEB; border: 8px solid #5c4033; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
+        .ground { height: 400px; background: linear-gradient(to bottom, #a3e635 0%, #65a30d 20%, #854d0e 40%, #451a03 100%); position: relative; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 20px; }
+        .farm-plot { width: 200px; height: 250px; background-color: #78350f; border: 4px solid #451a03; border-radius: 10px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
         .character { width: 30px; height: 30px; background-color: #fcd34d; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); border-radius: 50% 50% 10% 10%; box-shadow: 0 10px 0 #38bdf8, -10px 10px 0 #38bdf8, 10px 10px 0 #38bdf8, 0 20px 0 #1e293b; transition: transform 0.2s; }
         .character.working { animation: bounce 0.5s infinite alternate; }
         @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-10px); } }
-        
-        /* โรงตีเหล็ก */
-        .smithy-plot { width: 220px; height: 280px; background-color: #451a03; border: 4px solid #1c1917; border-radius: 10px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); margin-bottom: 10px;}
-        .smithy-house { width: 120px; height: 100px; background-color: #78350f; border: 4px solid #000; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); }
-        .smithy-roof { width: 140px; height: 30px; background-color: #475569; position: absolute; top: -34px; left: -14px; border: 4px solid #000; transform: skewX(10deg); }
-        
-        /* UI หลอดพลังงาน */
-        .energy-bar-container { width: 80%; height: 15px; background-color: #000; border: 2px solid #fff; margin-bottom: 10px; position: relative; margin-top: 80px;}
+        .energy-bar-container { width: 80%; height: 15px; background-color: #451a03; border: 2px solid #000; margin-bottom: 10px; position: relative; }
         .energy-bar { height: 100%; background-color: #10b981; width: 100%; transition: width 0.5s linear; }
         .energy-text { position: absolute; top: -20px; width: 100%; text-align: center; color: #fff; font-size: 14px; text-shadow: 1px 1px 0 #000; }
-        
-        /* กล่องข้อความ */
-        .speech-bubble { background-color: #fef08a; border: 4px solid #854d0e; border-radius: 10px; padding: 10px; color: #451a03; font-weight: bold; position: absolute; top: -60px; width: 180px; text-align: center; box-shadow: 3px 3px 0 rgba(0,0,0,0.5); z-index: 10;}
+        .speech-bubble { background-color: #fef08a; border: 4px solid #854d0e; border-radius: 10px; padding: 10px; color: #451a03; font-weight: bold; position: absolute; top: -60px; width: 180px; text-align: center; box-shadow: 3px 3px 0 rgba(0,0,0,0.5); }
         .speech-bubble::after { content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); border-width: 15px 15px 0; border-style: solid; border-color: #fef08a transparent transparent transparent; }
-        .smithy-bubble { background-color: #e2e8f0; border-color: #334155; color: #0f172a; }
-        .smithy-bubble::after { border-color: #e2e8f0 transparent transparent transparent; }
-
-        /* แผงควบคุม */
         .ui-panel { background-color: #1e293b; border-top: 4px solid #000; padding: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .panel-box { background: #334155; border: 4px solid #0f172a; padding: 15px; border-radius: 8px; text-align: center; width: 280px; }
+        .panel-box { background: #334155; border: 4px solid #0f172a; padding: 15px; border-radius: 8px; text-align: center; width: 300px; }
         .btn { font-family: 'VT323', monospace; font-size: 18px; background-color: #f59e0b; color: #000; border: 3px solid #000; padding: 8px 15px; margin: 5px; cursor: pointer; box-shadow: 3px 3px 0 #000; transition: all 0.1s; }
         .btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 #000; }
         .btn:disabled { background-color: #64748b; cursor: not-allowed; opacity: 0.7; }
         .btn-green { background-color: #10b981; }
-        .btn-blue { background-color: #38bdf8; }
-
-        /* ตลาด */
-        .market-stall { width: 150px; height: 100px; background-color: #b45309; border: 4px solid #451a03; position: relative; border-radius: 5px 5px 0 0; }
-        .market-roof { width: 170px; height: 30px; background-color: #ef4444; position: absolute; top: -34px; left: -14px; border: 4px solid #451a03; transform: skewX(-10deg); box-shadow: 0 5px 0 rgba(0,0,0,0.3); }
+        .market-stall { width: 150px; height: 120px; background-color: #b45309; border: 4px solid #451a03; position: relative; border-radius: 5px 5px 0 0; }
+        .market-roof { width: 170px; height: 40px; background-color: #ef4444; position: absolute; top: -44px; left: -14px; border: 4px solid #451a03; transform: skewX(-10deg); box-shadow: 0 5px 0 rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>Cybertron Village</h1>
-        <p>สังคมมนุษย์ดิจิทัล · หมู่บ้านอาชีพ</p>
-    </div>
-
+    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ฟาร์มพิกเซล</p></div>
     <div class="game-screen">
         <div class="ground">
-            
-            <!-- บ้านที่ 1: ฟาร์มต้นกล้า -->
             <div class="farm-plot" id="farm-plot">
                 <div class="speech-bubble" id="bubble-text">พร้อมสำหรับการเพาะปลูก...</div>
-                
                 <div class="energy-text"><span id="energy-text">100</span>/100</div>
-                <div class="energy-bar-container">
-                    <div class="energy-bar" id="energy-bar"></div>
-                </div>
-                
+                <div class="energy-bar-container"><div class="energy-bar" id="energy-bar"></div></div>
                 <div class="character" id="character-sprite"></div>
             </div>
-
-            <!-- บ้านที่ 2: โรงตีเหล็ก -->
-            <div class="smithy-plot">
-                <div class="speech-bubble smithy-bubble" id="smithy-bubble">ข้าวโพดแลกเครื่องมือได้นะ!</div>
-                <div class="smithy-house">
-                    <div class="smithy-roof"></div>
-                    <div style="color: white; text-align: center; margin-top: 20px; font-size: 24px; text-shadow: 1px 1px 0 #000;">⚒️</div>
-                    <div style="color: #fbbf24; text-align: center; font-size: 16px; margin-top: 5px;">โรงตีเหล็ก</div>
-                </div>
-                <div style="color: #fff; margin-bottom: 10px;">แร่: <span id="ore-count">0</span></div>
-            </div>
-
-            <!-- ตลาดกลาง -->
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div class="market-stall">
                     <div class="market-roof"></div>
-                    <div style="color: white; text-align: center; margin-top: 10px; font-size: 20px; text-shadow: 1px 1px 0 #000;">🏪 ตลาด</div>
-                    <div style="color: #fef08a; text-align: center; font-size: 14px; margin-top: 5px;">ข้าวโพด: <span id="market-corn-count">0</span></div>
+                    <div style="color: white; text-align: center; margin-top: 10px; font-size: 24px; text-shadow: 1px 1px 0 #000;">🏪 ตลาด</div>
+                    <div style="color: #fef08a; text-align: center; font-size: 16px; margin-top: 10px;">ข้าวโพด: <span id="market-corn-count">0</span></div>
                 </div>
             </div>
-
         </div>
-
         <div class="ui-panel">
-            <!-- ฟาร์ม -->
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">🌾 ฟาร์มต้นกล้า</h3>
+                <h3 style="margin-top:0; color: #fbbf24;">🌾 ฟาร์มของต้นกล้า</h3>
                 <button class="btn" onclick="plantCorn()" id="plant-btn">🌱 ปลูกข้าวโพด (10)</button>
-                <button class="btn btn-green" onclick="eatCorn()" id="eat-btn" disabled>🍽️ กิน (+20)</button>
-                <button class="btn btn-blue" onclick="tradeWithSmithy()" id="trade-btn" disabled>⚒️ แลกเครื่องมือ (ใช้ 2 ข้าวโพด)</button>
+                <button class="btn btn-green" onclick="eatCorn()" id="eat-btn" disabled>🍽️ กินข้าวโพด (+20)</button>
             </div>
-
-            <!-- ตลาดและโรงตีเหล็ก -->
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">🏪/⚒️ ระบบการค้า</h3>
-                <button class="btn" onclick="giveToMarket()" id="give-btn" disabled>📦 ให้ข้าวโพดตลาด</button>
+                <h3 style="margin-top:0; color: #fbbf24;">🤝 ตลาดกลาง</h3>
+                <button class="btn" onclick="giveToMarket()" id="give-btn" disabled>📦 ให้ข้าวโพด</button>
                 <button class="btn btn-green" onclick="buyFromMarket()" id="buy-btn" disabled>🍏 รับอาหาร (+30)</button>
-                <button class="btn" onclick="mineOre()" id="mine-btn">⛏️ ขุดแร่</button>
             </div>
         </div>
     </div>
-
     <script>
         let farmerEnergy = 100, cornInventory = 0, isPlanting = false;
-        let oreInventory = 0;
-        let hasTool = false; 
+        // ตัวแปรสำหรับควบคุมเวลา
+        let lifeTimer = 0; 
 
-        const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), plantBtn = document.getElementById('plant-btn'), eatBtn = document.getElementById('eat-btn'), tradeBtn = document.getElementById('trade-btn'), giveBtn = document.getElementById('give-btn'), buyBtn = document.getElementById('buy-btn'), marketCornCount = document.getElementById('market-corn-count'), oreCount = document.getElementById('ore-count'), mineBtn = document.getElementById('mine-btn'), smithyBubble = document.getElementById('smithy-bubble');
+        const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), plantBtn = document.getElementById('plant-btn'), eatBtn = document.getElementById('eat-btn'), giveBtn = document.getElementById('give-btn'), buyBtn = document.getElementById('buy-btn'), marketCornCount = document.getElementById('market-corn-count');
 
         function updateUI() {
             energyText.innerText = Math.round(farmerEnergy); 
             energyBar.style.width = `${farmerEnergy}%`;
             
-            if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981';
-            else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b';
-            else energyBar.style.backgroundColor = '#ef4444';
-
+            if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; else energyBar.style.backgroundColor = '#ef4444';
             if (farmerEnergy <= 0) { 
                 bubbleText.innerText = "💀 ต้นกล้าดับสูญ..."; 
-                plantBtn.disabled = true; eatBtn.disabled = true; tradeBtn.disabled = true; characterSprite.style.opacity = "0.3"; 
+                plantBtn.disabled = true; eatBtn.disabled = true; characterSprite.style.opacity = "0.3"; 
             } else { 
                 eatBtn.disabled = cornInventory <= 0; 
-                tradeBtn.disabled = cornInventory < 2; 
                 if(!isPlanting) plantBtn.disabled = false; 
             }
-            
             marketCornCount.innerText = cornInventory;
-            oreCount.innerText = oreInventory;
-
-            if (cornInventory > 0) { 
-                giveBtn.disabled = false; buyBtn.disabled = false; buyBtn.style.backgroundColor = '#10b981'; 
-            } else { 
-                giveBtn.disabled = true; buyBtn.disabled = true; buyBtn.style.backgroundColor = '#64748b'; 
-            }
+            if (cornInventory > 0) { giveBtn.disabled = false; buyBtn.disabled = false; buyBtn.style.backgroundColor = '#10b981'; } else { giveBtn.disabled = true; buyBtn.disabled = true; buyBtn.style.backgroundColor = '#64748b'; }
         }
 
-        setInterval(() => { if (farmerEnergy > 0) { farmerEnergy -= 0.5; updateUI(); } }, 1000); 
+        // ⏳ ปรับเวลาให้ช้าลงเพื่อให้สอดคล้องกับอายุขัย 90 ปี
+        // ลดพลังงาน 1 หน่วย ทุกๆ 5 วินาที (เพื่อให้อยู่ได้นานขึ้น)
+        setInterval(() => { 
+            if (farmerEnergy > 0) { 
+                farmerEnergy -= 1; 
+                updateUI(); 
+            } 
+        }, 5000); 
 
         function plantCorn() { 
             if (isPlanting || farmerEnergy < 10) return; 
             isPlanting = true; farmerEnergy -= 10; updateUI(); 
             plantBtn.disabled = true; characterSprite.classList.add('working'); 
             bubbleText.innerText = "⏳ กำลังปลูก..."; 
-            
             setTimeout(() => { 
-                const yieldAmount = hasTool ? 2 : 1;
-                cornInventory += yieldAmount; 
+                cornInventory += 1; 
                 isPlanting = false; characterSprite.classList.remove('working'); 
-                bubbleText.innerText = hasTool ? `🌽🌽 โตแล้ว! (ได้ 2 ฝัก)` : `🌽 โตแล้ว!`; 
+                bubbleText.innerText = "🌽 โตแล้ว!"; 
                 updateUI(); 
-            }, hasTool ? 1500 : 3000); 
+            }, 3000); 
         }
 
-        function eatCorn() { if (cornInventory > 0) { cornInventory -= 1; farmerEnergy = Math.min(100, farmerEnergy + 20); bubbleText.innerText = "😋 อร่อยจัง!"; updateUI(); } }
+        // 🍽️ กินข้าวโพดเพื่อฟื้นฟูพลังงาน
+        function eatCorn() { 
+            if (cornInventory > 0) { 
+                cornInventory -= 1; 
+                farmerEnergy = Math.min(100, farmerEnergy + 40); // เพิ่มพลังงาน 40 เพื่อให้อยู่รอดได้นานขึ้น
+                bubbleText.innerText = "😋 อิ่มท้อง! (+40 พลังงาน)"; 
+                updateUI(); 
+            } 
+        }
+
         function giveToMarket() { if (cornInventory > 0) { cornInventory -= 1; bubbleText.innerText = "🤝 เอาข้าวโพดไปให้แล้วนะ"; updateUI(); } }
         function buyFromMarket() { if (!buyBtn.disabled) { farmerEnergy = Math.min(100, farmerEnergy + 30); bubbleText.innerText = "🍏 ได้รับอาหารคุณภาพ!"; buyBtn.disabled = true; buyBtn.style.backgroundColor = '#64748b'; updateUI(); } }
-        
-        function mineOre() {
-            if (farmerEnergy >= 5) {
-                farmerEnergy -= 5;
-                oreInventory += 1;
-                smithyBubble.innerText = "⛏️ ขุดแร่ได้ 1 ชิ้น!";
-                updateUI();
-            } else {
-                smithyBubble.innerText = "พลังงานไม่พอขุดแร่...";
-            }
-        }
-
-        function tradeWithSmithy() {
-            if (cornInventory >= 2 && !hasTool) {
-                cornInventory -= 2;
-                hasTool = true;
-                smithyBubble.innerText = "⚒️ ได้เครื่องมือแล้ว! ปลูกเร็วขึ้นเท่าตัว!";
-                bubbleText.innerText = "🤝 แลกเครื่องมือสำเร็จ!";
-                updateUI();
-            } else if (hasTool) {
-                smithyBubble.innerText = "มีเครื่องมือแล้วนี่นา!";
-            }
-        }
-
         updateUI();
     </script>
 </body>
