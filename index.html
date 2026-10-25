@@ -605,3 +605,133 @@
     </script>
 </body>
 </html>
+<!-- เพิ่มส่วน UI สำหรับกราฟหิวและฟาร์ม -->
+<style>
+    .farm-container {
+        background-color: #1e293b;
+        border: 2px solid #38bdf8;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        text-align: center;
+        color: #e2e8f0;
+    }
+    .hunger-bar-container {
+        width: 100%;
+        background-color: #334155;
+        border-radius: 5px;
+        margin: 10px 0;
+        height: 20px;
+        overflow: hidden;
+    }
+    .hunger-bar {
+        height: 100%;
+        background-color: #10b981; /* สีเขียว */
+        width: 100%;
+        transition: width 1s linear;
+    }
+    .farm-btn {
+        background-color: #f59e0b; /* สีส้มข้าวโพด */
+        color: #0f172a;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    .farm-btn:hover {
+        background-color: #fbbf24;
+    }
+</style>
+
+<div class="farm-container">
+    <h2>🌽 ฟาร์มของต้นกล้า (AI เกษตรกร)</h2>
+    <p>สถานะพลังงาน (กราฟหิว): <span id="energy-text">100</span> / 100</p>
+    <div class="hunger-bar-container">
+        <div class="hunger-bar" id="energy-bar"></div>
+    </div>
+    
+    <p id="farm-status" style="color: #94a3b8; font-size: 14px;">พร้อมสำหรับการเพาะปลูก...</p>
+    
+    <button class="farm-btn" onclick="plantCorn()" id="plant-btn">🌱 ปลูกข้าวโพด (ใช้พลังงาน 10)</button>
+    <button class="farm-btn" style="background-color: #38bdf8;" onclick="eatCorn()" id="eat-btn" disabled>🍽️ กินข้าวโพด (ฟื้นฟู 20)</button>
+</div>
+
+<script>
+    // ระบบฟาร์มข้าวโพดและกราฟหิว
+    let farmerEnergy = 100;
+    let cornInventory = 0;
+    let isPlanting = false;
+
+    const energyBar = document.getElementById('energy-bar');
+    const energyText = document.getElementById('energy-text');
+    const farmStatus = document.getElementById('farm-status');
+    const plantBtn = document.getElementById('plant-btn');
+    const eatBtn = document.getElementById('eat-btn');
+
+    // ฟังก์ชันอัปเดตกราฟหิว
+    function updateEnergyUI() {
+        energyText.innerText = Math.round(farmerEnergy);
+        energyBar.style.width = `${farmerEnergy}%`;
+        
+        // เปลี่ยนสีกราฟตามพลังงาน
+        if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; // เขียว
+        else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; // เหลือง
+        else energyBar.style.backgroundColor = '#ef4444'; // แดง
+        
+        // เช็กว่าตายหรือยัง (ตามพิมพ์เขียวเก็น)
+        if (farmerEnergy <= 0) {
+            farmStatus.innerText = "💀 ต้นกล้าได้ดับสูญไปแล้ว (พลังงานหมด)...";
+            farmStatus.style.color = "#ef4444";
+            plantBtn.disabled = true;
+            eatBtn.disabled = true;
+        } else {
+            eatBtn.disabled = cornInventory <= 0;
+        }
+    }
+
+    // ระบบพลังงานลดลงตามเวลา (จำลอง 1 วินาที = 1 ชั่วโมง)
+    setInterval(() => {
+        if (farmerEnergy > 0) {
+            farmerEnergy -= 0.5; // ลดพลังงานลงเรื่อยๆ
+            updateEnergyUI();
+        }
+    }, 1000); 
+
+    // ฟังก์ชันปลูกข้าวโพด (ใช้เวลา 3 วินาที)
+    function plantCorn() {
+        if (isPlanting || farmerEnergy < 10) return;
+        
+        isPlanting = true;
+        farmerEnergy -= 10; // ปลูกใช้พลังงาน
+        updateEnergyUI();
+        
+        plantBtn.disabled = true;
+        farmStatus.innerText = "⏳ กำลังปลูกข้าวโพด... (รอ 3 วินาที)";
+        farmStatus.style.color = "#38bdf8";
+
+        setTimeout(() => {
+            cornInventory += 1;
+            isPlanting = false;
+            plantBtn.disabled = farmerEnergy <= 0;
+            farmStatus.innerText = `🌽 ข้าวโพดโตแล้ว! (มีในครอบครอง: ${cornInventory} ฝัก)`;
+            farmStatus.style.color = "#10b981";
+            updateEnergyUI();
+        }, 3000);
+    }
+
+    // ฟังก์ชันกินข้าวโพด
+    function eatCorn() {
+        if (cornInventory > 0) {
+            cornInventory -= 1;
+            farmerEnergy = Math.min(100, farmerEnergy + 20); // ฟื้นฟู 20
+            farmStatus.innerText = `🍽️ ต้นกล้ากินข้าวโพด 1 ฝัก (พลังงานฟื้นฟู)`;
+            farmStatus.style.color = "#10b981";
+            updateEnergyUI();
+        }
+    }
+
+    // เริ่มต้นการทำงาน
+    updateEnergyUI();
+</script>
