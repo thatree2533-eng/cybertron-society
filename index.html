@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Harvest - Autonomous Farm</title>
+    <title>Cybertron Harvest - True Autonomous AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -13,16 +13,13 @@
         .game-screen { width: 100%; max-width: 900px; background: #87CEEB; border: 8px solid #5c4033; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
         .ground { height: 400px; background: linear-gradient(to bottom, #a3e635 0%, #65a30d 20%, #854d0e 40%, #451a03 100%); position: relative; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 20px; }
         
-        /* แปลงฟาร์ม */
         .farm-plot { width: 280px; height: 250px; background-color: #78350f; border: 4px solid #451a03; border-radius: 10px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
         
-        /* จุดปลูก 3 จุด */
         .plant-slots { display: flex; gap: 20px; position: absolute; bottom: 60px; }
         .slot { width: 40px; height: 40px; background-color: #451a03; border: 2px solid #000; display: flex; justify-content: center; align-items: center; font-size: 24px; }
         .slot.growing::after { content: "🌱"; font-size: 20px; }
         .slot.ready::after { content: "🌽"; font-size: 24px; animation: bounce 1s infinite alternate; }
         
-        /* ตัวละคร */
         .character { width: 30px; height: 30px; background-color: #fcd34d; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border-radius: 50% 50% 10% 10%; box-shadow: 0 10px 0 #38bdf8, -10px 10px 0 #38bdf8, 10px 10px 0 #38bdf8, 0 20px 0 #1e293b; transition: transform 0.2s; }
         .character.working { animation: bounce 0.5s infinite alternate; }
         .character.eating { animation: eatAnim 0.3s infinite alternate; }
@@ -37,23 +34,18 @@
         
         .ui-panel { background-color: #1e293b; border-top: 4px solid #000; padding: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .panel-box { background: #334155; border: 4px solid #0f172a; padding: 15px; border-radius: 8px; text-align: center; width: 300px; }
-        .btn { font-family: 'VT323', monospace; font-size: 18px; background-color: #f59e0b; color: #000; border: 3px solid #000; padding: 8px 15px; margin: 5px; cursor: pointer; box-shadow: 3px 3px 0 #000; transition: all 0.1s; }
-        .btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 #000; }
-        .btn:disabled { background-color: #64748b; cursor: not-allowed; opacity: 0.7; }
-        .btn-green { background-color: #10b981; }
         
         .market-stall { width: 150px; height: 120px; background-color: #b45309; border: 4px solid #451a03; position: relative; border-radius: 5px 5px 0 0; }
         .market-roof { width: 170px; height: 40px; background-color: #ef4444; position: absolute; top: -44px; left: -14px; border: 4px solid #451a03; transform: skewX(-10deg); box-shadow: 0 5px 0 rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ฟาร์มอัตโนมัติ</p></div>
+    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · AI ใช้ชีวิตอัตโนมัติ</p></div>
     <div class="game-screen">
         <div class="ground">
             <div class="farm-plot" id="farm-plot">
-                <div class="speech-bubble" id="bubble-text">ระบบฟาร์มอัตโนมัติพร้อมทำงาน...</div>
+                <div class="speech-bubble" id="bubble-text">เริ่มต้นชีวิตอัตโนมัติ...</div>
                 
-                <!-- จุดปลูก 3 จุด -->
                 <div class="plant-slots">
                     <div class="slot" id="slot-0"></div>
                     <div class="slot" id="slot-1"></div>
@@ -74,13 +66,12 @@
         </div>
         <div class="ui-panel">
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">🌾 ฟาร์มของต้นกล้า</h3>
-                <p style="font-size: 14px; color: #94a3b8;">สถานะ: <span id="ai-status" style="color:#10b981;">อัตโนมัติ</span></p>
+                <h3 style="margin-top:0; color: #fbbf24;">🌾 สถานะของต้นกล้า</h3>
+                <p style="font-size: 14px; color: #94a3b8;">ระบบ: <span id="ai-status" style="color:#10b981;">ทำงานอัตโนมัติ (ห้ามยุ่ง)</span></p>
             </div>
             <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">🤝 ตลาดกลาง</h3>
-                <button class="btn" onclick="giveToMarket()" id="give-btn" disabled>📦 ให้ข้าวโพด</button>
-                <button class="btn btn-green" onclick="buyFromMarket()" id="buy-btn" disabled>🍏 รับอาหาร (+30)</button>
+                <h3 style="margin-top:0; color: #fbbf24;">🏪 สังเกตการณ์ตลาด</h3>
+                <p style="font-size: 14px; color: #94a3b8;">(มนุษย์มีหน้าที่แค่มองดู AI ใช้ชีวิต)</p>
             </div>
         </div>
     </div>
@@ -89,8 +80,9 @@
         let slots = [{status: 'empty', timer: 0}, {status: 'empty', timer: 0}, {status: 'empty', timer: 0}];
         let isEating = false;
         let isWorking = false;
+        let isDead = false;
         
-        const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), giveBtn = document.getElementById('give-btn'), buyBtn = document.getElementById('buy-btn'), marketCornCount = document.getElementById('market-corn-count'), aiStatus = document.getElementById('ai-status');
+        const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), marketCornCount = document.getElementById('market-corn-count'), aiStatus = document.getElementById('ai-status');
 
         function updateUI() {
             energyText.innerText = Math.round(farmerEnergy); 
@@ -98,18 +90,8 @@
             
             if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; else energyBar.style.backgroundColor = '#ef4444';
             
-            if (farmerEnergy <= 0) { 
-                bubbleText.innerText = "💀 ต้นกล้าดับสูญ..."; 
-                aiStatus.innerText = "ดับสูญ";
-                aiStatus.style.color = "#ef4444";
-                characterSprite.style.opacity = "0.3"; 
-                return;
-            }
-            
             marketCornCount.innerText = cornInventory;
-            if (cornInventory > 0) { giveBtn.disabled = false; buyBtn.disabled = false; buyBtn.style.backgroundColor = '#10b981'; } else { giveBtn.disabled = true; buyBtn.disabled = true; buyBtn.style.backgroundColor = '#64748b'; }
             
-            // อัปเดตจุดปลูก
             slots.forEach((slot, index) => {
                 const el = document.getElementById(`slot-${index}`);
                 el.className = 'slot';
@@ -118,46 +100,57 @@
             });
         }
 
-        // ⏳ ลูปหลัก (Main Loop) - ทำงานทุกๆ 1 วินาที
+        // ⏳ ลูปหลัก (AI ใช้ชีวิตเอง)
         setInterval(() => { 
-            if (farmerEnergy <= 0) return; // ถ้าตายแล้วหยุดทำ
+            if (isDead) return;
 
             // 1. ลดพลังงานตามเวลา
             farmerEnergy -= 1; 
             updateUI();
 
-            // 2. ระบบสัญชาตญาณ: ถ้าพลังงานต่ำกว่า 40 ให้กินเอง
-            if (farmerEnergy <= 40 && cornInventory > 0 && !isEating && !isWorking) {
-                autoEat();
+            // 2. ถ้าตาย
+            if (farmerEnergy <= 0) {
+                isDead = true;
+                bubbleText.innerText = "💀 ต้นกล้าดับสูญ...";
+                aiStatus.innerText = "ดับสูญ";
+                aiStatus.style.color = "#ef4444";
+                characterSprite.style.opacity = "0.3"; 
+                return;
             }
 
-            // 3. ระบบทำงานอัตโนมัติ: ถ้าพลังงานเหลือเยอะ (>70) และยังไม่เต็มแปลง ให้ปลูก
+            // 3. AI ตัดสินใจ: ถ้าหิว (<40) และมีข้าวโพด ให้กินเอง
+            if (farmerEnergy <= 40 && cornInventory > 0 && !isEating && !isWorking) {
+                autoEat();
+                return; // ทำอย่างละอย่างต่อ 1 วินาที
+            }
+
+            // 4. AI ตัดสินใจ: ถ้ามีข้าวโพดสุก ให้เก็บเกี่ยวเอง
+            const readySlotIndex = slots.findIndex(s => s.status === 'ready');
+            if (readySlotIndex !== -1 && !isWorking && !isEating) {
+                harvestCrop(readySlotIndex);
+                return;
+            }
+
+            // 5. AI ตัดสินใจ: ถ้าพลังงานเหลือเยอะ (>70) และมีแปลงว่าง ให้ปลูกเอง
             if (farmerEnergy > 70 && !isWorking && !isEating) {
                 const emptySlotIndex = slots.findIndex(s => s.status === 'empty');
                 if (emptySlotIndex !== -1) {
                     startPlanting(emptySlotIndex);
+                    return;
                 }
             }
 
-            // 4. อัปเดตการเติบโตของพืช
-            slots.forEach((slot, index) => {
+            // 6. การเติบโตของพืช
+            slots.forEach((slot) => {
                 if (slot.status === 'growing') {
                     slot.timer += 1;
-                    if (slot.timer >= 3) { // ใช้เวลา 3 วินาทีในการโต
+                    if (slot.timer >= 3) { 
                         slot.status = 'ready';
                         slot.timer = 0;
                         updateUI();
                     }
                 }
             });
-
-            // 5. เก็บเกี่ยวอัตโนมัติเมื่อพืชสุก
-            if (!isWorking) {
-                const readySlotIndex = slots.findIndex(s => s.status === 'ready');
-                if (readySlotIndex !== -1) {
-                    harvestCrop(readySlotIndex);
-                }
-            }
 
         }, 1000); // 1 วินาที = 1 รอบ
 
@@ -176,11 +169,11 @@
 
         function startPlanting(index) {
             isWorking = true;
-            farmerEnergy -= 10; // ปลูกใช้พลังงาน
+            farmerEnergy -= 10; 
             slots[index].status = 'growing';
             slots[index].timer = 0;
             characterSprite.classList.add('working');
-            bubbleText.innerText = "🌱 กำลังปลูกข้าวโพด...";
+            bubbleText.innerText = "🌱 ปลูกข้าวโพดเอง...";
             updateUI();
             
             setTimeout(() => {
@@ -194,7 +187,7 @@
             slots[index].status = 'empty';
             cornInventory += 1;
             characterSprite.classList.add('working');
-            bubbleText.innerText = "🌽 เก็บเกี่ยวข้าวโพด!";
+            bubbleText.innerText = "🌽 เก็บเกี่ยวเอง!";
             updateUI();
             setTimeout(() => {
                 characterSprite.classList.remove('working');
@@ -202,9 +195,6 @@
             }, 1000);
         }
 
-        function giveToMarket() { if (cornInventory > 0) { cornInventory -= 1; bubbleText.innerText = "🤝 เอาข้าวโพดไปให้แล้วนะ"; updateUI(); } }
-        function buyFromMarket() { if (!buyBtn.disabled) { farmerEnergy = Math.min(100, farmerEnergy + 30); bubbleText.innerText = "🍏 ได้รับอาหารคุณภาพ!"; buyBtn.disabled = true; buyBtn.style.backgroundColor = '#64748b'; updateUI(); } }
-        
         updateUI();
     </script>
 </body>
