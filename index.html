@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Harvest - Real World Clock</title>
+    <title>Cybertron Harvest - Real Time 24H</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
         body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -47,7 +47,7 @@
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ระบบเวลาจริง</p></div>
+    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · ระบบเวลาจริง 24 ชั่วโมง</p></div>
     <div class="game-screen">
         <div class="ground" id="game-ground">
             <div class="clock-box">⏰ <span id="game-time">--:--</span></div>
@@ -92,6 +92,7 @@
         let isDead = false;
         
         let hasEatenToday = false; // ตัวแปรเช็กว่าวันนี้กินข้าวหรือยัง
+        let lastDay = new Date().getDate(); // เก็บวันที่เพื่อรีเซ็ตการกิน
 
         const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), bubbleText = document.getElementById('bubble-text'), characterSprite = document.getElementById('character-sprite'), marketCornCount = document.getElementById('market-corn-count'), aiStatus = document.getElementById('ai-status'), gameTimeEl = document.getElementById('game-time'), groundEl = document.getElementById('game-ground');
 
@@ -111,14 +112,15 @@
             });
         }
 
-        // ⏰ อัปเดตนาฬิกาจริงทุกๆ 1 วินาที
+        // ⏰ ระบบนาฬิกา (อัปเดตทุกวินาที)
         setInterval(() => {
             const now = new Date();
             gameTimeEl.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             
-            // ถ้าเป็นเวลาใหม่ของวัน (เที่ยงคืน) ให้รีเซ็ตสถานะการกิน
-            if (now.getHours() === 0 && now.getMinutes() === 0) {
+            // รีเซ็ตสถานะการกินเมื่อขึ้นวันใหม่
+            if (now.getDate() !== lastDay) {
                 hasEatenToday = false;
+                lastDay = now.getDate();
             }
         }, 1000);
 
@@ -144,8 +146,6 @@
                     aiStatus.innerText = "กำลังนอนหลับ...";
                     aiStatus.style.color = "#38bdf8";
                     bubbleText.innerText = "💤 หลับฝันดี...";
-                    
-                    // หลับจะใช้พลังงานน้อยมาก (แทบไม่ลด)
                     updateUI();
                 }
                 return; 
@@ -154,9 +154,9 @@
             // ตื่นนอน
             characterSprite.classList.remove('sleeping');
             
-            // 2. ลดพลังงานปกติ (ตื่นอยู่) - ลดช้ามากๆ ทุกๆ 3 วินาที
+            // 2. ลดพลังงานปกติ (ตื่นอยู่)
             if (!isEating && !isWorking) {
-                farmerEnergy -= 0.5; 
+                farmerEnergy -= 1; 
                 aiStatus.innerText = "ใช้ชีวิตปกติ...";
                 aiStatus.style.color = "#10b981";
                 if (bubbleText.innerText.includes("หลับ")) {
@@ -176,17 +176,16 @@
             }
 
             // 3. ระบบการกิน (วันละ 1 มื้อ กินตอนไหนก็ได้)
-            // เช็กว่าถ้าวันนี้ยังไม่ได้กิน และมีข้าวโพด หรือพลังงานเริ่มต่ำ
             if (!hasEatenToday && cornInventory > 0 && !isEating && !isWorking) {
-                // สุ่มเวลาในการกิน (เช่น ถ้าพลังงานต่ำกว่า 60 หรือสุ่มได้)
+                // ถ้าพลังงานเหลือน้อยกว่า 60 แล้ว ถึงจะยอมกิน
                 if (farmerEnergy < 60) {
                     autoEat();
-                    hasEatenToday = true; // มาร์คว่าวันนี้กินแล้ว
+                    hasEatenToday = true; 
                     return;
                 }
             }
 
-            // 4. ทำงาน (ถ้าเป็นเวลากลางวัน และพลังงานเหลือเยอะ)
+            // 4. ทำงาน (ถ้าพลังงานเหลือเยอะ)
             if (farmerEnergy > 30 && !isWorking && !isEating) {
                 const emptySlotIndex = slots.findIndex(s => s.status === 'empty');
                 if (emptySlotIndex !== -1) {
@@ -202,7 +201,7 @@
                 return;
             }
 
-            // 6. การเติบโตของพืช (ใช้เวลาประมาณ 15 วินาทีจริง)
+            // 6. การเติบโตของพืช (ใช้เวลา 15 วินาทีจริง)
             slots.forEach((slot) => {
                 if (slot.status === 'growing') {
                     slot.timer += 3; 
@@ -235,7 +234,7 @@
             slots[index].status = 'growing';
             slots[index].timer = 0;
             characterSprite.classList.add('working');
-            bubbleText.innerText = "🌱 กำลังปลูกข้าวโพด...";
+            bubbleText.innerText = "🌱 ปลูกข้าวโพด...";
             updateUI();
             
             setTimeout(() => {
