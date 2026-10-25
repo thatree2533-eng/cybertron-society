@@ -833,3 +833,84 @@
         updateMarketUI();
     }, 100);
 </script>
+<!-- ========================================== -->
+<!-- ส่วนที่ 1: หน้าตากล่องตลาดกลาง (HTML) -->
+<!-- ========================================== -->
+<div class="market-container" id="market-box" style="display: none;">
+    <h2>🏪 ตลาดกลาง (Gift Economy)</h2>
+    <p>กฎ: ต้อง "ให้" (วางผลผลิต) ก่อน จึงจะมีสิทธิ์ "รับ" (แลกเปลี่ยน)</p>
+    
+    <p>ข้าวโพดในสต็อก: <strong id="market-corn-count">0</strong> ฝัก</p>
+    <p>สิทธิ์ในการรับ: <strong id="market-rights" style="color: #ef4444;">ไม่มีสิทธิ์ (ต้องให้ก่อน)</strong></p>
+
+    <button class="market-btn" onclick="giveToMarket()" id="give-btn" style="background-color: #f59e0b; color: #0f172a; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; margin: 5px;">🌽 นำข้าวโพดไปวาง (ให้)</button>
+    
+    <button class="market-btn market-btn-buy" onclick="buyFromMarket()" id="buy-btn" disabled style="background-color: #475569; color: #94a3b8; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: not-allowed; margin: 5px;">🍏 แลกอาหารคุณภาพ (รับ)</button>
+</div>
+
+<!-- ========================================== -->
+<!-- ส่วนที่ 2: ระบบทำงานตลาดกลาง (JavaScript) -->
+<!-- ========================================== -->
+<script>
+    // รอให้หน้าเว็บโหลดเสร็จก่อน แล้วค่อยแสดงกล่องตลาด
+    setTimeout(() => {
+        document.getElementById('market-box').style.display = 'block';
+    }, 500);
+
+    const marketCornCount = document.getElementById('market-corn-count');
+    const marketRights = document.getElementById('market-rights');
+    const giveBtn = document.getElementById('give-btn');
+    const buyBtn = document.getElementById('buy-btn');
+
+    function updateMarketUI() {
+        marketCornCount.innerText = cornInventory;
+        
+        if (cornInventory > 0) {
+            marketRights.innerText = "มีสิทธิ์ (พร้อมรับ)";
+            marketRights.style.color = "#10b981";
+            giveBtn.disabled = false;
+            buyBtn.disabled = false;
+            buyBtn.style.backgroundColor = '#10b981'; // เปลี่ยนเป็นสีเขียว
+            buyBtn.style.color = '#0f172a';
+            buyBtn.style.cursor = 'pointer';
+        } else {
+            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
+            marketRights.style.color = "#ef4444";
+            giveBtn.disabled = true;
+            buyBtn.disabled = true;
+            buyBtn.style.backgroundColor = '#475569';
+            buyBtn.style.color = '#94a3b8';
+            buyBtn.style.cursor = 'not-allowed';
+        }
+    }
+
+    function giveToMarket() {
+        if (cornInventory > 0) {
+            cornInventory -= 1; 
+            farmStatus.innerText = "🤝 ต้นกล้านำข้าวโพดไปวางที่ตลาดกลางแล้ว (ทำบุญ/ให้)";
+            farmStatus.style.color = "#f59e0b";
+            updateMarketUI();
+            updateEnergyUI(); 
+        }
+    }
+
+    function buyFromMarket() {
+        if (cornInventory >= 0 && !buyBtn.disabled) {
+            farmerEnergy = Math.min(100, farmerEnergy + 30); 
+            farmStatus.innerText = "🍏 ต้นกล้าแลกเปลี่ยนและได้รับอาหารคุณภาพ (พลังงานฟื้นฟู +30)";
+            farmStatus.style.color = "#10b981";
+            updateEnergyUI();
+            
+            // รีเซ็ตสิทธิ์
+            marketRights.innerText = "ไม่มีสิทธิ์ (ต้องให้ก่อน)";
+            marketRights.style.color = "#ef4444";
+            buyBtn.disabled = true;
+            buyBtn.style.backgroundColor = '#475569';
+            buyBtn.style.color = '#94a3b8';
+        }
+    }
+
+    // อัปเดตตลาดทุกๆ 1 วินาทีเพื่อให้ซิงค์กับฟาร์ม
+    setInterval(updateMarketUI, 1000);
+</script>
+<!-- ========================================== -->
