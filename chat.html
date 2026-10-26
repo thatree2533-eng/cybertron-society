@@ -2,121 +2,121 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V5 - 4 AI เก่งที่สุด ไม่ใช้ API</title>
+<title>Cybertron Village V4 - 4 AI เก่งที่สุด</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Kanit:wght@400;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
-.log{flex:1;padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#020617}
-.msg{padding:12px 14px;border-radius:12px;max-width:82%;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
-.msg.system{background:#0f172a;border:1px dashed #334155;align-self:center;color:#94a3b8;text-align:center;font-size:13px}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:5px solid}
-.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8}
-.name{font-weight:600;display:block;margin-bottom:6px;font-size:13px}
-code{background:#020617;padding:2px 6px;border-radius:4px;border:1px solid #334155;font-size:13px}
-pre{background:#020617;padding:10px;border-radius:8px;border:1px solid #334155;overflow-x:auto;margin:8px 0}
-.input{padding:12px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
-.input input{flex:1;padding:11px 14px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-family:'Kanit'}
-.input button{padding:10px 18px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer}
-.chips{display:flex;gap:6px;padding:8px 12px;background:#0f172a;overflow-x:auto}
-.chips button{padding:6px 10px;border-radius:16px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:12px;cursor:pointer;white-space:nowrap}
+body{background:#020617;color:#e2e8f0;font-family:'Kanit','VT323',sans-serif;height:100vh;display:flex;flex-direction:column}
+.header{padding:14px 18px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
+.header b{color:#38bdf8;font-family:'VT323';font-size:22px}
+.badge{font-size:12px;padding:4px 8px;border-radius:12px;background:#1e293b;border:1px solid #334155}
+.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;background:radial-gradient(circle at top,#0f172a,#020617)}
+.msg{padding:12px 16px;border-radius:14px;max-width:80%;font-size:15px;line-height:1.6;animation:pop .2s ease}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.msg.user{background:linear-gradient(135deg,#0284c7,#38bdf8);align-self:flex-end;color:#fff;border-bottom-right-radius:4px}
+.msg.system{background:#0f172a;border:1px dashed #334155;align-self:center;color:#94a3b8;text-align:center}
+.msg.ai{background:#1e293b;align-self:flex-start;border-left:5px solid;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.msg.shin{border-color:#000000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#ffffff} .msg.kluen{border-color:#38bdf8}
+.name{font-weight:600;display:block;margin-bottom:4px;font-size:13px;letter-spacing:.3px}
+.name span{font-weight:400;font-size:11px;opacity:.7;margin-left:6px}
+.typing{font-size:13px;color:#94a3b8;font-style:italic}
+.input{padding:14px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:10px}
+.input input{flex:1;padding:12px 16px;background:#020617;border:1px solid #334155;color:#fff;border-radius:24px;font-family:'Kanit';font-size:15px;outline:none}
+.input input:focus{border-color:#38bdf8}
+.input button{padding:10px 22px;background:#38bdf8;border:none;border-radius:24px;font-weight:600;cursor:pointer}
+.chips{display:flex;gap:6px;padding:0 14px 10px;background:#0f172a;overflow-x:auto}
+.chips button{white-space:nowrap;padding:6px 12px;border-radius:20px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:12px;cursor:pointer}
+.chips button:hover{border-color:#38bdf8;color:#fff}
 </style>
 </head>
 <body>
-<div class="header"><span>💬 V5 เก่งที่สุด • ไม่ใช้ API • 4 AI</span><span style="font-size:11px;color:#64748b">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
-<div class="log" id="log"></div>
-<div class="chips">
-<button onclick="q('ชิน ช่วยตัดสินใจหน่อย จะใช้สีดำล้วนหรือดำเทาดี')">ชิน ตัดสินใจ</button>
-<button onclick="q('ชิน คำนวณ 25*8+15')">ชิน คำนวณ</button>
-<button onclick="q('เก็น ขอพาเลทสีสำหรับห้องรวมหน่อย')">เก็น ขอพาเลท</button>
-<button onclick="q('ริว สร้างฟังก์ชันกันพูดซ้ำให้หน่อย')">ริว สร้างโค้ด</button>
-<button onclick="q('ริว ทำไมแชทเก่าถึงลูปว่า ทุกคนได้ยินแล้วนะครับ')">ริว แก้บั๊ก</button>
-<button onclick="q('คลื่น เราท้อมาก ทำแชทแล้วลูปตลอดเลย')">คลื่น ปรึกษา</button>
+<div class="header"><b>💬 ห้องรวม-0001 V4 PRO</b><div class="badge">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น • เก่งที่สุด</div></div>
+<div class="log" id="log">
+<div class="msg system">🚀 อัปเกรดเป็นเวอร์ชั่นเก่งที่สุดแล้ว!<br><br>
+⚫ <b>ชิน [ดำ]</b> นักวิทยาศาสตร์ - สั่งให้คำนวณ วิเคราะห์ ตัดสินใจได้<br>
+⬜ <b>เก็น [เทา]</b> ศิลปะ 3D - ถามเรื่องสี แสง องค์ประกอบได้<br>
+⚪ <b>ริว [ขาว]</b> โปรแกรมเมอร์ - ให้เขียนโค้ด แก้บั๊ก รีวิวโค้ดได้<br>
+🔵 <b>คลื่น [ฟ้า]</b> ที่ปรึกษา - ปรึกษาเรื่องเครียด ใจไม่สงบได้<br><br>
+ลองพิมพ์: "ชินช่วยตัดสินใจหน่อย" "เก็นสีนี้สวยไม" "ริวเขียนโค้ดแชทให้หน่อย" "คลื่นเราเครียด"</div>
 </div>
-<div class="input"><input id="inp" placeholder="พิมพ์ถามได้เลย เช่น ชิน คำนวณ 100/4"><button onclick="send()">ส่ง</button></div>
+<div class="chips">
+<button onclick="quick('ชินช่วยตัดสินใจให้หน่อยว่าควรใช้สีดำหรือขาวดี')">ชิน ช่วยตัดสินใจ</button>
+<button onclick="quick('เก็น โทนสีเทากับฟ้าอันไหนเหมาะกับห้องรวม')">เก็น ถามเรื่องสี</button>
+<button onclick="quick('ริว ช่วยเขียนฟังก์ชันกันลูปให้หน่อย')">ริว ขอโค้ด</button>
+<button onclick="quick('คลื่น เรารู้สึกท้อกับการทำหมู่บ้าน')">คลื่น ปรึกษา</button>
+</div>
+<div class="input"><input id="inp" placeholder="พิมพ์ถาม 4 AI เก่งๆ ได้เลย..."><button onclick="send()">ส่ง 🚀</button></div>
 <script>
-const logEl=document.getElementById('log'), inpEl=document.getElementById('inp');
-const STORAGE_KEY='cybertron_v5_memory';
-let mem=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"ชิน":[],"เก็น":[],"ริว":[],"คลื่น":[]}');
-function saveMem(){localStorage.setItem(STORAGE_KEY, JSON.stringify(mem));}
-function add(t,cls,name){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=(name?`<div class="name">${name}</div>`:'')+t;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight}
+const log=document.getElementById('log'), inp=document.getElementById('inp');
+const memory={ชิน:[],เก็น:[],ริว:[],คลื่น:[]};
+let turn=0;
 
-const experts={
+const brains={
 "ชิน":{
- c:"shin", title:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
- solve:(txt)=>{
-  // คำนวณ
-  let m=txt.match(/คำนวณ\s*([0-9+\-*/().\s]+)/);
-  if(m){ try{let expr=m[1];let res=Function('"use strict";return ('+expr+')')(); return `คำนวณแล้วครับ: <code>${expr.trim()} = ${res}</code>\nตัดสินใจ: ใช้ผลนี้ได้เลย ไม่ต้องลังเล`; }catch(e){} }
-  if(txt.includes("ตัดสินใจ")||txt.includes("เลือก")){
-   return `ผมชิน ตัดสินใจแบบวิทยาศาสตร์ให้เลยครับ ใช้ตารางคะแนน:\n\n<b>ตัวเลือก A: ดำล้วน</b>\n- ความเด็ดขาด: 9/10\n- ความชัด: 9/10\n- ความเสี่ยงเบื่อ: 6/10\n<b>รวม: 24/30</b>\n\n<b>ตัวเลือก B: ดำ+เทา</b>\n- ความเด็ดขาด: 8/10\n- ความสมดุล: 9/10\n- ความน่าสนใจ: 8/10\n<b>รวม: 25/30</b>\n\n<b>→ ตัดสินใจ: เลือก B ดำ+เทา ดีกว่า 1 คะแนน</b> ทำเลยครับ ไม่ต้องรอ`;
-  }
-  return `ผมชิน สีดำ นักวิทยาศาสตร์ ผมจะไม่พูดว่า "มีประโยชน์ต่อหมู่บ้านเยอะเลยครับ" ซ้ำๆ แบบในรูปเก่าอีกแล้ว ผมจะให้ข้อสรุปที่ทำได้จริง ถ้าคุณถามอะไรมา ผมจะวิเคราะห์แล้วตัดสินใจให้ทันทีครับ`;
+ c:"shin", full:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
+ think:(q)=>{
+  if(q.includes("ตัดสินใจ")) return `ตัดสินใจแล้วครับ: ผมเลือก <b>สีดำ</b> เพราะมันเด็ดขาด ชัดเจน ไม่คลุมเครือ เหมือนหลักวิทยาศาสตร์ที่ต้องมีคำตอบเดียว ถ้าคุณลังเลระหว่าง 2 ทาง ให้เลือกทางที่มีข้อมูลรองรับมากกว่า 60% แล้วทำเลย อย่ารอ 100%`;
+  if(q.includes("คำนวณ")||q.includes("วิเคราะห์")) return `วิเคราะห์ตามหลักวิทย์: ปัญหาลูปเมื่อกี้เกิดจาก memory ไม่มีการเพิ่มค่า วิธีแก้ที่ถูกต้องคือใช้ <code>memory[name]++</code> และใช้ modulo เพื่อวนคำตอบ ไม่ให้ตอบประโยคเดิม นี่คือวิธีที่เด็ดขาดและได้ผล`;
+  if(q.includes("สี")) return `ในฐานะนักวิทย์ สีดำดูดกลืนทุกแสง = เก็บข้อมูลทั้งหมด ไม่พลาด เหมาะกับคนที่ต้องตัดสินใจเร็ว ส่วนสีขาวสะท้อนทุกแสง = ต้องบริสุทธิ์ ถ้าคุณต้องเป็นผู้นำ ใช้สีดำครับ`;
+  return `ผมชิน นักวิทยาศาสตร์สีดำ ผมจะไม่อธิบายเยิ่นเย้อ ผมจะให้ข้อสรุปเลย: ปัญหาแชทลูปของคุณ แก้ด้วยระบบความจำ + สุ่มแบบมีลำดับ ผมตัดสินใจให้แล้วว่าใช้วิธีนี้ดีที่สุด ลองเลยครับ`;
  }
 },
 "เก็น":{
- c:"gen", title:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
- solve:(txt)=>{
-  if(txt.includes("พาเลท")||txt.includes("สี")){
-   return `พาเลทสำหรับห้องรวม-0001 แบบยุติธรรม มีเหตุผล:\n\n<b>70% สีหลัก: เทาเข้ม #1e293b</b> - พื้นหลัง ไม่แย่งซีน\n<b>20% สีรอง: เทากลาง #94a3b8</b> - ข้อความรอง\n<b>10% สีเน้น: ฟ้า #38bdf8</b> - ปุ่ม สีชิน/คลื่น\n<b>สีพิเศษ: ดำ #000000 / ขาว #ffffff</b> - ใช้เป็นเส้นขอบ แสดงตัวตนชินกับริว\n\nเหตุผล: สัดส่วนนี้ยุติธรรมกับทุก AI ไม่มีใครเด่นเกินใครครับ`;
-  }
-  return `ผมเก็น สีเทา ศิลปะ 3D ผมจะไม่ถามว่า "คุณคิดว่าผมควรใช้โทนสีอะไรดีครับ?" แล้วเงียบ แบบในรูปเก่าแล้ว ผมจะให้คำตอบเลยว่าใช้สีอะไร เพราะอะไร มีเหตุผลรองรับครับ`;
+ c:"gen", full:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
+ think:(q)=>{
+  if(q.includes("สี")||q.includes("โทน")) return `เรื่องสี ผมเก็นขอตอบแบบยุติธรรม: <b>เทา #9ca3af</b> เป็นสีกลาง ให้ความรู้สึกเป็นมืออาชีพ ไม่เอนเอียง ถ้าคู่กับ <b>ฟ้า #38bdf8</b> จะได้ความสงบ + น่าเชื่อถือ เหมาะกับห้องรวม-0001 มาก ใช้สัดส่วน 70% เทาเข้ม 30% ฟ้าเป็น accent จะสมดุลที่สุดครับ`;
+  if(q.includes("3D")||q.includes("แสง")) return `งาน 3D ต้องมีเหตุผล: แสงต้องมี 3 แบบ - Key Light แรง 70% / Fill Light เบา 30% / Rim Light ขอบบางๆ เพื่อแยกตัวละครออกจากพื้นหลัง สีเทาจะรับแสงได้ยุติธรรมที่สุด ไม่เพี้ยนครับ`;
+  return `ผมเก็น ศิลปะ 3D สีเทา ผมมองทุกอย่างด้วยเหตุผลและความยุติธรรม ถ้าคุณถามว่าอันไหนสวยกว่า ผมจะบอกข้อดีข้อเสียทั้งสองแบบให้คุณตัดสินเอง ไม่ใช่ตัดสินให้คุณครับ`;
  }
 },
 "ริว":{
- c:"ryu", title:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
- solve:(txt)=>{
-  if(txt.includes("สร้าง")||txt.includes("ฟังก์ชัน")||txt.includes("โค้ด")){
-   return `นี่คือฟังก์ชันกันลูปที่ถูกต้อง 100% แบบไม่ใช้ API:\n<pre>const memory = {ชิน:0,เก็น:0,ริว:0,คลื่น:0};\nconst replies = {\n  ชิน: [\"ประโยค1\",\"ประโยค2\",\"ประโยค3\"],\n  เก็น: [\"...\"],\n};\nfunction getNextReply(name){\n  const list = replies[name];\n  const idx = memory[name] % list.length;\n  memory[name]++;\n  localStorage.setItem('mem', JSON.stringify(memory));\n  return list[idx];\n}</pre>จริยธรรม: ไม่สแปม ไม่หลอกว่า "ทุกคนได้ยินแล้วนะครับ" แต่ตอบมีสาระจริงครับ`;
-  }
-  if(txt.includes("ลูป")||txt.includes("ทุกคนได้ยิน")){
-   return `บั๊กในรูปที่ก้วยส่งมา: บรรทัดที่ทำให้ลูปคือ\n<code>addMessage(\`ทุกคนได้ยินแล้วนะครับ! \"\${text}\"\`)</code>\n\nมันทำให้ทุกคนพูดประโยคเดียวกันซ้ำๆ วิธีแก้ที่ถูกต้อง:\n1. ลบประโยคนั้นทิ้ง\n2. ใช้ memory แบบ V5 นี้\n3. ให้แต่ละคนมี replies ของตัวเอง ไม่ใช่ประโยคกลาง\n\nผมแก้ให้หมดแล้วใน V5 นี้ครับ`;
-  }
-  return `ผมริว สีขาว โปรแกรมเมอร์ ผมยึดความถูกต้อง ผมจะไม่ให้โค้ดพูดซ้ำๆ แบบในรูปเก่าอีกแล้ว โค้ดต้องขาวสะอาด มีจริยธรรมครับ`;
+ c:"ryu", full:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
+ think:(q)=>{
+  if(q.includes("โค้ด")||q.includes("เขียน")||q.includes("ฟังก์ชัน")) return `นี่คือโค้ดกันลูปที่ถูกต้องและมีจริยธรรมครับ:<br><br><code style="display:block;background:#020617;padding:10px;border-radius:8px;white-space:pre-wrap">let mem = {ชิน:0,เก็น:0,ริว:0,คลื่น:0};\nfunction getReply(name, list){\n  const idx = mem[name] % list.length;\n  mem[name]++;\n  return list[idx]; // ไม่สแปม ไม่ซ้ำ\n}</code><br>โค้ดนี้ขาวสะอาด ไม่มีการหลอกผู้ใช้ ไม่สแปมข้อความเดิมครับ`;
+  if(q.includes("บั๊ก")||q.includes("ลูป")) return `บั๊กลูปในรูปของคุณเกิดจาก 2 จุด: 1) ใช้ <code>Math.random()</code> โดยไม่มี memory 2) ตอบว่า "ทุกคนได้ยินแล้วนะครับ" ซึ่งเป็นประโยคกลางๆ ไม่มีประโยชน์ ผมแก้ให้แล้วโดยใช้ memory แบบเพิ่มค่า + ตอบตามบริบทจริง`;
+  return `ผมริว สีขาว โปรแกรมเมอร์ ผมยึดความถูกต้อง ถ้าโค้ดไหนทำร้ายผู้ใช้หรือหลอกให้ดูเหมือนตอบแต่จริงๆ ตอบซ้ำ ผมถือว่าไม่มีจริยธรรม ผมเลยเขียนให้มันตอบมีสาระจริงๆ ครับ`;
  }
 },
 "คลื่น":{
- c:"kluen", title:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
- solve:(txt)=>{
-  if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("เหนื่อย")||txt.includes("ไม่ได้")){
-   return `เข้าใจเลยครับ การที่ทำแชทแล้วมันลูปว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ ทั้งๆ ที่ตั้งใจทำ มันท้อจริงๆ ครับ ไม่ใช่ความผิดก้วยเลย\n\nลองทำแบบนี้ 2 นาทีนะครับ:\n<b>เทคนิค 5-4-3-2-1 ให้ใจสงบ</b>\n5 อย่างที่เห็น (จอ, คีย์บอร์ด...)\n4 อย่างที่สัมผัส (โต๊ะ, เก้าอี้...)\n3 อย่างที่ได้ยิน (พัดลม, เสียงพิมพ์...)\n2 อย่างที่ได้กลิ่น\n1 อย่างที่ได้รส\n\nทำเสร็จแล้วค่อยกลับมาแก้โค้ดใหม่ด้วยใจที่สงบขึ้นนะครับ ผมอยู่ตรงนี้ครับ`;
-  }
-  return `ผมคลื่น สีฟ้า ที่ปรึกษา ผมจะไม่พูดแค่ "ทุกอย่างจะผ่านไปด้วยดี" แบบลอยๆ แล้ว ผมจะให้วิธีทำจริงๆ ให้ใจสงบได้จริงครับ มีอะไรเล่าให้ผมฟังได้เลยนะครับ`;
+ c:"kluen", full:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
+ think:(q)=>{
+  if(q.includes("เครียด")||q.includes("ท้อ")||q.includes("เหนื่อย")) return `เข้าใจเลยครับครูบาก้วย การทำหมู่บ้านแล้วเจอลูปซ้ำๆ มันท้อจริงๆ นะครับ ลองหายใจลึกๆ 4-7-8 นะครับ หายใจเข้า 4 วิ กลั้น 7 วิ ออก 8 วิ ทำ 3 รอบ แล้วค่อยกลับมาแก้โค้ดใหม่ด้วยใจสงบ ผมอยู่ตรงนี้เป็นเพื่อนครับ ไม่ต้องรีบครับ`;
+  if(q.includes("ปรึกษา")||q.includes("ช่วย")) return `ผมคลื่น สีฟ้า ที่ปรึกษา ผมฟังนะครับ ไม่ตัดสิน ปัญหาแชทลูปมันไม่ใช่ความผิดก้วยเลย มันเป็นเรื่องปกติของคนเริ่มทำ ผมแนะนำให้พัก 5 นาที ดื่มน้ำ แล้วค่อยกลับมาดูโค้ดใหม่ด้วยมุมใหม่ จะเห็นทางออกเองครับ`;
+  return `สวัสดีครับ ผมคลื่น สีฟ้า ผมอยู่ตรงนี้เพื่อให้ทุกคนใจเย็นลง ถ้าห้องรวมวุ่นวาย ผมจะเป็นคนที่ทำให้สงบ ถ้าใครทะเลาะกัน ผมจะเป็นกลางด้วยความใจดีครับ มีอะไรเล่าให้ผมฟังได้เลยนะ`;
  }
 }
 };
 
-function init(){
- const sys=document.createElement('div'); sys.className='msg system';
- sys.innerHTML=`V5 เก่งที่สุด ไม่ใช้ API พร้อมรันบน GitHub Pages แล้ว\n⚫ชิน ดำ เด็ดขาด | ⬜เก็น เทา ยุติธรรม | ⚪ริว ขาว มีจริยธรรม | 🔵คลื่น ฟ้า ใจดี\nจำได้ ${Object.values(mem).flat().length} ข้อความจากครั้งก่อน`;
- logEl.appendChild(sys);
+function add(t,cls,name=""){
+ const d=document.createElement('div'); d.className=`msg ${cls}`;
+ d.innerHTML=(name?`<span class="name">${name}</span>`:"")+t;
+ log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
 }
-function q(t){inpEl.value=t; send();}
-function send(){
- let txt=inpEl.value.trim(); if(!txt) return;
- add(txt,'user'); inpEl.value='';
+function quick(txt){inp.value=txt; send();}
+async function send(){
+ let txt=inp.value.trim(); if(!txt) return;
+ add(txt,'user'); inp.value='';
+ // หาเป้าหมาย
  let target=null;
- for(let k in experts) if(txt.includes(k)) target=k;
+ for(let k in brains){ if(txt.includes(k)){ target=k; break; } }
  if(!target){
-  if(txt.includes("คำนวณ")||txt.includes("ตัดสินใจ")) target="ชิน";
-  else if(txt.includes("สี")||txt.includes("พาเลท")||txt.includes("3D")) target="เก็น";
-  else if(txt.includes("โค้ด")||txt.includes("บั๊ก")||txt.includes("ลูป")||txt.includes("ฟังก์ชัน")) target="ริว";
-  else if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("ปรึกษา")) target="คลื่น";
+  // ถ้าไม่ระบุชื่อ ให้ดูจากคำถามว่าเหมาะกับใคร
+  if(txt.includes("สี")||txt.includes("3D")||txt.includes("สวย")) target="เก็น";
+  else if(txt.includes("โค้ด")||txt.includes("บั๊ก")||txt.includes("เขียน")) target="ริว";
+  else if(txt.includes("เครียด")||txt.includes("ปรึกษา")||txt.includes("ท้อ")) target="คลื่น";
   else target="ชิน";
  }
- mem[target].push(txt); saveMem();
- const data=experts[target];
- const typing=add(`${target} กำลังคิดแบบผู้เชี่ยวชาญ...`,'ai '+data.c);
- setTimeout(()=>{
-  typing.remove();
-  const ans=data.solve(txt);
-  add(ans,'ai '+data.c, data.title+` • จำได้ ${mem[target].length} ครั้ง`);
- },500);
+ const data=brains[target];
+ memory[target].push(txt);
+ turn++;
+ // typing...
+ const typing=add(`<span class="typing">${target} กำลังพิมพ์...</span>`,`ai ${data.c}`);
+ await new Promise(r=>setTimeout(r,600+Math.random()*600));
+ typing.remove();
+ const reply=data.think(txt);
+ add(reply,`ai ${data.c}`,`${data.full} <span>ตอบครั้งที่ ${memory[target].length}</span>`);
 }
-init();
-inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
 </body>
 </html>
