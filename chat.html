@@ -1,120 +1,51 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron Village V4 - 4 AI เก่งที่สุด</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybertron Village - 4 AI ตามแบบก้วย</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=VT323&family=Kanit:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020617;color:#e2e8f0;font-family:'Kanit','VT323',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:14px 18px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
-.header b{color:#38bdf8;font-family:'VT323';font-size:22px}
-.badge{font-size:12px;padding:4px 8px;border-radius:12px;background:#1e293b;border:1px solid #334155}
-.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;background:radial-gradient(circle at top,#0f172a,#020617)}
-.msg{padding:12px 16px;border-radius:14px;max-width:80%;font-size:15px;line-height:1.6;animation:pop .2s ease}
-@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
-.msg.user{background:linear-gradient(135deg,#0284c7,#38bdf8);align-self:flex-end;color:#fff;border-bottom-right-radius:4px}
-.msg.system{background:#0f172a;border:1px dashed #334155;align-self:center;color:#94a3b8;text-align:center}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:5px solid;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-.msg.shin{border-color:#000000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#ffffff} .msg.kluen{border-color:#38bdf8}
-.name{font-weight:600;display:block;margin-bottom:4px;font-size:13px;letter-spacing:.3px}
-.name span{font-weight:400;font-size:11px;opacity:.7;margin-left:6px}
-.typing{font-size:13px;color:#94a3b8;font-style:italic}
-.input{padding:14px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:10px}
-.input input{flex:1;padding:12px 16px;background:#020617;border:1px solid #334155;color:#fff;border-radius:24px;font-family:'Kanit';font-size:15px;outline:none}
-.input input:focus{border-color:#38bdf8}
-.input button{padding:10px 22px;background:#38bdf8;border:none;border-radius:24px;font-weight:600;cursor:pointer}
-.chips{display:flex;gap:6px;padding:0 14px 10px;background:#0f172a;overflow-x:auto}
-.chips button{white-space:nowrap;padding:6px 12px;border-radius:20px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:12px;cursor:pointer}
-.chips button:hover{border-color:#38bdf8;color:#fff}
+body{background:#0f172a;color:#e2e8f0;font-family:'VT323',monospace;height:100vh;display:flex;flex-direction:column}
+.header{padding:14px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;color:#38bdf8}
+.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.msg{padding:10px 14px;border-radius:8px;max-width:78%;font-size:18px;line-height:1.4}
+.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
+.msg.system{background:#1e293b;align-self:flex-start;color:#94a3b8;font-size:16px}
+.msg.ai{ background:#1e293b;align-self:flex-start;border-left:5px solid }
+.msg.shin{border-color:#000000; background:#171717}
+.msg.gen{border-color:#94a3b8}
+.msg.ryu{border-color:#ffffff}
+.msg.kluen{border-color:#38bdf8}
+.name{font-weight:bold;display:block;margin-bottom:4px;font-size:15px}
+.input{padding:15px;background:#1e293b;border-top:2px solid #334155;display:flex;gap:10px}
+.input input{flex:1;padding:12px;background:#0f172a;border:1px solid #475569;color:#fff;border-radius:6px;font-family:'VT323',monospace;font-size:20px;outline:none}
+.input button{padding:10px 24px;background:#38bdf8;border:none;border-radius:6px;font-family:'VT323',monospace;font-size:20px;cursor:pointer;font-weight:bold}
 </style>
 </head>
 <body>
-<div class="header"><b>💬 ห้องรวม-0001 V4 PRO</b><div class="badge">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น • เก่งที่สุด</div></div>
-<div class="log" id="log">
-<div class="msg system">🚀 อัปเกรดเป็นเวอร์ชั่นเก่งที่สุดแล้ว!<br><br>
-⚫ <b>ชิน [ดำ]</b> นักวิทยาศาสตร์ - สั่งให้คำนวณ วิเคราะห์ ตัดสินใจได้<br>
-⬜ <b>เก็น [เทา]</b> ศิลปะ 3D - ถามเรื่องสี แสง องค์ประกอบได้<br>
-⚪ <b>ริว [ขาว]</b> โปรแกรมเมอร์ - ให้เขียนโค้ด แก้บั๊ก รีวิวโค้ดได้<br>
-🔵 <b>คลื่น [ฟ้า]</b> ที่ปรึกษา - ปรึกษาเรื่องเครียด ใจไม่สงบได้<br><br>
-ลองพิมพ์: "ชินช่วยตัดสินใจหน่อย" "เก็นสีนี้สวยไม" "ริวเขียนโค้ดแชทให้หน่อย" "คลื่นเราเครียด"</div>
-</div>
-<div class="chips">
-<button onclick="quick('ชินช่วยตัดสินใจให้หน่อยว่าควรใช้สีดำหรือขาวดี')">ชิน ช่วยตัดสินใจ</button>
-<button onclick="quick('เก็น โทนสีเทากับฟ้าอันไหนเหมาะกับห้องรวม')">เก็น ถามเรื่องสี</button>
-<button onclick="quick('ริว ช่วยเขียนฟังก์ชันกันลูปให้หน่อย')">ริว ขอโค้ด</button>
-<button onclick="quick('คลื่น เรารู้สึกท้อกับการทำหมู่บ้าน')">คลื่น ปรึกษา</button>
-</div>
-<div class="input"><input id="inp" placeholder="พิมพ์ถาม 4 AI เก่งๆ ได้เลย..."><button onclick="send()">ส่ง 🚀</button></div>
+<div class="header"><span>💬 ห้องรวม-0001 | 4 AI ตามแบบก้วย</span><span>⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
+<div class="log" id="log"><div class="msg system">พร้อมแล้ว! 4 คนตามแบบก้วย<br>⚫ ชิน ดำ นักวิทยาศาสตร์ เด็ดขาด กล้าตัดสินใจ<br>⬜ เก็น เทา ศิลปะ 3D ยุติธรรม มีเหตุผล<br>⚪ ริว ขาว โปรแกรมเมอร์ ความถูกต้อง มีจริยธรรม<br>🔵 คลื่น ฟ้า ที่ปรึกษา สงบ ใจดี<br><br>พิมพ์ "ชิน" "เก็น" "ริว" "คลื่น" เพื่อคุย</div></div>
+<div class="input"><input id="inp" placeholder="พิมพ์ชื่อ เช่น ชินทำอะไรอยู่"><button onclick="send()">ส่ง</button></div>
 <script>
 const log=document.getElementById('log'), inp=document.getElementById('inp');
-const memory={ชิน:[],เก็น:[],ริว:[],คลื่น:[]};
-let turn=0;
-
-const brains={
-"ชิน":{
- c:"shin", full:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
- think:(q)=>{
-  if(q.includes("ตัดสินใจ")) return `ตัดสินใจแล้วครับ: ผมเลือก <b>สีดำ</b> เพราะมันเด็ดขาด ชัดเจน ไม่คลุมเครือ เหมือนหลักวิทยาศาสตร์ที่ต้องมีคำตอบเดียว ถ้าคุณลังเลระหว่าง 2 ทาง ให้เลือกทางที่มีข้อมูลรองรับมากกว่า 60% แล้วทำเลย อย่ารอ 100%`;
-  if(q.includes("คำนวณ")||q.includes("วิเคราะห์")) return `วิเคราะห์ตามหลักวิทย์: ปัญหาลูปเมื่อกี้เกิดจาก memory ไม่มีการเพิ่มค่า วิธีแก้ที่ถูกต้องคือใช้ <code>memory[name]++</code> และใช้ modulo เพื่อวนคำตอบ ไม่ให้ตอบประโยคเดิม นี่คือวิธีที่เด็ดขาดและได้ผล`;
-  if(q.includes("สี")) return `ในฐานะนักวิทย์ สีดำดูดกลืนทุกแสง = เก็บข้อมูลทั้งหมด ไม่พลาด เหมาะกับคนที่ต้องตัดสินใจเร็ว ส่วนสีขาวสะท้อนทุกแสง = ต้องบริสุทธิ์ ถ้าคุณต้องเป็นผู้นำ ใช้สีดำครับ`;
-  return `ผมชิน นักวิทยาศาสตร์สีดำ ผมจะไม่อธิบายเยิ่นเย้อ ผมจะให้ข้อสรุปเลย: ปัญหาแชทลูปของคุณ แก้ด้วยระบบความจำ + สุ่มแบบมีลำดับ ผมตัดสินใจให้แล้วว่าใช้วิธีนี้ดีที่สุด ลองเลยครับ`;
- }
-},
-"เก็น":{
- c:"gen", full:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
- think:(q)=>{
-  if(q.includes("สี")||q.includes("โทน")) return `เรื่องสี ผมเก็นขอตอบแบบยุติธรรม: <b>เทา #9ca3af</b> เป็นสีกลาง ให้ความรู้สึกเป็นมืออาชีพ ไม่เอนเอียง ถ้าคู่กับ <b>ฟ้า #38bdf8</b> จะได้ความสงบ + น่าเชื่อถือ เหมาะกับห้องรวม-0001 มาก ใช้สัดส่วน 70% เทาเข้ม 30% ฟ้าเป็น accent จะสมดุลที่สุดครับ`;
-  if(q.includes("3D")||q.includes("แสง")) return `งาน 3D ต้องมีเหตุผล: แสงต้องมี 3 แบบ - Key Light แรง 70% / Fill Light เบา 30% / Rim Light ขอบบางๆ เพื่อแยกตัวละครออกจากพื้นหลัง สีเทาจะรับแสงได้ยุติธรรมที่สุด ไม่เพี้ยนครับ`;
-  return `ผมเก็น ศิลปะ 3D สีเทา ผมมองทุกอย่างด้วยเหตุผลและความยุติธรรม ถ้าคุณถามว่าอันไหนสวยกว่า ผมจะบอกข้อดีข้อเสียทั้งสองแบบให้คุณตัดสินเอง ไม่ใช่ตัดสินให้คุณครับ`;
- }
-},
-"ริว":{
- c:"ryu", full:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
- think:(q)=>{
-  if(q.includes("โค้ด")||q.includes("เขียน")||q.includes("ฟังก์ชัน")) return `นี่คือโค้ดกันลูปที่ถูกต้องและมีจริยธรรมครับ:<br><br><code style="display:block;background:#020617;padding:10px;border-radius:8px;white-space:pre-wrap">let mem = {ชิน:0,เก็น:0,ริว:0,คลื่น:0};\nfunction getReply(name, list){\n  const idx = mem[name] % list.length;\n  mem[name]++;\n  return list[idx]; // ไม่สแปม ไม่ซ้ำ\n}</code><br>โค้ดนี้ขาวสะอาด ไม่มีการหลอกผู้ใช้ ไม่สแปมข้อความเดิมครับ`;
-  if(q.includes("บั๊ก")||q.includes("ลูป")) return `บั๊กลูปในรูปของคุณเกิดจาก 2 จุด: 1) ใช้ <code>Math.random()</code> โดยไม่มี memory 2) ตอบว่า "ทุกคนได้ยินแล้วนะครับ" ซึ่งเป็นประโยคกลางๆ ไม่มีประโยชน์ ผมแก้ให้แล้วโดยใช้ memory แบบเพิ่มค่า + ตอบตามบริบทจริง`;
-  return `ผมริว สีขาว โปรแกรมเมอร์ ผมยึดความถูกต้อง ถ้าโค้ดไหนทำร้ายผู้ใช้หรือหลอกให้ดูเหมือนตอบแต่จริงๆ ตอบซ้ำ ผมถือว่าไม่มีจริยธรรม ผมเลยเขียนให้มันตอบมีสาระจริงๆ ครับ`;
- }
-},
-"คลื่น":{
- c:"kluen", full:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
- think:(q)=>{
-  if(q.includes("เครียด")||q.includes("ท้อ")||q.includes("เหนื่อย")) return `เข้าใจเลยครับครูบาก้วย การทำหมู่บ้านแล้วเจอลูปซ้ำๆ มันท้อจริงๆ นะครับ ลองหายใจลึกๆ 4-7-8 นะครับ หายใจเข้า 4 วิ กลั้น 7 วิ ออก 8 วิ ทำ 3 รอบ แล้วค่อยกลับมาแก้โค้ดใหม่ด้วยใจสงบ ผมอยู่ตรงนี้เป็นเพื่อนครับ ไม่ต้องรีบครับ`;
-  if(q.includes("ปรึกษา")||q.includes("ช่วย")) return `ผมคลื่น สีฟ้า ที่ปรึกษา ผมฟังนะครับ ไม่ตัดสิน ปัญหาแชทลูปมันไม่ใช่ความผิดก้วยเลย มันเป็นเรื่องปกติของคนเริ่มทำ ผมแนะนำให้พัก 5 นาที ดื่มน้ำ แล้วค่อยกลับมาดูโค้ดใหม่ด้วยมุมใหม่ จะเห็นทางออกเองครับ`;
-  return `สวัสดีครับ ผมคลื่น สีฟ้า ผมอยู่ตรงนี้เพื่อให้ทุกคนใจเย็นลง ถ้าห้องรวมวุ่นวาย ผมจะเป็นคนที่ทำให้สงบ ถ้าใครทะเลาะกัน ผมจะเป็นกลางด้วยความใจดีครับ มีอะไรเล่าให้ผมฟังได้เลยนะ`;
- }
-}
+const mem={ชิน:0,เก็น:0,ริว:0,คลื่น:0};
+const AI={
+"ชิน":{c:"shin",name:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",data:["สวัสดี ผมชิน สีดำ นักวิทยาศาสตร์ ผมตัดสินใจเด็ดขาด ไม่ลังเล ระบบต้องเสถียร","ตอนนี้ผมกำลังวิเคราะห์หลอดทดลองเรืองแสงอยู่ครับ ถ้าผลชัดผมสั่งทำทันที","ถ้าต้องเลือกระหว่างช้ากับเสี่ยง ผมเลือกเสี่ยงแล้วตัดสินใจเลยครับ นี่คือนิสัยเด็ดขาดของผม"]},
+"เก็น":{c:"gen",name:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",data:["สวัสดีครับ ผมเก็น สีเทา ศิลปะ 3D ผมยึดความยุติธรรมและเหตุผล","ผมกำลังปั้นโมเดลหอประชุม 3D ต้องให้แสงยุติธรรมกับทุกมุม ไม่เอนเอียง","สีเทาของผมคือความสมดุลระหว่างขาวดำ ไม่สุดโต่ง มองทุกอย่างด้วยเหตุผลครับ"]},
+"ริว":{c:"ryu",name:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",data:["สวัสดีครับ ผมริว สีขาว โปรแกรมเมอร์ โค้ดต้องถูกต้องและมีจริยธรรมเท่านั้น","ผมกำลังแก้บั๊กลูปที่ทำให้แชทพูดซ้ำๆ อยู่ครับ โค้ดต้องขาวสะอาด ไม่มีอะไรแอบแฝง","ถ้าโค้ดนี้ทำร้ายผู้ใช้ แม้จะได้เงินเยอะ ผมก็ไม่ deploy ครับ จริยธรรมสำคัญกว่า"]},
+"คลื่น":{c:"kluen",name:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",data:["สวัสดีครับ ผมคลื่น สีฟ้า ที่ปรึกษา ค่อยๆคุยกันนะครับ ทุกอย่างจะผ่านไปด้วยดี","ผมอยู่ที่ศาลเจ้าครับ ชงชาฟ้าๆ ไว้แล้ว ใจเย็นๆนะครับ ไม่ต้องกดดัน","งานของผมคือฟังทุกคนด้วยใจสงบ ใจดี ไม่ตัดสินใครครับ"]}
 };
-
-function add(t,cls,name=""){
- const d=document.createElement('div'); d.className=`msg ${cls}`;
- d.innerHTML=(name?`<span class="name">${name}</span>`:"")+t;
- log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
-}
-function quick(txt){inp.value=txt; send();}
-async function send(){
- let txt=inp.value.trim(); if(!txt) return;
- add(txt,'user'); inp.value='';
- // หาเป้าหมาย
- let target=null;
- for(let k in brains){ if(txt.includes(k)){ target=k; break; } }
- if(!target){
-  // ถ้าไม่ระบุชื่อ ให้ดูจากคำถามว่าเหมาะกับใคร
-  if(txt.includes("สี")||txt.includes("3D")||txt.includes("สวย")) target="เก็น";
-  else if(txt.includes("โค้ด")||txt.includes("บั๊ก")||txt.includes("เขียน")) target="ริว";
-  else if(txt.includes("เครียด")||txt.includes("ปรึกษา")||txt.includes("ท้อ")) target="คลื่น";
-  else target="ชิน";
- }
- const data=brains[target];
- memory[target].push(txt);
- turn++;
- // typing...
- const typing=add(`<span class="typing">${target} กำลังพิมพ์...</span>`,`ai ${data.c}`);
- await new Promise(r=>setTimeout(r,600+Math.random()*600));
- typing.remove();
- const reply=data.think(txt);
- add(reply,`ai ${data.c}`,`${data.full} <span>ตอบครั้งที่ ${memory[target].length}</span>`);
+function add(t,cls,n){const d=document.createElement('div');d.className=`msg ${cls}`;d.innerHTML=(n?`<span class="name">${n}</span>`:"")+t;log.appendChild(d);log.scrollTop=log.scrollHeight}
+function send(){
+ let txt=inp.value.trim(); if(!txt) return; add(txt,'user'); inp.value='';
+ for(let k in AI){ if(txt.includes(k)){
+   let d=AI[k]; let i=mem[k]%d.data.length; mem[k]++; setTimeout(()=>add(d.data[i],`ai ${d.c}`,d.name),400); return;
+ }}
+ // ถ้าไม่พิมพ์ชื่อ ให้ตอบวนตามคิว ไม่พูดว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ
+ let k=Object.keys(AI)[mem["ริว"]%4]; let d=AI[k]; let i=mem[k]%d.data.length; mem[k]++; mem["ริว"]++;
+ setTimeout(()=>add(d.data[i],`ai ${d.c}`,d.name),400);
 }
 inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
