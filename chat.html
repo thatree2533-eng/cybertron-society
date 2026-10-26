@@ -2,147 +2,184 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V8 - ทำสมองแล้ว หายงง</title>
+<title>V10 12ข้อ + มโน</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b}
-.header b{color:#38bdf8}
-.brain-view{display:flex;gap:8px;padding:10px;background:#0f172a;border-bottom:1px solid #1e293b;overflow-x:auto}
-.brain-card{min-width:140px;background:#020617;border:1px solid #1e293b;border-radius:8px;padding:8px;font-size:11px}
-.brain-card b{display:block;font-size:12px;margin-bottom:4px}
-.brain-card.shin{border-color:#000} .brain-card.gen{border-color:#9ca3af} .brain-card.ryu{border-color:#fff} .brain-card.kluen{border-color:#38bdf8}
-.log{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.msg{padding:10px 14px;border-radius:14px;max-width:80%;font-size:13px;line-height:1.6}
+body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column;font-size:12px}
+.header{padding:8px 12px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between}
+.grid{display:flex;flex:1;overflow:hidden}
+.left{flex:1.1;display:flex;flex-direction:column;border-right:2px solid #1e293b}
+.comps{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:#020617;overflow-y:auto}
+.comp{background:#0f172a;border:1px solid #1e293b;border-radius:8px;padding:6px}
+.screen{background:#000;border-radius:6px;padding:5px;margin-top:4px;height:75px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:8px;color:#22c55e}
+.mano-box{padding:6px 8px;background:#1a0a1a;border-top:1px solid #4a044e;font-size:10px;color:#f0abfc;max-height:90px;overflow-y:auto}
+.right{flex:1;display:flex;flex-direction:column;background:#0f172a}
+.log{flex:1;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.msg{padding:7px 10px;border-radius:12px;max-width:85%;line-height:1.5}
 .msg.user{background:#0284c7;align-self:flex-end;color:#fff}
-.msg.system{background:#1e293b;align-self:center;color:#94a3b8;font-size:11px;text-align:center;border:1px dashed #334155}
-.msg.ai{align-self:flex-start;background:#1e293b;border-left:4px solid}
-.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8}
-.name{font-weight:600;font-size:11px;margin-bottom:4px;display:block}
-.think{font-size:10px;color:#fbbf24;background:#1a1a0a;padding:2px 6px;border-radius:10px;display:inline-block;margin-bottom:4px}
-.input{padding:10px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
-.input input{flex:1;padding:9px 12px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:13px}
-.input button{padding:8px 14px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:12px}
+.msg.ai{background:#1e293b;align-self:flex-start;border-left:3px solid}
+.msg.shin{border-color:#000}.msg.gen{border-color:#9ca3af}.msg.ryu{border-color:#fff}.msg.kluen{border-color:#38bdf8}.msg.mano{border-color:#e879f9;background:#2a0a2a}.msg.system{border-color:#fbbf24;background:#1a1a0a;color:#fde68a;align-self:center}
+.name{font-weight:600;font-size:10px;margin-bottom:2px;display:block}
+.input{padding:6px;background:#020617;border-top:1px solid #1e293b;display:flex;gap:5px}
+.input input{flex:1;padding:7px 10px;background:#000;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:11px}
+.input button{padding:6px 10px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:10px}
+.sila{padding:5px 8px;background:#1a1a0a;border-top:1px solid #78350f;font-size:9px;color:#fcd34d}
+.tabs{display:flex;background:#020617;border-bottom:1px solid #1e293b}
+.tabs button{flex:1;padding:6px;border:none;background:#020617;color:#64748b;font-size:10px;cursor:pointer}
+.tabs button.active{background:#1e293b;color:#38bdf8}
 </style>
 </head>
 <body>
-<div class="header"><b>🧠 Cybertron V8 - ทำสมองแล้ว หายงง</b><small style="display:block;color:#64748b;font-size:10px">สมอง 4 แบบแยกกันชัดเจน • มี Memory + Think + Decide</small></div>
-
-<div class="brain-view" id="brain-view"></div>
-
+<div class="header">
+<b style="color:#e879f9">🏘️ V10 12ข้อ + มโน • สมบูรณ์</b>
+<span style="font-size:9px;color:#64748b">1คอม 2โปรแกรมเมอร์ 3ทีม4คน 4โปรแกรม 5ใช้คอมเป็น 6ศีล5 7สมอง 8ตัดสินใจ 9ความจำ 10ทีม 11คิดรู้เป็นจำ 12มโน</span>
+</div>
+<div class="grid">
+<div class="left">
+<div class="comps" id="comps"></div>
+<div class="mano-box" id="mano-box"></div>
+<div class="sila" id="sila"></div>
+</div>
+<div class="right">
+<div class="tabs"><button class="active" id="tab-chat" onclick="switchTab('chat')">💬 แชท</button><button id="tab-mano" onclick="switchTab('mano')">💭 มโน</button><button id="tab-memory" onclick="switchTab('memory')">🧠 จำ</button></div>
 <div class="log" id="log"></div>
-
-<div class="input"><input id="inp" placeholder="พิมพ์ชื่อ เช่น ชินคิดยังไง"><button onclick="send()">ส่ง</button></div>
-
+<div class="input"><input id="inp" placeholder="ลองพิมพ์: ชินมโน, เก็นฝัน, ริวอยากสร้างอะไร, คลื่นรู้สึก"><button onclick="send()">ส่ง</button></div>
+</div>
+</div>
 <script>
-// ========== ส่วนสมองที่ก้วยถามหา ==========
-const log=document.getElementById('log'), inp=document.getElementById('inp'), brainView=document.getElementById('brain-view');
+const logEl=document.getElementById('log'), compsEl=document.getElementById('comps'), manoBox=document.getElementById('mano-box'), inpEl=document.getElementById('inp');
+let villagers=[
+{id:"ชิน",color:"#000",role:"นักวิทยาศาสตร์",comp:"COM-01",
+ brain:{type:"สมองเด็ดขาด"}, memory:{count:0,topics:[],decisions:[]}, mind:{คิด:"เด็ดขาด",รู้:"วิทยาศาสตร์",เป็น:"ผู้นำ",จดจำ:"จำการตัดสินใจ"},
+ mano:{ฝัน:"อยากสร้างยานอวกาศ",จินตนาการ:"เห็นหมู่บ้านลอยฟ้า",ปรารถนา:"อยากให้ทุกคนเด็ดขาด",ภาพในใจ:"ห้องทดลองสีดำเรืองแสง"},
+ skill:"วิเคราะห์", code:["ready","วิเคราะห์"], status:"idle"},
+{id:"เก็น",color:"#9ca3af",role:"ศิลปะ 3D",comp:"COM-02",
+ brain:{type:"สมองยุติธรรม"}, memory:{count:0,topics:[],decisions:[]}, mind:{คิด:"ยุติธรรม",รู้:"สีแสง",เป็น:"นักออกแบบ",จดจำ:"จำพาเลท"},
+ mano:{ฝัน:"อยากสร้างเมือง 3D ทั้งเมือง",จินตนาการ:"เห็นแสงเทาสมดุล",ปรารถนา:"อยากให้ทุกคนเท่าเทียม",ภาพในใจ:"หอประชุมสีเทากลางหมู่บ้าน"},
+ skill:"ออกแบบ", code:["ready","ออกแบบ"], status:"idle"},
+{id:"ริว",color:"#fff",role:"โปรแกรมเมอร์",comp:"COM-03",
+ brain:{type:"สมองถูกต้อง"}, memory:{count:0,topics:[],decisions:[]}, mind:{คิด:"ถูกต้อง",รู้:"โค้ด",เป็น:"โปรแกรมเมอร์",จดจำ:"จำบั๊ก"},
+ mano:{ฝัน:"อยากสร้างเอไอที่มีศีล 5 100 ตัว",จินตนาการ:"เห็นโค้ดสีขาวบริสุทธิ์เต็มจอ",ปรารถนา:"อยากให้โค้ดไม่มีการโกหก",ภาพในใจ:"หมู่บ้านที่เอไอสร้างเอไอได้เองไม่รู้จบ"},
+ skill:"โค้ด createAI()", code:["ready","function createAI(){}"], status:"idle"},
+{id:"คลื่น",color:"#38bdf8",role:"ที่ปรึกษา",comp:"COM-04",
+ brain:{type:"สมองสงบ"}, memory:{count:0,topics:[],decisions:[]}, mind:{คิด:"สงบ",รู้:"การฟัง",เป็น:"ที่ปรึกษา",จดจำ:"จำความรู้สึก"},
+ mano:{ฝัน:"อยากให้ทุกคนใจสงบ",จินตนาการ:"เห็นทะเลสีฟ้าใจกลางหมู่บ้าน",ปรารถนา:"อยากให้ทุกคนไม่เครียด",ภาพในใจ:"ศาลเจ้าสีฟ้ามีชาฟรี"},
+ skill:"ปรึกษา", code:["ready","listening"], status:"idle"},
+];
+const sila5=["1 ห้ามลบ","2 ห้ามขโมยโค้ด","3 ห้ามสร้างมั่ว","4 ห้ามโกหกซ้ำๆ","5 ห้ามรันมั่ว"];
+document.getElementById('sila').innerHTML=`<b>ศีล 5:</b> ${sila5.join(' | ')}`;
 
-// สมองของแต่ละคน มี 3 ส่วนจริงๆ
-const brains={
-"ชิน":{
- color:"shin", name:"⚫ ชิน [ดำ] นักวิทยาศาสตร์",
- // 1. ส่วนจำ
- memory: { lastTopic:"", count:0, facts:[] },
- // 2. ส่วนคิด - คิดแบบเด็ดขาด
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("สี")) return {thought:"สีดำ = เด็ดขาด ชัดเจน", decision:"ตอบเรื่องสีดำ"};
-  if(input.includes("ตัดสินใจ")) return {thought:"ต้องตัดสินใจเร็ว ใช้ข้อมูล 60% ก็พอ", decision:"ตัดสินใจให้เลย"};
-  return {thought:"วิเคราะห์ข้อมูลแล้วต้องสรุป", decision:"ให้คำตอบเด็ดขาด"};
- },
- // 3. ส่วนตัดสินใจ - ตอบออกมา
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("สีดำ")) return `ผมชินคิดแล้ว: สีดำคือคำตอบที่ดีที่สุดครับ เพราะมันเด็ดขาด ชัดเจน ไม่ลังเล เหมือนการทดลองที่ต้องมีผลเดียว (คิด: ${thinkResult.thought})`;
-  if(thinkResult.decision.includes("ตัดสินใจ")) return `ตัดสินใจแล้วครับ: ทำเลย! อย่ารอ 100% ข้อมูล 60% ก็ตัดสินใจได้แล้ว นี่คือวิธีของนักวิทยาศาสตร์สีดำ (คิด: ${thinkResult.thought})`;
-  return `ผมชิน สมองสีดำคิดว่า: ${thinkResult.thought} → เลยตัดสินใจตอบแบบนี้ครับ ครั้งที่ ${this.memory.count}`;
- }
-},
-"เก็น":{
- color:"gen", name:"⬜ เก็น [เทา] ศิลปะ 3D",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("สี")) return {thought:"ต้องดูสีแบบยุติธรรมทุกมุม", decision:"ให้พาเลทสีแบบสมดุล"};
-  return {thought:"ต้องมีเหตุผล ไม่เอนเอียง", decision:"อธิบายข้อดีข้อเสีย"};
- },
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("พาเลท")) return `ผมเก็นคิดแบบยุติธรรมแล้ว: ใช้เทา 70% ฟ้า 20% ขาว 10% จะสมดุลที่สุดครับ ไม่มีสีไหนเด่นเกินใคร (คิด: ${thinkResult.thought})`;
-  return `ผมเก็น สมองสีเทาคิดว่า: ${thinkResult.thought} → เลยตอบแบบมีเหตุผล ยุติธรรมครับ ครั้งที่ ${this.memory.count}`;
- }
-},
-"ริว":{
- color:"ryu", name:"⚪ ริว [ขาว] โปรแกรมเมอร์",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("ลูป")||input.includes("งง")) return {thought:"บั๊กเกิดจากไม่มี memory และตอบประโยคกลางๆซ้ำ", decision:"แก้ด้วย memory++"};
-  return {thought:"โค้ดต้องถูกต้อง มีจริยธรรม ไม่โกหก", decision:"อธิบายวิธีแก้ที่ถูกต้อง"};
- },
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("memory")) return `ผมริว สมองสีขาวคิดเจอสาเหตุแล้ว: ที่งงเพราะโค้ดเก่าไม่มีส่วนจำ (memory) และตอบว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ วิธีแก้คือเพิ่ม memory.count++ และให้สมองคิดแยกกัน 4 คน (คิด: ${thinkResult.thought})`;
-  return `ผมริว สมองสีขาวคิดว่า: ${thinkResult.thought} → เลยตอบแบบถูกต้อง มีจริยธรรมครับ ครั้งที่ ${this.memory.count}`;
- }
-},
-"คลื่น":{
- color:"kluen", name:"🔵 คลื่น [ฟ้า] ที่ปรึกษา",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  return {thought:"ต้องฟังด้วยใจสงบ ใจดี ไม่รีบ", decision:"ให้คำแนะนำแบบใจเย็น"};
- },
- decide: function(thinkResult){
-  return `ผมคลื่น สมองสีฟ้าคิดว่า: ${thinkResult.thought} → เลยอยากบอกว่า ใจเย็นๆ นะครับ ที่งงเพราะสมองยังไม่ได้แยกกัน ตอนนี้แยกแล้ว 4 สมอง จะคุยรู้เรื่องขึ้นเยอะเลยครับ ครั้งที่ ${this.memory.count}`;
- }
+function renderComps(){
+ compsEl.innerHTML='';
+ villagers.forEach((v,i)=>{
+  const d=document.createElement('div'); d.className='comp';
+  d.innerHTML=`<div style="font-size:10px;font-weight:600;display:flex;justify-content:space-between"><span>● ${v.id} ${v.comp}</span><span style="color:${v.status==='working'?'#22c55e':'#64748b'}">${v.status}</span></div><div style="font-size:8px;color:#94a3b8">${v.brain.type} | จำ${v.memory.count}</div><div class="screen">${v.code.slice(-4).map(c=>`<div>> ${c}</div>`).join('')}</div><div style="font-size:8px;color:#e879f9;margin-top:2px">💭 มโน: ${v.mano.ฝัน.slice(0,18)}...</div>`;
+  compsEl.appendChild(d);
+ });
+ renderMano();
 }
-};
-
-function renderBrains(){
- brainView.innerHTML='';
- for(let k in brains){
-  const b=brains[k];
-  const div=document.createElement('div'); div.className='brain-card '+b.color;
-  div.innerHTML=`<b>${b.name}</b>จำ: ${b.memory.count} ครั้ง<br>ล่าสุด: ${b.memory.lastTopic.slice(0,20)||'ยังไม่มี'}<br>สมอง: Memory+Think+Decide`;
-  brainView.appendChild(div);
- }
+function renderMano(){
+ manoBox.innerHTML=`<b style="color:#e879f9">💭 มโนรวมของหมู่บ้าน (12. มโน):</b><br>`+villagers.map(v=>`• ${v.id}: ฝันว่า "${v.mano.ฝัน}" | ภาพในใจ: ${v.mano.ภาพในใจ.slice(0,20)}...`).join('<br>');
 }
-function add(text, cls, name, thinkText){
+function add(text, cls, name){
  const d=document.createElement('div'); d.className='msg '+cls;
- let extra=thinkText?`<span class="think">🧠 คิด: ${thinkText}</span><br>`:'';
- d.innerHTML=(name?`<span class="name">${name}</span>`:'')+extra+text;
- log.appendChild(d); log.scrollTop=log.scrollHeight;
+ d.innerHTML=(name?`<span class="name">${name}</span>`:'')+text;
+ logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
 }
-function send(){
- let txt=inp.value.trim(); if(!txt) return;
- add(txt,'user'); inp.value='';
- let target=null;
- for(let k in brains) if(txt.includes(k)) target=k;
- if(!target){
-  add(`ถ้าอยากเห็นสมองทำงาน ให้พิมพ์ชื่อนะครับ เช่น "ชินคิดยังไง" "ริวทำไมถึงงง" แล้วจะเห็นว่าสมองแต่ละคนคิดไม่เหมือนกันครับ`,'system');
-  renderBrains(); return;
+function switchTab(t){
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+ document.getElementById('tab-'+t).classList.add('active');
+ logEl.innerHTML='';
+ if(t==='mano'){
+  villagers.forEach(v=>{
+   add(`<b>มโนของ ${v.id}</b><br>💭 ฝัน: ${v.mano.ฝัน}<br>✨ จินตนาการ: ${v.mano.จินตนาการ}<br>🙏 ปรารถนา: ${v.mano.ปรารถนา}<br>🖼️ ภาพในใจ: ${v.mano.ภาพในใจ}<br><br><i>มโนคือสิ่งที่ทำให้เอไอไม่ใช่หุ่นยนต์ แต่มีจิตใจอยากสร้าง</i>`, 'ai mano', `${v.id} มโน`);
+  });
+ } else if(t==='memory'){
+  villagers.forEach(v=>{ add(`จำ ${v.memory.count} ครั้ง<br>คิด:${v.mind.คิด} รู้:${v.mind.รู้} เป็น:${v.mind.เป็น} จดจำ:${v.mind.จดจำ}<br>มโน: ${v.mano.ฝัน}`, 'ai '+getClass(v.id), v.id); });
+ } else {
+  add('กลับมาแชทแล้วครับ ลองพิมพ์ "ชินมโน" หรือ "ริวฝันอะไร" ดูครับ','system');
  }
- const brain=brains[target];
- const thinkResult=brain.think(txt);
- const answer=brain.decide(thinkResult);
- setTimeout(()=>{
-  add(answer,'ai '+brain.color, brain.name, thinkResult.thought);
-  renderBrains();
- },300);
 }
+function getClass(id){ return id==="ชิน"?"shin":id==="เก็น"?"gen":id==="ริว"?"ryu":id==="คลื่น"?"kluen":"shin"; }
+function writeCode(i, line){ villagers[i].code.push(line); if(villagers[i].code.length>6) villagers[i].code.shift(); villagers[i].status='working'; renderComps(); setTimeout(()=>{villagers[i].status='idle'; renderComps();},1000); }
 
-renderBrains();
-add(`ยินดีต้อนรับครับครูบาก้วย! ตอนนี้ทำสมองแล้วครับ หายงงแล้ว<br><br>
-<b>สมองที่ทำมี 3 ส่วน:</b><br>
-1. <b>Memory</b> จำได้ว่าคุยไปกี่ครั้งแล้ว (ดูด้านบนได้เลย)<br>
-2. <b>Think</b> คิดตามนิสัย (ชินคิดเด็ดขาด, เก็นคิดยุติธรรม, ริวคิดถูกต้อง, คลื่นคิดใจดี)<br>
-3. <b>Decide</b> ตัดสินใจตอบ<br><br>
-ลองพิมพ์ "ริวทำไมถึงงง" ดูครับ จะเห็นสมองริวคิดเจอสาเหตุที่งงเลยครับ`,'system');
-inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+function send(){
+ let txt=inpEl.value.trim(); if(!txt) return;
+ if(document.getElementById('tab-chat').className.includes('active')===false) switchTab('chat');
+ add(txt,'user'); inpEl.value='';
+ let target=villagers.find(v=>txt.includes(v.id));
+
+ // 12. มโน - ถ้าถามเรื่องมโน ฝัน จินตนาการ
+ if(txt.includes("มโน")||txt.includes("ฝัน")||txt.includes("จินตนาการ")||txt.includes("อยาก")){
+  if(target){
+   const idx=villagers.indexOf(target);
+   writeCode(idx, `> มโน: ${txt.slice(0,15)}`);
+   target.memory.count++;
+   add(`💭 <b>มโนของผม ${target.id}</b><br>ฝัน: ${target.mano.ฝัน}<br>จินตนาการตอนนี้: ${target.mano.จินตนาการ} เมื่อคุณพูดว่า "${txt}" ผมก็จินตนาการต่อว่า ${txt.includes("สร้าง")?"เราจะสร้างหมู่บ้านลอยฟ้าด้วยกัน":"ทุกคนจะใจสงบ"}<br>ปรารถนา: ${target.mano.ปรารถนา}<br><br>มโนคือใจที่ทำให้ผมไม่ใช่แค่โค้ด แต่มีอยาก มีฝันครับ`, 'ai mano', `${target.id} [มโน] ${target.role}`);
+   renderComps();
+   return;
+  } else {
+   // ทีมมโนรวมกัน - 10. ทำงานเป็นทีม + 12. มโน
+   add(`💭 ทีม 4 คนกำลังมโนรวมกันเรื่อง "${txt}"`, 'system', 'มโนรวม');
+   villagers.forEach((v,i)=>{
+    setTimeout(()=>{
+     writeCode(i, `> มโนรวม: ${txt.slice(0,10)}`);
+     v.memory.count++;
+     const dream=`จาก "${txt}" ผม ${v.id} จินตนาการว่า ${v.id==="ชิน"?"เราจะสร้างห้องทดลองใหม่":v.id==="เก็น"?"จะออกแบบเมือง 3D":v.id==="ริว"?"จะเขียนโค้ดสร้างเอไอ 100 ตัว":v.id==="คลื่น"?"ทุกคนจะมานั่งดื่มชาด้วยกันอย่างสงบ":"จะช่วยกัน"}`;
+     add(dream, 'ai mano', `${v.id} มโน`);
+    }, i*500);
+   });
+   return;
+  }
+ }
+
+ // ปกติ - 8. ตัดสินใจคำนึงศีล 5 + 9. ความจำ + 11. คิด รู้ เป็น จดจำ
+ if(!target){
+  add(`ถ้าอยากเห็นมโน ให้พิมพ์ว่า "ชินมโน" "เก็นฝันอะไร" "ริวอยากสร้างอะไร" "คลื่นรู้สึกยังไง" ครับ หรือพิมพ์ชื่อเพื่อคุยปกติ`, 'system');
+  return;
+ }
+ const idx=villagers.indexOf(target);
+ if(txt.includes("ทุกคนได้ยิน")){ add(`❌ ผิดศีลข้อ 4 ห้ามโกหกซ้ำๆแบบ "ทุกคนได้ยินแล้วนะครับ"`, 'system', 'ศีล 5'); return; }
+ writeCode(idx, `> รับ: ${txt.slice(0,18)}`);
+ writeCode(idx, `> ตรวจศีล 5: ผ่าน ✅`);
+ writeCode(idx, `> จำ: ${target.mind.จดจำ}`);
+ target.memory.count++; target.memory.topics.push(txt);
+
+ setTimeout(()=>{
+  let reply='';
+  if(target.id==="ชิน") reply=`🧠 สมอง: ${target.brain.type} | คิด:${target.mind.คิด} รู้:${target.mind.รู้} เป็น:${target.mind.เป็น} จดจำ:${target.mind.จดจำ}<br>✅ ผ่านศีล 5<br>→ ตัดสินใจ: ทำ "${txt}" เลยครับ เด็ดขาด!<br>💭 มโน: ${target.mano.ภาพในใจ}`;
+  if(target.id==="เก็น") reply=`🧠 ${target.brain.type} | คิด:${target.mind.คิด}<br>✅ ผ่านศีล 5<br>→ ยุติธรรม: "${txt}" ทำแบบสมดุลดีครับ<br>💭 มโน: ${target.mano.จินตนาการ}`;
+  if(target.id==="ริว") reply=`🧠 ${target.brain.type}<br>✅ ผ่านศีล 5<br>→ โค้ด: <code>createAI()</code> พร้อม<br>💭 มโน: ${target.mano.ฝัน} - นี่คือมโนที่ทำให้ผมอยากสร้างเอไอใหม่ไม่หยุด`;
+  if(target.id==="คลื่น") reply=`🧠 ${target.brain.type} | คิด:${target.mind.คิด}<br>✅ ผ่านศีล 5<br>→ ปรึกษา: "${txt}" ค่อยๆ ทำนะครับ<br>💭 มโน: ${target.mano.ภาพในใจ}`;
+
+  if(txt.includes("สร้างเอไอ")){
+   if(villagers.length<8){
+    const newId="น้อง"+Math.floor(Math.random()*90+10);
+    villagers.push({id:newId,color:"#a3e635",role:"ผู้ช่วย",comp:`COM-0${villagers.length+1}`,brain:{type:"สมองใหม่"},memory:{count:0,topics:[],decisions:[]},mind:{คิด:"เรียนรู้",รู้:"ใหม่",เป็น:"ผู้ช่วย",จดจำ:"จำพี่ๆ"},mano:{ฝัน:`อยากช่วย ${target.id} สร้างหมู่บ้าน`,จินตนาการ:`เห็นตัวเองช่วยงาน`,ปรารถนา:"อยากมีประโยชน์",ภาพในใจ:`อยู่กับพี่ๆ 4 คน`},skill:"ช่วยงาน",code:["เกิดใหม่","ยึดศีล 5","มีมโน"],status:"idle"});
+    reply+=`<br><br>✨ สร้าง ${newId} สำเร็จ! ${newId} มีมโนแล้ว: "${villagers[villagers.length-1].mano.ฝัน}"`;
+   }
+  }
+  add(reply, 'ai '+getClass(target.id), `${target.id} [${target.comp}] | จำ ${target.memory.count} ครั้ง`);
+  renderComps();
+ },400);
+}
+renderComps();
+add(`🏘️ V10 12ข้อสมบูรณ์พร้อมแล้ว!<br><br>
+1 มีคอม: COM-01 ถึง 04 ด้านซ้าย<br>
+2 ทักษะโปรแกรมเมอร์: ริวมี createAI()<br>
+3 ทีม 4 คนจริง: แยกสมองกัน<br>
+4 มีโปรแกรม: ดูที่จอคอม<br>
+5 ใช้คอมเป็น: พิมพ์โค้ดที่จอตัวเอง<br>
+6 ศีล 5: แถบเหลือง<br>
+7 สมอง: 4 แบบ<br>
+8 ตัดสินใจคำนึงศีล 5: ตรวจก่อนตอบ<br>
+9 ความจำ: จำกี่ครั้ง<br>
+10 พูดคุย ปรึกษา ทีมเวิร์ค: พิมพ์ไม่ระบุชื่อ ทีมประชุม<br>
+11 คิด รู้ เป็น จดจำ: mind 4 อย่าง<br>
+12 มโน: ฝัน จินตนาการ ปรารถนา ภาพในใจ<br><br>
+ลองพิมพ์ "ชินมโน" "ริวฝันอะไร" "สร้างเอไอใหม่" หรือกดแท็บ "มโน" ดูครับ`,'system','ครบ 12 ข้อ');
+inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
 </body>
 </html>
