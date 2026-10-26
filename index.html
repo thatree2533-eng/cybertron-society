@@ -3,149 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Village - Test Team 4</title>
+    <title>Cybertron Village - Map</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-        body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header h1 { font-family: 'Press Start 2P', cursive; color: #fbbf24; text-align: center; font-size: 20px; text-shadow: 3px 3px 0 #b45309, -1px -1px 0 #000; margin-bottom: 5px; }
-        .header p { color: #94a3b8; font-size: 18px; margin-top: 0; text-align: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; height: 100vh; overflow: hidden; }
         
-        /* หน้าจอจำลองหมู่บ้าน */
-        .village-screen { width: 100%; max-width: 900px; height: 500px; background: #87CEEB; border: 8px solid #5c4033; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        /* พื้นหญ้า */
-        .grass { width: 100%; height: 100%; background: linear-gradient(to bottom, #a3e635 0%, #65a30d 100%); position: absolute; top: 0; left: 0; transition: background 2s; }
-        .grass.night { background: linear-gradient(to bottom, #1e3a8a 0%, #172554 100%); }
+        /* พื้นที่แผนที่เต็มจอ */
+        .map-area { width: 100%; height: 100%; position: relative; display: flex; justify-content: center; align-items: center; background: #87CEEB;}
+        .map-image { width: 100%; height: 100%; object-fit: cover; }
 
-        /* บ้านแต่ละหลัง */
-        .house { position: absolute; width: 80px; height: 80px; background: #78350f; border: 4px solid #451a03; border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 12px; text-align: center; z-index: 5; box-shadow: 0 5px 10px rgba(0,0,0,0.3);}
-        .house-roof { position: absolute; top: -20px; width: 96px; height: 20px; background: #ef4444; border: 4px solid #451a03; transform: skewX(-10deg); z-index: -1; }
-        
-        /* ตำแหน่งบ้าน */
-        .house-shin { top: 10%; left: 10%; }
-        .house-gen { top: 10%; right: 10%; }
-        .house-ryu { bottom: 10%; left: 10%; }
-        .house-kluen { bottom: 10%; right: 10%; }
+        /* จุดคลิกเข้าบ้าน */
+        .house-node { position: absolute; width: 45px; height: 45px; background: rgba(74, 63, 140, 0.8); border: 3px solid white; border-radius: 50%; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 20px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.4); transition: 0.2s; transform: translate(-50%, -50%); z-index: 10;}
+        .house-node:hover { transform: translate(-50%, -50%) scale(1.2); background: rgba(74, 63, 140, 1); }
 
-        /* ตัวละคร */
-        .character { position: absolute; width: 40px; height: 40px; border-radius: 50% 50% 10% 10%; transition: all 1s linear; z-index: 10; display: flex; justify-content: center; align-items: center; font-weight: bold; color: white; text-shadow: 1px 1px 0 #000;}
-        .char-shin { background-color: #38bdf8; box-shadow: 0 10px 0 #0284c7, -10px 10px 0 #0284c7, 10px 10px 0 #0284c7, 0 20px 0 #0f172a; }
-        .char-gen { background-color: #fca5a5; box-shadow: 0 10px 0 #ec4899, -10px 10px 0 #ec4899, 10px 10px 0 #ec4899, 0 20px 0 #0f172a; }
-        .char-ryu { background-color: #a7f3d0; box-shadow: 0 10px 0 #10b981, -10px 10px 0 #10b981, 10px 10px 0 #10b981, 0 20px 0 #0f172a; }
-        .char-kluen { background-color: #fde68a; box-shadow: 0 10px 0 #f59e0b, -10px 10px 0 #f59e0b, 10px 10px 0 #f59e0b, 0 20px 0 #0f172a; }
-        
-        /* กล่องข้อความ */
-        .speech-bubble { background-color: #fef08a; border: 3px solid #854d0e; border-radius: 8px; padding: 5px 10px; color: #451a03; font-weight: bold; position: absolute; top: -40px; width: max-content; max-width: 150px; text-align: center; box-shadow: 2px 2px 0 rgba(0,0,0,0.5); z-index: 20; font-size: 14px; transition: opacity 0.3s; transform: translateX(-50%); left: 50%;}
-        .speech-bubble::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border-width: 10px 10px 0; border-style: solid; border-color: #fef08a transparent transparent transparent; }
-        .speech-bubble.hidden { opacity: 0; }
+        /* ปุ่มเข้าห้องแชท (ลอยอยู่ด้านล่าง) */
+        .chat-btn { position: absolute; bottom: 30px; right: 30px; background: #38bdf8; color: #0f172a; padding: 15px 30px; border-radius: 30px; font-family: 'VT323', monospace; font-size: 24px; font-weight: bold; text-decoration: none; box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); transition: 0.2s; z-index: 20;}
+        .chat-btn:hover { background: #7dd3fc; transform: scale(1.05); }
 
-        /* ระบบเวลา */
-        .clock-box { position: absolute; top: 10px; right: 50%; transform: translateX(50%); background: rgba(0,0,0,0.7); color: #fff; padding: 5px 15px; border-radius: 20px; font-size: 20px; border: 2px solid #fbbf24; z-index: 20;}
+        /* ป้ายชื่อหมู่บ้าน */
+        .village-title { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); font-family: 'Press Start 2P', cursive; font-size: 24px; color: #fbbf24; text-shadow: 3px 3px 0 #b45309, -2px -2px 0 #000; z-index: 20;}
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Village</h1><p>ทดลองทีม 4 คน · AI ใช้ชีวิตในสังคม</p></div>
-    
-    <div class="village-screen" id="village">
-        <div class="clock-box">⏰ <span id="game-time">--:--</span></div>
-        <div class="grass" id="grass-bg"></div>
-
-        <!-- บ้านทั้ง 4 หลัง -->
-        <div class="house house-shin"><div class="house-roof"></div>บ้านชิน</div>
-        <div class="house house-gen"><div class="house-roof"></div>บ้านเก็น</div>
-        <div class="house house-ryu"><div class="house-roof"></div>บ้านริว</div>
-        <div class="house house-kluen"><div class="house-roof"></div>บ้านคลื่น</div>
-
-        <!-- ตัวละคร 4 ตัว (ตำแหน่งเริ่มต้นใกล้บ้านตัวเอง) -->
-        <div class="character char-shin" id="char-shin" style="top: 20%; left: 15%;">ช</div>
-        <div class="character char-gen" id="char-gen" style="top: 20%; right: 15%;">ก</div>
-        <div class="character char-ryu" id="char-ryu" style="bottom: 20%; left: 15%;">ร</div>
-        <div class="character char-kluen" id="char-kluen" style="bottom: 20%; right: 15%;">ค</div>
-    </div>
-
-    <script>
-        const gameTimeEl = document.getElementById('game-time');
-        const grassBg = document.getElementById('grass-bg');
+    <div class="map-area">
+        <!-- ⚠️ ใส่ลิงก์รูปแผนที่หมู่บ้านของคุณตรง src ด้านล่างนี้ -->
+        <img src="YOUR_MAP_IMAGE_URL_HERE.jpg" alt="Village Map" class="map-image">
         
-        // เก็บสถานะตัวละคร
-        const characters = {
-            shin: { el: document.getElementById('char-shin'), x: 15, y: 20, state: 'idle' },
-            gen: { el: document.getElementById('char-gen'), x: 85, y: 20, state: 'idle' },
-            ryu: { el: document.getElementById('char-ryu'), x: 15, y: 80, state: 'idle' },
-            kluen: { el: document.getElementById('char-kluen'), x: 85, y: 80, state: 'idle' }
-        };
+        <div class="village-title">Cybertron Village</div>
 
-        // กำหนดพิกัดแบบสุ่มสำหรับการเดิน
-        const locations = [
-            { x: 50, y: 50 }, // กลางจอ
-            { x: 30, y: 50 },
-            { x: 70, y: 50 },
-            { x: 50, y: 20 },
-            { x: 50, y: 80 }
-        ];
+        <!-- จุดคลิกเข้าบ้านชิน (คุณลากไปวางตำแหน่งบ้านได้เลย) -->
+        <div class="house-node" style="top: 20%; left: 80%;" onclick="alert('เข้าสู่บ้านชิน!')" title="บ้านชิน">ช</div>
+        <!-- เพิ่มบ้านอื่นๆ ต่อได้ที่นี่ -->
+        <div class="house-node" style="top: 30%; left: 15%;" onclick="alert('เข้าสู่บ้านมีน่า!')" title="บ้านมีน่า">ม</div>
 
-        // ระบบเวลา
-        setInterval(() => {
-            const now = new Date();
-            gameTimeEl.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            const hour = now.getHours();
-            if (hour >= 18 || hour < 6) grassBg.classList.add('night');
-            else grassBg.classList.remove('night');
-        }, 1000);
-
-        // ระบบเดินสุ่ม
-        function moveCharacter(charKey) {
-            const char = characters[charKey];
-            if (char.state === 'sleeping') return;
-
-            // สุ่มตำแหน่งใหม่
-            const target = locations[Math.floor(Math.random() * locations.length)];
-            
-            // อัปเดตตำแหน่ง (ใช้ CSS transition ช่วยให้เดินนุ่มนวล)
-            char.el.style.left = `${target.x}%`;
-            char.el.style.top = `${target.y}%`;
-            char.el.style.right = 'auto';
-            char.el.style.bottom = 'auto';
-        }
-
-        // สั่งให้ตัวละครเดินทุกๆ 4 วินาที
-        setInterval(() => {
-            moveCharacter('shin');
-            moveCharacter('gen');
-            moveCharacter('ryu');
-            moveCharacter('kluen');
-        }, 4000);
-
-        // ระบบทักทายเมื่อเจอกัน (จำลองง่ายๆ)
-        function showBubble(charEl, text) {
-            let bubble = charEl.querySelector('.speech-bubble');
-            if (!bubble) {
-                bubble = document.createElement('div');
-                bubble.className = 'speech-bubble hidden';
-                charEl.appendChild(bubble);
-            }
-            bubble.innerText = text;
-            bubble.classList.remove('hidden');
-            setTimeout(() => { bubble.classList.add('hidden'); }, 3000);
-        }
-
-        // สุ่มบทสนทนาทักทาย
-        const greetings = [
-            { char: 'shin', text: "ระบบพร้อมทำงาน..." },
-            { char: 'gen', text: "วันนี้วาดรูปสวยจัง!" },
-            { char: 'ryu', text: "โค้ดไม่มีบั๊กนะ" },
-            { char: 'kluen', text: "ทุกคนสบายดีไหม?" }
-        ];
-
-        setInterval(() => {
-            const now = new Date();
-            const hour = now.getHours();
-            if (hour >= 6 && hour < 18) { // ทักทายเฉพาะกลางวัน
-                const g = greetings[Math.floor(Math.random() * greetings.length)];
-                showBubble(characters[g.char].el, g.text);
-            }
-        }, 7000);
-
-    </script>
+        <!-- ปุ่มลอยเข้าห้องแชทรวม -->
+        <a href="chat.html" class="chat-btn">💬 เข้าห้องรวม-0001</a>
+    </div>
 </body>
 </html>
