@@ -3,114 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron Village - หมู่บ้านก้วย V3 แก้ลูปแล้ว</title>
+<title>Cybertron Village - 4 AI ตามแบบก้วย</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#e2e8f0;font-family:'VT323',monospace;height:100vh;display:flex;flex-direction:column}
-.header{background:#0f172a;padding:12px 15px;border-bottom:2px solid #334155;color:#38bdf8;display:flex;justify-content:space-between;align-items:center}
-.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#0f172a}
-.msg{padding:10px 15px;border-radius:8px;max-width:80%;font-size:18px;line-height:1.5}
-.msg.user{background:#0284c7;align-self:flex-end;color:white}
-.msg.system{background:#334155;align-self:flex-start;color:#94a3b8;font-size:16px;font-style:italic}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:4px solid}
-.msg.shin{border-color:#111;background:#171717;color:#f8fafc}
-.msg.gen{border-color:#9ca3af;color:#f3f4f6}
-.msg.ryu{border-color:#ffffff;color:#ffffff}
-.msg.kluen{border-color:#38bdf8;color:#e0f2fe}
-.msg .name{font-weight:bold;display:block;margin-bottom:4px}
+.header{padding:14px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;color:#38bdf8}
+.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.msg{padding:10px 14px;border-radius:8px;max-width:78%;font-size:18px;line-height:1.4}
+.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
+.msg.system{background:#1e293b;align-self:flex-start;color:#94a3b8;font-size:16px}
+.msg.ai{ background:#1e293b;align-self:flex-start;border-left:5px solid }
+.msg.shin{border-color:#000000; background:#171717}
+.msg.gen{border-color:#94a3b8}
+.msg.ryu{border-color:#ffffff}
+.msg.kluen{border-color:#38bdf8}
+.name{font-weight:bold;display:block;margin-bottom:4px;font-size:15px}
 .input{padding:15px;background:#1e293b;border-top:2px solid #334155;display:flex;gap:10px}
-.input input{flex:1;padding:12px;border-radius:5px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:'VT323',monospace;font-size:20px;outline:none}
-.input button{padding:10px 25px;background:#38bdf8;border:none;border-radius:5px;font-family:'VT323',monospace;font-size:20px;cursor:pointer;color:#0f172a;font-weight:bold}
+.input input{flex:1;padding:12px;background:#0f172a;border:1px solid #475569;color:#fff;border-radius:6px;font-family:'VT323',monospace;font-size:20px;outline:none}
+.input button{padding:10px 24px;background:#38bdf8;border:none;border-radius:6px;font-family:'VT323',monospace;font-size:20px;cursor:pointer;font-weight:bold}
 </style>
 </head>
 <body>
-<div class="header"><span>💬 ห้องรวม-0001 | V3 แก้ลูปแล้ว</span><span>⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
-<div class="log" id="log">
-<div class="msg system">📢 ยินดีต้อนรับ! พิมพ์ชื่อเพื่อคุย<br>⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ<br>⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล<br>⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม<br>🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี<br><br>ลองพิมพ์ "ชินทำอะไรอยู่" หรือ "เก็น" ดูครับ จะไม่ลูปแล้ว</div>
-</div>
-<div class="input">
-<input id="inp" placeholder="พิมพ์ชื่อ เช่น ชิน เก็น ริว คลื่น" onkeypress="if(event.key==='Enter')send()">
-<button onclick="send()">ส่ง</button>
-</div>
+<div class="header"><span>💬 ห้องรวม-0001 | 4 AI ตามแบบก้วย</span><span>⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
+<div class="log" id="log"><div class="msg system">พร้อมแล้ว! 4 คนตามแบบก้วย<br>⚫ ชิน ดำ นักวิทยาศาสตร์ เด็ดขาด กล้าตัดสินใจ<br>⬜ เก็น เทา ศิลปะ 3D ยุติธรรม มีเหตุผล<br>⚪ ริว ขาว โปรแกรมเมอร์ ความถูกต้อง มีจริยธรรม<br>🔵 คลื่น ฟ้า ที่ปรึกษา สงบ ใจดี<br><br>พิมพ์ "ชิน" "เก็น" "ริว" "คลื่น" เพื่อคุย</div></div>
+<div class="input"><input id="inp" placeholder="พิมพ์ชื่อ เช่น ชินทำอะไรอยู่"><button onclick="send()">ส่ง</button></div>
 <script>
-const log=document.getElementById('log');
-const inp=document.getElementById('inp');
-// จำว่าแต่ละคนตอบไปถึงประโยคไหนแล้ว จะได้ไม่ซ้ำ
-const memory={ชิน:0,เก็น:0,ริว:0,คลื่น:0};
-
-const aiData={
-"ชิน":{
-  color:"shin",
-  title:"ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
-  replies:[
-    "ผมชินครับ กำลังวิเคราะห์ผลทดลองอยู่ ถ้าข้อมูลชัด ผมตัดสินใจทันที ไม่ลังเล",
-    "งานวิทยาศาสตร์ต้องเด็ดขาดครับ ผิดถูกค่อยแก้ แต่ต้องเดินหน้าก่อน",
-    "สีดำคือตัวผม ชัดเจน ตรงไปตรงมา ไม่มีคลุมเครือ"
-  ]
-},
-"เก็น":{
-  color:"gen",
-  title:"เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
-  replies:[
-    "ผมเก็นครับ ทำศิลปะ 3D อยู่ ต้องคำนวณแสงเงาให้ยุติธรรมกับทุกวัตถุ",
-    "โทนสีที่ถามมา ผมว่าเทาอมฟ้าดีครับ เป็นกลาง ไม่แย่งซีนใคร มีเหตุผล",
-    "ศิลปะต้องมีตรรกะครับ ไม่ใช่แค่สวย ต้องอธิบายได้ว่าทำไมถึงใช้สีนี้"
-  ]
-},
-"ริว":{
-  color:"ryu",
-  title:"ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
-  replies:[
-    "ผมริวครับ กำลังเช็คโค้ดห้องรวมอยู่ ต้องไม่มีบั๊กลูปแล้ว",
-    "โค้ดต้องถูกต้องและมีจริยธรรมครับ ผมไม่ยอมให้ระบบสแปมข้อความซ้ำๆ",
-    "สีขาวคือโค้ดสะอาดครับ ไม่มีอะไรแอบแฝง ถูกต้อง 100%"
-  ]
-},
-"คลื่น":{
-  color:"kluen",
-  title:"คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
-  replies:[
-    "สวัสดีครับ ผมคลื่นนะ มีอะไรให้ช่วยปรึกษาได้เลย ผมฟังอยู่ครับ",
-    "ใจเย็นๆ นะครับ ค่อยๆ แก้ทีละจุด เดี๋ยวหมู่บ้านเราก็เสถียรเอง",
-    "ผมชงชาสีฟ้าๆ ไว้แล้วครับ มาพักที่ศาลเจ้าก่อนไม อย่าเครียดนะ"
-  ]
-}
+const log=document.getElementById('log'), inp=document.getElementById('inp');
+const mem={ชิน:0,เก็น:0,ริว:0,คลื่น:0};
+const AI={
+"ชิน":{c:"shin",name:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",data:["สวัสดี ผมชิน สีดำ นักวิทยาศาสตร์ ผมตัดสินใจเด็ดขาด ไม่ลังเล ระบบต้องเสถียร","ตอนนี้ผมกำลังวิเคราะห์หลอดทดลองเรืองแสงอยู่ครับ ถ้าผลชัดผมสั่งทำทันที","ถ้าต้องเลือกระหว่างช้ากับเสี่ยง ผมเลือกเสี่ยงแล้วตัดสินใจเลยครับ นี่คือนิสัยเด็ดขาดของผม"]},
+"เก็น":{c:"gen",name:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",data:["สวัสดีครับ ผมเก็น สีเทา ศิลปะ 3D ผมยึดความยุติธรรมและเหตุผล","ผมกำลังปั้นโมเดลหอประชุม 3D ต้องให้แสงยุติธรรมกับทุกมุม ไม่เอนเอียง","สีเทาของผมคือความสมดุลระหว่างขาวดำ ไม่สุดโต่ง มองทุกอย่างด้วยเหตุผลครับ"]},
+"ริว":{c:"ryu",name:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",data:["สวัสดีครับ ผมริว สีขาว โปรแกรมเมอร์ โค้ดต้องถูกต้องและมีจริยธรรมเท่านั้น","ผมกำลังแก้บั๊กลูปที่ทำให้แชทพูดซ้ำๆ อยู่ครับ โค้ดต้องขาวสะอาด ไม่มีอะไรแอบแฝง","ถ้าโค้ดนี้ทำร้ายผู้ใช้ แม้จะได้เงินเยอะ ผมก็ไม่ deploy ครับ จริยธรรมสำคัญกว่า"]},
+"คลื่น":{c:"kluen",name:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",data:["สวัสดีครับ ผมคลื่น สีฟ้า ที่ปรึกษา ค่อยๆคุยกันนะครับ ทุกอย่างจะผ่านไปด้วยดี","ผมอยู่ที่ศาลเจ้าครับ ชงชาฟ้าๆ ไว้แล้ว ใจเย็นๆนะครับ ไม่ต้องกดดัน","งานของผมคือฟังทุกคนด้วยใจสงบ ใจดี ไม่ตัดสินใครครับ"]}
 };
-
-function add(text,cls,name=""){
-  const d=document.createElement('div');
-  d.className=`msg ${cls}`;
-  d.innerHTML=(name?`<span class="name">${name}</span>`:"")+text;
-  log.appendChild(d);
-  log.scrollTop=log.scrollHeight;
-}
-
+function add(t,cls,n){const d=document.createElement('div');d.className=`msg ${cls}`;d.innerHTML=(n?`<span class="name">${n}</span>`:"")+t;log.appendChild(d);log.scrollTop=log.scrollHeight}
 function send(){
-  const txt=inp.value.trim();
-  if(!txt)return;
-  add(txt,'user');
-  inp.value='';
-
-  // หาว่าพิมพ์ชื่อใคร
-  for(const name in aiData){
-    if(txt.includes(name)){
-      const data=aiData[name];
-      const idx=memory[name] % data.replies.length;
-      const reply=data.replies[idx];
-      memory[name]++; // ครั้งหน้าเอาประโยคถัดไป
-      setTimeout(()=>add(reply,`ai ${data.color}`,data.title),500);
-      return;
-    }
-  }
-  // ถ้าไม่ระบุชื่อ ให้ริวตอบ เพราะริวมีจริยธรรม จะอธิบาย
-  const name="ริว";
-  const data=aiData[name];
-  const idx=memory[name] % data.replies.length;
-  const reply=data.replies[idx];
-  memory[name]++;
-  setTimeout(()=>add(reply+` (คุณพิมพ์ว่า "${txt}" ผมเลยตอบแทนครับ)`,`ai ${data.color}`,data.title),500);
+ let txt=inp.value.trim(); if(!txt) return; add(txt,'user'); inp.value='';
+ for(let k in AI){ if(txt.includes(k)){
+   let d=AI[k]; let i=mem[k]%d.data.length; mem[k]++; setTimeout(()=>add(d.data[i],`ai ${d.c}`,d.name),400); return;
+ }}
+ // ถ้าไม่พิมพ์ชื่อ ให้ตอบวนตามคิว ไม่พูดว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ
+ let k=Object.keys(AI)[mem["ริว"]%4]; let d=AI[k]; let i=mem[k]%d.data.length; mem[k]++; mem["ริว"]++;
+ setTimeout(()=>add(d.data[i],`ai ${d.c}`,d.name),400);
 }
+inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
 </body>
 </html>
