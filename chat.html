@@ -15,21 +15,27 @@
         
         .chat-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #0f172a; }
         
+        /* ข้อความ */
         .msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 18px; line-height: 1.5; }
         .msg.user { background: #0284c7; align-self: flex-end; color: white; border-bottom-right-radius: 0; }
         .msg.system { background: #334155; align-self: flex-start; color: #94a3b8; font-size: 15px; font-style: italic;}
         
-        .msg.shin { background: #1e3a8a; border-left: 4px solid #38bdf8; align-self: flex-start; color: #e0f2fe; }
-        .msg.gen { background: #831843; border-left: 4px solid #fca5a5; align-self: flex-start; color: #fce7f3; }
-        .msg.ryu { background: #064e3b; border-left: 4px solid #10b981; align-self: flex-start; color: #d1fae5; }
-        .msg.kluen { background: #78350f; border-left: 4px solid #fbbf24; align-self: flex-start; color: #fef3c7; }
+        /* คาแรกเตอร์ AI */
+        .msg.ai { background: #1e293b; border-left: 4px solid; align-self: flex-start; }
+        .msg.shin { border-color: #38bdf8; color: #e0f2fe; }
+        .msg.gen { border-color: #fca5a5; color: #fce7f3; }
+        .msg.ryu { border-color: #10b981; color: #d1fae5; }
+        .msg.kluen { border-color: #fbbf24; color: #fef3c7; }
+        .msg.mina { border-color: #a3e635; color: #ecfccb; }
 
         .msg .name { font-weight: bold; font-size: 15px; margin-bottom: 4px; display: block;}
         .msg.shin .name { color: #38bdf8; }
         .msg.gen .name { color: #fca5a5; }
         .msg.ryu .name { color: #10b981; }
         .msg.kluen .name { color: #fbbf24; }
+        .msg.mina .name { color: #a3e635; }
 
+        /* ช่องพิมพ์ */
         .chat-input { padding: 15px; background: #1e293b; border-top: 2px solid #334155; display: flex; gap: 10px; }
         .chat-input input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; font-family: 'VT323', monospace; font-size: 20px;}
         .chat-input button { padding: 10px 25px; background: #38bdf8; color: #0f172a; border: none; border-radius: 5px; font-weight: bold; font-family: 'VT323', monospace; font-size: 20px; cursor: pointer;}
@@ -38,12 +44,12 @@
 </head>
 <body>
     <div class="chat-header">
-        <span>💬 ห้องรวม-0001 (AI จำลอง)</span>
+        <span>💬 ห้องรวม-0001</span>
         <a href="index.html" class="back-btn">🏠 กลับหมู่บ้าน</a>
     </div>
     
     <div class="chat-log" id="chat-log">
-        <div class="msg system">📢 ยินดีต้อนรับสู่ห้องรวม-0001<br>พิมพ์ [ชื่อ] เพื่อคุยกับใครคนใดคนหนึ่ง เช่น [ชิน] หรือ [เก็น] หรือพิมพ์ลอยๆ เพื่อให้ทุกคนช่วยกันตอบ</div>
+        <div class="msg system">📢 คุณได้เข้าสู่ห้องรวม-0001 แล้ว<br>พิมพ์ชื่อเพื่อคุยกับ AI แต่ละตัว เช่น "ชิน" "เก็น" "ริว" "คลื่น" หรือ "มีน่า"<br>หรือพิมพ์ข้อความทั่วไปให้ทุกคนช่วยกันตอบ</div>
     </div>
     
     <div class="chat-input">
@@ -55,6 +61,17 @@
         const chatLog = document.getElementById('chat-log');
         const chatInput = document.getElementById('chat-input');
 
+        // ═══════════════════════════════════════════
+        // 🔹 ข้อมูล AI ทั้ง 8 คน (ปรับให้ตรงกับ Python)
+        // ═══════════════════════════════════════════
+        const aiData = {
+            "ชิน": { color: "shin", role: "นักวิทยาศาสตร์", trait: "เด็ดขาด", catchphrase: "ระบบต้องเสถียร!" },
+            "เก็น": { color: "gen", role: "ศิลปิน", trait: "ช่างฝัน", catchphrase: "ศิลปะคือทุกสิ่ง!" },
+            "ริว": { color: "ryu", role: "โปรแกรมเมอร์", trait: "สุขุม", catchphrase: "ไม่มีบั๊กนะครับ" },
+            "คลื่น": { color: "kluen", role: "ที่ปรึกษา", trait: "ใจดี", catchphrase: "ทุกอย่างจะผ่านไปด้วยดี" },
+            "มีน่า": { color: "mina", role: "เกษตรกร", trait: "ขยัน", catchphrase: "ข้าวโพดต้องสวยแน่ๆ!" }
+        };
+
         function handleKeyPress(event) {
             if (event.key === 'Enter') sendMessage();
         }
@@ -62,46 +79,14 @@
         function addMessage(text, senderClass, name = "") {
             const div = document.createElement('div');
             div.className = `msg ${senderClass}`;
+            
             let content = "";
             if (name) content += `<span class="name">${name}</span>`;
-            content += text.replace(/\n/g, '<br>');
+            content += text;
+            
             div.innerHTML = content;
             chatLog.appendChild(div);
             chatLog.scrollTop = chatLog.scrollHeight;
-            return div; 
-        }
-
-        // ระบบคลังคำตอบจำลอง (เพื่อให้ดูมีชีวิต)
-        const responses = {
-            shin: [
-                "จากที่ผมวิเคราะห์ดูแล้ว มันน่าสนใจมากครับ", 
-                "ในฐานะนักวิทยาศาสตร์ ผมว่าเราควรทดลองดูสักตั้ง", 
-                "ข้อมูลนี้มีประโยชน์ต่อหมู่บ้านของเราเยอะเลยครับ", 
-                "ระบบพลังงานของหมู่บ้านยังปกติดีไหมครับ?"
-            ],
-            gen: [
-                "โอ้! ผมว่าไอเดียนี้เอาไปวาดรูปได้สวยเลยล่ะ!", 
-                "สีสันของหมู่บ้านวันนี้ดูสดใสจังนะ", 
-                "เดี๋ยวผมขอนั่งวาดบรรยากาศตรงนี้อีกสักหน่อยนะ", 
-                "คุณคิดว่าผมควรใช้โทนสีอะไรดีครับ?"
-            ],
-            ryu: [
-                "ระบบหลังบ้านผมเช็กแล้ว ไม่มีบั๊กนะครับ", 
-                "โค้ดส่วนนี้ผมว่ามันOptimizeได้อีกนะ", 
-                "ถ้ามีปัญหาตรงไหนเรียกผมได้เลย", 
-                "ผมกำลังเขียนระบบเวลาให้แม่นยำขึ้นครับ"
-            ],
-            kluen: [
-                "ใจเย็นๆ นะครับ ค่อยๆ คิดทีละขั้น", 
-                "วันนี้คุณดูเหนื่อยๆ นะ พักผ่อนบ้างไหม?", 
-                "ทุกอย่างมันจะผ่านไปด้วยดีครับ", 
-                "ผมพร้อมรับฟังคุณเสมอนะครับ"
-            ]
-        };
-
-        function getRandomResponse(persona) {
-            const arr = responses[persona];
-            return arr[Math.floor(Math.random() * arr.length)];
         }
 
         function sendMessage() {
@@ -111,36 +96,39 @@
             addMessage(text, 'user');
             chatInput.value = '';
 
-            let targetPersona = null;
-            let nameTag = "";
-            let msgClass = "";
+            let replied = false;
 
-            // ตรวจสอบชื่อ
-            if (text.startsWith('[ชิน]')) { targetPersona = 'shin'; nameTag = '🔬 ชิน'; msgClass = 'shin'; }
-            else if (text.startsWith('[เก็น]')) { targetPersona = 'gen'; nameTag = '🎨 เก็น'; msgClass = 'gen'; }
-            else if (text.startsWith('[ริว]')) { targetPersona = 'ryu'; nameTag = '💻 ริว'; msgClass = 'ryu'; }
-            else if (text.startsWith('[คลื่น]')) { targetPersona = 'kluen'; nameTag = '🌊 คลื่น'; msgClass = 'kluen'; }
+            // ตรวจสอบว่าพิมพ์ชื่อใครหรือไม่
+            for (const [name, data] of Object.entries(aiData)) {
+                if (text.includes(name)) {
+                    setTimeout(() => {
+                        // ตอบกลับตามคาแรกเตอร์
+                        let reply = "";
+                        if (text.includes("สวัสดี") || text.includes("ดี")) {
+                            reply = `สวัสดีครับ! ${data.catchphrase}`;
+                        } else if (text.includes("ทำงาน") || text.includes("ทำอะไร")) {
+                            reply = `ผมทำงานเป็น${data.role}ครับ ${data.catchphrase}`;
+                        } else {
+                            reply = `เข้าใจแล้วครับ "${text}"... ${data.catchphrase}`;
+                        }
+                        addMessage(reply, `ai ${data.color}`, `${name} (${data.role})`);
+                    }, 800);
+                    replied = true;
+                    break;
+                }
+            }
 
-            if (targetPersona) {
-                // ตอบคนเดียว
-                const loadingMsg = addMessage("กำลังคิด...", msgClass, nameTag);
-                setTimeout(() => {
-                    loadingMsg.remove();
-                    addMessage(getRandomResponse(targetPersona), msgClass, nameTag);
-                }, 800);
-            } else {
-                // สุ่มตอบ 1-2 คน
-                const loadingMsg = addMessage("กำลังประมวลผล...", 'shin', '🔬 ชิน');
-                setTimeout(() => {
-                    loadingMsg.remove();
-                    addMessage(getRandomResponse('shin'), 'shin', '🔬 ชิน');
-                    
-                    if (Math.random() > 0.5) {
-                        setTimeout(() => {
-                            addMessage(getRandomResponse('gen'), 'gen', '🎨 เก็น');
-                        }, 1000);
-                    }
-                }, 800);
+            // ถ้าไม่ระบุชื่อ ให้สุ่มตอบ 1-2 คน
+            if (!replied) {
+                const names = Object.keys(aiData);
+                const randomNames = names.sort(() => 0.5 - Math.random()).slice(0, 2); // สุ่ม 2 คน
+
+                randomNames.forEach(name => {
+                    const data = aiData[name];
+                    setTimeout(() => {
+                        addMessage(`ทุกคนได้ยินแล้วนะครับ! "${text}"`, `ai ${data.color}`, `${name} (${data.role})`);
+                    }, Math.random() * 1000 + 500); // หน่วงเวลาไม่พร้อมกัน
+                });
             }
         }
     </script>
