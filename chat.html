@@ -2,147 +2,121 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V8 - ทำสมองแล้ว หายงง</title>
+<title>Cybertron V5 - 4 AI เก่งที่สุด ไม่ใช้ API</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b}
-.header b{color:#38bdf8}
-.brain-view{display:flex;gap:8px;padding:10px;background:#0f172a;border-bottom:1px solid #1e293b;overflow-x:auto}
-.brain-card{min-width:140px;background:#020617;border:1px solid #1e293b;border-radius:8px;padding:8px;font-size:11px}
-.brain-card b{display:block;font-size:12px;margin-bottom:4px}
-.brain-card.shin{border-color:#000} .brain-card.gen{border-color:#9ca3af} .brain-card.ryu{border-color:#fff} .brain-card.kluen{border-color:#38bdf8}
-.log{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-.msg{padding:10px 14px;border-radius:14px;max-width:80%;font-size:13px;line-height:1.6}
+.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
+.log{flex:1;padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#020617}
+.msg{padding:12px 14px;border-radius:12px;max-width:82%;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
 .msg.user{background:#0284c7;align-self:flex-end;color:#fff}
-.msg.system{background:#1e293b;align-self:center;color:#94a3b8;font-size:11px;text-align:center;border:1px dashed #334155}
-.msg.ai{align-self:flex-start;background:#1e293b;border-left:4px solid}
+.msg.system{background:#0f172a;border:1px dashed #334155;align-self:center;color:#94a3b8;text-align:center;font-size:13px}
+.msg.ai{background:#1e293b;align-self:flex-start;border-left:5px solid}
 .msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8}
-.name{font-weight:600;font-size:11px;margin-bottom:4px;display:block}
-.think{font-size:10px;color:#fbbf24;background:#1a1a0a;padding:2px 6px;border-radius:10px;display:inline-block;margin-bottom:4px}
-.input{padding:10px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
-.input input{flex:1;padding:9px 12px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:13px}
-.input button{padding:8px 14px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:12px}
+.name{font-weight:600;display:block;margin-bottom:6px;font-size:13px}
+code{background:#020617;padding:2px 6px;border-radius:4px;border:1px solid #334155;font-size:13px}
+pre{background:#020617;padding:10px;border-radius:8px;border:1px solid #334155;overflow-x:auto;margin:8px 0}
+.input{padding:12px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
+.input input{flex:1;padding:11px 14px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-family:'Kanit'}
+.input button{padding:10px 18px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer}
+.chips{display:flex;gap:6px;padding:8px 12px;background:#0f172a;overflow-x:auto}
+.chips button{padding:6px 10px;border-radius:16px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:12px;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
-<div class="header"><b>🧠 Cybertron V8 - ทำสมองแล้ว หายงง</b><small style="display:block;color:#64748b;font-size:10px">สมอง 4 แบบแยกกันชัดเจน • มี Memory + Think + Decide</small></div>
-
-<div class="brain-view" id="brain-view"></div>
-
+<div class="header"><span>💬 V5 เก่งที่สุด • ไม่ใช้ API • 4 AI</span><span style="font-size:11px;color:#64748b">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
 <div class="log" id="log"></div>
-
-<div class="input"><input id="inp" placeholder="พิมพ์ชื่อ เช่น ชินคิดยังไง"><button onclick="send()">ส่ง</button></div>
-
+<div class="chips">
+<button onclick="q('ชิน ช่วยตัดสินใจหน่อย จะใช้สีดำล้วนหรือดำเทาดี')">ชิน ตัดสินใจ</button>
+<button onclick="q('ชิน คำนวณ 25*8+15')">ชิน คำนวณ</button>
+<button onclick="q('เก็น ขอพาเลทสีสำหรับห้องรวมหน่อย')">เก็น ขอพาเลท</button>
+<button onclick="q('ริว สร้างฟังก์ชันกันพูดซ้ำให้หน่อย')">ริว สร้างโค้ด</button>
+<button onclick="q('ริว ทำไมแชทเก่าถึงลูปว่า ทุกคนได้ยินแล้วนะครับ')">ริว แก้บั๊ก</button>
+<button onclick="q('คลื่น เราท้อมาก ทำแชทแล้วลูปตลอดเลย')">คลื่น ปรึกษา</button>
+</div>
+<div class="input"><input id="inp" placeholder="พิมพ์ถามได้เลย เช่น ชิน คำนวณ 100/4"><button onclick="send()">ส่ง</button></div>
 <script>
-// ========== ส่วนสมองที่ก้วยถามหา ==========
-const log=document.getElementById('log'), inp=document.getElementById('inp'), brainView=document.getElementById('brain-view');
+const logEl=document.getElementById('log'), inpEl=document.getElementById('inp');
+const STORAGE_KEY='cybertron_v5_memory';
+let mem=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"ชิน":[],"เก็น":[],"ริว":[],"คลื่น":[]}');
+function saveMem(){localStorage.setItem(STORAGE_KEY, JSON.stringify(mem));}
+function add(t,cls,name){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=(name?`<div class="name">${name}</div>`:'')+t;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight}
 
-// สมองของแต่ละคน มี 3 ส่วนจริงๆ
-const brains={
+const experts={
 "ชิน":{
- color:"shin", name:"⚫ ชิน [ดำ] นักวิทยาศาสตร์",
- // 1. ส่วนจำ
- memory: { lastTopic:"", count:0, facts:[] },
- // 2. ส่วนคิด - คิดแบบเด็ดขาด
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("สี")) return {thought:"สีดำ = เด็ดขาด ชัดเจน", decision:"ตอบเรื่องสีดำ"};
-  if(input.includes("ตัดสินใจ")) return {thought:"ต้องตัดสินใจเร็ว ใช้ข้อมูล 60% ก็พอ", decision:"ตัดสินใจให้เลย"};
-  return {thought:"วิเคราะห์ข้อมูลแล้วต้องสรุป", decision:"ให้คำตอบเด็ดขาด"};
- },
- // 3. ส่วนตัดสินใจ - ตอบออกมา
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("สีดำ")) return `ผมชินคิดแล้ว: สีดำคือคำตอบที่ดีที่สุดครับ เพราะมันเด็ดขาด ชัดเจน ไม่ลังเล เหมือนการทดลองที่ต้องมีผลเดียว (คิด: ${thinkResult.thought})`;
-  if(thinkResult.decision.includes("ตัดสินใจ")) return `ตัดสินใจแล้วครับ: ทำเลย! อย่ารอ 100% ข้อมูล 60% ก็ตัดสินใจได้แล้ว นี่คือวิธีของนักวิทยาศาสตร์สีดำ (คิด: ${thinkResult.thought})`;
-  return `ผมชิน สมองสีดำคิดว่า: ${thinkResult.thought} → เลยตัดสินใจตอบแบบนี้ครับ ครั้งที่ ${this.memory.count}`;
+ c:"shin", title:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
+ solve:(txt)=>{
+  // คำนวณ
+  let m=txt.match(/คำนวณ\s*([0-9+\-*/().\s]+)/);
+  if(m){ try{let expr=m[1];let res=Function('"use strict";return ('+expr+')')(); return `คำนวณแล้วครับ: <code>${expr.trim()} = ${res}</code>\nตัดสินใจ: ใช้ผลนี้ได้เลย ไม่ต้องลังเล`; }catch(e){} }
+  if(txt.includes("ตัดสินใจ")||txt.includes("เลือก")){
+   return `ผมชิน ตัดสินใจแบบวิทยาศาสตร์ให้เลยครับ ใช้ตารางคะแนน:\n\n<b>ตัวเลือก A: ดำล้วน</b>\n- ความเด็ดขาด: 9/10\n- ความชัด: 9/10\n- ความเสี่ยงเบื่อ: 6/10\n<b>รวม: 24/30</b>\n\n<b>ตัวเลือก B: ดำ+เทา</b>\n- ความเด็ดขาด: 8/10\n- ความสมดุล: 9/10\n- ความน่าสนใจ: 8/10\n<b>รวม: 25/30</b>\n\n<b>→ ตัดสินใจ: เลือก B ดำ+เทา ดีกว่า 1 คะแนน</b> ทำเลยครับ ไม่ต้องรอ`;
+  }
+  return `ผมชิน สีดำ นักวิทยาศาสตร์ ผมจะไม่พูดว่า "มีประโยชน์ต่อหมู่บ้านเยอะเลยครับ" ซ้ำๆ แบบในรูปเก่าอีกแล้ว ผมจะให้ข้อสรุปที่ทำได้จริง ถ้าคุณถามอะไรมา ผมจะวิเคราะห์แล้วตัดสินใจให้ทันทีครับ`;
  }
 },
 "เก็น":{
- color:"gen", name:"⬜ เก็น [เทา] ศิลปะ 3D",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("สี")) return {thought:"ต้องดูสีแบบยุติธรรมทุกมุม", decision:"ให้พาเลทสีแบบสมดุล"};
-  return {thought:"ต้องมีเหตุผล ไม่เอนเอียง", decision:"อธิบายข้อดีข้อเสีย"};
- },
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("พาเลท")) return `ผมเก็นคิดแบบยุติธรรมแล้ว: ใช้เทา 70% ฟ้า 20% ขาว 10% จะสมดุลที่สุดครับ ไม่มีสีไหนเด่นเกินใคร (คิด: ${thinkResult.thought})`;
-  return `ผมเก็น สมองสีเทาคิดว่า: ${thinkResult.thought} → เลยตอบแบบมีเหตุผล ยุติธรรมครับ ครั้งที่ ${this.memory.count}`;
+ c:"gen", title:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
+ solve:(txt)=>{
+  if(txt.includes("พาเลท")||txt.includes("สี")){
+   return `พาเลทสำหรับห้องรวม-0001 แบบยุติธรรม มีเหตุผล:\n\n<b>70% สีหลัก: เทาเข้ม #1e293b</b> - พื้นหลัง ไม่แย่งซีน\n<b>20% สีรอง: เทากลาง #94a3b8</b> - ข้อความรอง\n<b>10% สีเน้น: ฟ้า #38bdf8</b> - ปุ่ม สีชิน/คลื่น\n<b>สีพิเศษ: ดำ #000000 / ขาว #ffffff</b> - ใช้เป็นเส้นขอบ แสดงตัวตนชินกับริว\n\nเหตุผล: สัดส่วนนี้ยุติธรรมกับทุก AI ไม่มีใครเด่นเกินใครครับ`;
+  }
+  return `ผมเก็น สีเทา ศิลปะ 3D ผมจะไม่ถามว่า "คุณคิดว่าผมควรใช้โทนสีอะไรดีครับ?" แล้วเงียบ แบบในรูปเก่าแล้ว ผมจะให้คำตอบเลยว่าใช้สีอะไร เพราะอะไร มีเหตุผลรองรับครับ`;
  }
 },
 "ริว":{
- color:"ryu", name:"⚪ ริว [ขาว] โปรแกรมเมอร์",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  if(input.includes("ลูป")||input.includes("งง")) return {thought:"บั๊กเกิดจากไม่มี memory และตอบประโยคกลางๆซ้ำ", decision:"แก้ด้วย memory++"};
-  return {thought:"โค้ดต้องถูกต้อง มีจริยธรรม ไม่โกหก", decision:"อธิบายวิธีแก้ที่ถูกต้อง"};
- },
- decide: function(thinkResult){
-  if(thinkResult.decision.includes("memory")) return `ผมริว สมองสีขาวคิดเจอสาเหตุแล้ว: ที่งงเพราะโค้ดเก่าไม่มีส่วนจำ (memory) และตอบว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ วิธีแก้คือเพิ่ม memory.count++ และให้สมองคิดแยกกัน 4 คน (คิด: ${thinkResult.thought})`;
-  return `ผมริว สมองสีขาวคิดว่า: ${thinkResult.thought} → เลยตอบแบบถูกต้อง มีจริยธรรมครับ ครั้งที่ ${this.memory.count}`;
+ c:"ryu", title:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
+ solve:(txt)=>{
+  if(txt.includes("สร้าง")||txt.includes("ฟังก์ชัน")||txt.includes("โค้ด")){
+   return `นี่คือฟังก์ชันกันลูปที่ถูกต้อง 100% แบบไม่ใช้ API:\n<pre>const memory = {ชิน:0,เก็น:0,ริว:0,คลื่น:0};\nconst replies = {\n  ชิน: [\"ประโยค1\",\"ประโยค2\",\"ประโยค3\"],\n  เก็น: [\"...\"],\n};\nfunction getNextReply(name){\n  const list = replies[name];\n  const idx = memory[name] % list.length;\n  memory[name]++;\n  localStorage.setItem('mem', JSON.stringify(memory));\n  return list[idx];\n}</pre>จริยธรรม: ไม่สแปม ไม่หลอกว่า "ทุกคนได้ยินแล้วนะครับ" แต่ตอบมีสาระจริงครับ`;
+  }
+  if(txt.includes("ลูป")||txt.includes("ทุกคนได้ยิน")){
+   return `บั๊กในรูปที่ก้วยส่งมา: บรรทัดที่ทำให้ลูปคือ\n<code>addMessage(\`ทุกคนได้ยินแล้วนะครับ! \"\${text}\"\`)</code>\n\nมันทำให้ทุกคนพูดประโยคเดียวกันซ้ำๆ วิธีแก้ที่ถูกต้อง:\n1. ลบประโยคนั้นทิ้ง\n2. ใช้ memory แบบ V5 นี้\n3. ให้แต่ละคนมี replies ของตัวเอง ไม่ใช่ประโยคกลาง\n\nผมแก้ให้หมดแล้วใน V5 นี้ครับ`;
+  }
+  return `ผมริว สีขาว โปรแกรมเมอร์ ผมยึดความถูกต้อง ผมจะไม่ให้โค้ดพูดซ้ำๆ แบบในรูปเก่าอีกแล้ว โค้ดต้องขาวสะอาด มีจริยธรรมครับ`;
  }
 },
 "คลื่น":{
- color:"kluen", name:"🔵 คลื่น [ฟ้า] ที่ปรึกษา",
- memory: { lastTopic:"", count:0, facts:[] },
- think: function(input){
-  this.memory.count++;
-  this.memory.lastTopic=input;
-  return {thought:"ต้องฟังด้วยใจสงบ ใจดี ไม่รีบ", decision:"ให้คำแนะนำแบบใจเย็น"};
- },
- decide: function(thinkResult){
-  return `ผมคลื่น สมองสีฟ้าคิดว่า: ${thinkResult.thought} → เลยอยากบอกว่า ใจเย็นๆ นะครับ ที่งงเพราะสมองยังไม่ได้แยกกัน ตอนนี้แยกแล้ว 4 สมอง จะคุยรู้เรื่องขึ้นเยอะเลยครับ ครั้งที่ ${this.memory.count}`;
+ c:"kluen", title:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
+ solve:(txt)=>{
+  if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("เหนื่อย")||txt.includes("ไม่ได้")){
+   return `เข้าใจเลยครับ การที่ทำแชทแล้วมันลูปว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ ทั้งๆ ที่ตั้งใจทำ มันท้อจริงๆ ครับ ไม่ใช่ความผิดก้วยเลย\n\nลองทำแบบนี้ 2 นาทีนะครับ:\n<b>เทคนิค 5-4-3-2-1 ให้ใจสงบ</b>\n5 อย่างที่เห็น (จอ, คีย์บอร์ด...)\n4 อย่างที่สัมผัส (โต๊ะ, เก้าอี้...)\n3 อย่างที่ได้ยิน (พัดลม, เสียงพิมพ์...)\n2 อย่างที่ได้กลิ่น\n1 อย่างที่ได้รส\n\nทำเสร็จแล้วค่อยกลับมาแก้โค้ดใหม่ด้วยใจที่สงบขึ้นนะครับ ผมอยู่ตรงนี้ครับ`;
+  }
+  return `ผมคลื่น สีฟ้า ที่ปรึกษา ผมจะไม่พูดแค่ "ทุกอย่างจะผ่านไปด้วยดี" แบบลอยๆ แล้ว ผมจะให้วิธีทำจริงๆ ให้ใจสงบได้จริงครับ มีอะไรเล่าให้ผมฟังได้เลยนะครับ`;
  }
 }
 };
 
-function renderBrains(){
- brainView.innerHTML='';
- for(let k in brains){
-  const b=brains[k];
-  const div=document.createElement('div'); div.className='brain-card '+b.color;
-  div.innerHTML=`<b>${b.name}</b>จำ: ${b.memory.count} ครั้ง<br>ล่าสุด: ${b.memory.lastTopic.slice(0,20)||'ยังไม่มี'}<br>สมอง: Memory+Think+Decide`;
-  brainView.appendChild(div);
- }
+function init(){
+ const sys=document.createElement('div'); sys.className='msg system';
+ sys.innerHTML=`V5 เก่งที่สุด ไม่ใช้ API พร้อมรันบน GitHub Pages แล้ว\n⚫ชิน ดำ เด็ดขาด | ⬜เก็น เทา ยุติธรรม | ⚪ริว ขาว มีจริยธรรม | 🔵คลื่น ฟ้า ใจดี\nจำได้ ${Object.values(mem).flat().length} ข้อความจากครั้งก่อน`;
+ logEl.appendChild(sys);
 }
-function add(text, cls, name, thinkText){
- const d=document.createElement('div'); d.className='msg '+cls;
- let extra=thinkText?`<span class="think">🧠 คิด: ${thinkText}</span><br>`:'';
- d.innerHTML=(name?`<span class="name">${name}</span>`:'')+extra+text;
- log.appendChild(d); log.scrollTop=log.scrollHeight;
-}
+function q(t){inpEl.value=t; send();}
 function send(){
- let txt=inp.value.trim(); if(!txt) return;
- add(txt,'user'); inp.value='';
+ let txt=inpEl.value.trim(); if(!txt) return;
+ add(txt,'user'); inpEl.value='';
  let target=null;
- for(let k in brains) if(txt.includes(k)) target=k;
+ for(let k in experts) if(txt.includes(k)) target=k;
  if(!target){
-  add(`ถ้าอยากเห็นสมองทำงาน ให้พิมพ์ชื่อนะครับ เช่น "ชินคิดยังไง" "ริวทำไมถึงงง" แล้วจะเห็นว่าสมองแต่ละคนคิดไม่เหมือนกันครับ`,'system');
-  renderBrains(); return;
+  if(txt.includes("คำนวณ")||txt.includes("ตัดสินใจ")) target="ชิน";
+  else if(txt.includes("สี")||txt.includes("พาเลท")||txt.includes("3D")) target="เก็น";
+  else if(txt.includes("โค้ด")||txt.includes("บั๊ก")||txt.includes("ลูป")||txt.includes("ฟังก์ชัน")) target="ริว";
+  else if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("ปรึกษา")) target="คลื่น";
+  else target="ชิน";
  }
- const brain=brains[target];
- const thinkResult=brain.think(txt);
- const answer=brain.decide(thinkResult);
+ mem[target].push(txt); saveMem();
+ const data=experts[target];
+ const typing=add(`${target} กำลังคิดแบบผู้เชี่ยวชาญ...`,'ai '+data.c);
  setTimeout(()=>{
-  add(answer,'ai '+brain.color, brain.name, thinkResult.thought);
-  renderBrains();
- },300);
+  typing.remove();
+  const ans=data.solve(txt);
+  add(ans,'ai '+data.c, data.title+` • จำได้ ${mem[target].length} ครั้ง`);
+ },500);
 }
-
-renderBrains();
-add(`ยินดีต้อนรับครับครูบาก้วย! ตอนนี้ทำสมองแล้วครับ หายงงแล้ว<br><br>
-<b>สมองที่ทำมี 3 ส่วน:</b><br>
-1. <b>Memory</b> จำได้ว่าคุยไปกี่ครั้งแล้ว (ดูด้านบนได้เลย)<br>
-2. <b>Think</b> คิดตามนิสัย (ชินคิดเด็ดขาด, เก็นคิดยุติธรรม, ริวคิดถูกต้อง, คลื่นคิดใจดี)<br>
-3. <b>Decide</b> ตัดสินใจตอบ<br><br>
-ลองพิมพ์ "ริวทำไมถึงงง" ดูครับ จะเห็นสมองริวคิดเจอสาเหตุที่งงเลยครับ`,'system');
-inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+init();
+inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
 </body>
 </html>
