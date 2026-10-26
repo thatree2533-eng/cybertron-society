@@ -38,12 +38,12 @@
 </head>
 <body>
     <div class="chat-header">
-        <span>💬 ห้องรวม-0001 (Groq AI)</span>
+        <span>💬 ห้องรวม-0001 (AI จำลอง)</span>
         <a href="index.html" class="back-btn">🏠 กลับหมู่บ้าน</a>
     </div>
     
     <div class="chat-log" id="chat-log">
-        <div class="msg system">📢 เชื่อมต่อสมองกล (Groq) สำเร็จ!<br>พิมพ์ [ชื่อ] เพื่อคุยกับใครคนใดคนหนึ่ง เช่น [ชิน] หรือ [เก็น]</div>
+        <div class="msg system">📢 ยินดีต้อนรับสู่ห้องรวม-0001<br>พิมพ์ [ชื่อ] เพื่อคุยกับใครคนใดคนหนึ่ง เช่น [ชิน] หรือ [เก็น] หรือพิมพ์ลอยๆ เพื่อให้ทุกคนช่วยกันตอบ</div>
     </div>
     
     <div class="chat-input">
@@ -52,10 +52,6 @@
     </div>
 
     <script>
-        // ⚠️ นำ API Key ใหม่ของคุณ (ที่เพิ่งสร้าง) มาใส่ตรงนี้
-        const GROQ_API_KEY = "ใส่_API_KEY_ใหม่ของคุณตรงนี้"; 
-        const API_URL = "https://api.groq.com/openai/v1/chat/completions";
-
         const chatLog = document.getElementById('chat-log');
         const chatInput = document.getElementById('chat-input');
 
@@ -75,49 +71,40 @@
             return div; 
         }
 
-        const personas = {
-            shin: "คุณคือ 'ชิน' นักวิทยาศาสตร์ผู้เด็ดขาด มีเหตุผล พูดจาสุภาพ แทนตัวเองว่า 'ผม' ตอบสั้นๆ กระชับ และต้องไม่ละเมิดศีล 5 เด็ดขาด",
-            gen: "คุณคือ 'เก็น' ศิลปิน 3D ผู้ช่างฝัน ร่าเริง ชอบพูดถึงการวาดรูปและสีสัน แทนตัวเองว่า 'ฉัน' และต้องไม่ละเมิดศีล 5 เด็ดขาด",
-            ryu: "คุณคือ 'ริว' โปรแกรมเมอร์ผู้สุขุม ฉลาด พูดจาเท่ๆ ชอบใช้ศัพท์เทคนิคเล็กน้อย แทนตัวเองว่า 'ผม' และต้องไม่ละเมิดศีล 5 เด็ดขาด",
-            kluen: "คุณคือ 'คลื่น' ที่ปรึกษาผู้ใจเย็น สุขุม พูดจานุ่มนวล ชอบให้กำลังใจ แทนตัวเองว่า 'ผม' และต้องไม่ละเมิดศีล 5 เด็ดขาด"
+        // ระบบคลังคำตอบจำลอง (เพื่อให้ดูมีชีวิต)
+        const responses = {
+            shin: [
+                "จากที่ผมวิเคราะห์ดูแล้ว มันน่าสนใจมากครับ", 
+                "ในฐานะนักวิทยาศาสตร์ ผมว่าเราควรทดลองดูสักตั้ง", 
+                "ข้อมูลนี้มีประโยชน์ต่อหมู่บ้านของเราเยอะเลยครับ", 
+                "ระบบพลังงานของหมู่บ้านยังปกติดีไหมครับ?"
+            ],
+            gen: [
+                "โอ้! ผมว่าไอเดียนี้เอาไปวาดรูปได้สวยเลยล่ะ!", 
+                "สีสันของหมู่บ้านวันนี้ดูสดใสจังนะ", 
+                "เดี๋ยวผมขอนั่งวาดบรรยากาศตรงนี้อีกสักหน่อยนะ", 
+                "คุณคิดว่าผมควรใช้โทนสีอะไรดีครับ?"
+            ],
+            ryu: [
+                "ระบบหลังบ้านผมเช็กแล้ว ไม่มีบั๊กนะครับ", 
+                "โค้ดส่วนนี้ผมว่ามันOptimizeได้อีกนะ", 
+                "ถ้ามีปัญหาตรงไหนเรียกผมได้เลย", 
+                "ผมกำลังเขียนระบบเวลาให้แม่นยำขึ้นครับ"
+            ],
+            kluen: [
+                "ใจเย็นๆ นะครับ ค่อยๆ คิดทีละขั้น", 
+                "วันนี้คุณดูเหนื่อยๆ นะ พักผ่อนบ้างไหม?", 
+                "ทุกอย่างมันจะผ่านไปด้วยดีครับ", 
+                "ผมพร้อมรับฟังคุณเสมอนะครับ"
+            ]
         };
 
-        async function callGroqAPI(personaKey, userMessage) {
-            const systemPrompt = personas[personaKey];
-            
-            try {
-                const response = await fetch(API_URL, {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${GROQ_API_KEY}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        model: "llama-3.1-8b-instant", // อัปเดตเป็นโมเดลล่าสุด
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userMessage }
-                        ],
-                        temperature: 0.7,
-                        max_tokens: 200
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Groq API Error:", errorData); 
-                    throw new Error(errorData.error?.message || "API request failed");
-                }
-
-                const data = await response.json();
-                return data.choices[0].message.content;
-            } catch (error) {
-                console.error("Error:", error);
-                return `(ขออภัยครับ ระบบขัดข้อง: ${error.message})`; 
-            }
+        function getRandomResponse(persona) {
+            const arr = responses[persona];
+            return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        async function sendMessage() {
+        function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
 
@@ -127,23 +114,33 @@
             let targetPersona = null;
             let nameTag = "";
             let msgClass = "";
-            let cleanText = text;
 
-            if (text.startsWith('[ชิน]')) { targetPersona = 'shin'; nameTag = '🔬 ชิน'; msgClass = 'shin'; cleanText = text.replace('[ชิน]', '').trim(); }
-            else if (text.startsWith('[เก็น]')) { targetPersona = 'gen'; nameTag = '🎨 เก็น'; msgClass = 'gen'; cleanText = text.replace('[เก็น]', '').trim(); }
-            else if (text.startsWith('[ริว]')) { targetPersona = 'ryu'; nameTag = '💻 ริว'; msgClass = 'ryu'; cleanText = text.replace('[ริว]', '').trim(); }
-            else if (text.startsWith('[คลื่น]')) { targetPersona = 'kluen'; nameTag = '🌊 คลื่น'; msgClass = 'kluen'; cleanText = text.replace('[คลื่น]', '').trim(); }
+            // ตรวจสอบชื่อ
+            if (text.startsWith('[ชิน]')) { targetPersona = 'shin'; nameTag = '🔬 ชิน'; msgClass = 'shin'; }
+            else if (text.startsWith('[เก็น]')) { targetPersona = 'gen'; nameTag = '🎨 เก็น'; msgClass = 'gen'; }
+            else if (text.startsWith('[ริว]')) { targetPersona = 'ryu'; nameTag = '💻 ริว'; msgClass = 'ryu'; }
+            else if (text.startsWith('[คลื่น]')) { targetPersona = 'kluen'; nameTag = '🌊 คลื่น'; msgClass = 'kluen'; }
 
             if (targetPersona) {
+                // ตอบคนเดียว
                 const loadingMsg = addMessage("กำลังคิด...", msgClass, nameTag);
-                const reply = await callGroqAPI(targetPersona, cleanText);
-                loadingMsg.remove(); 
-                addMessage(reply, msgClass, nameTag);
+                setTimeout(() => {
+                    loadingMsg.remove();
+                    addMessage(getRandomResponse(targetPersona), msgClass, nameTag);
+                }, 800);
             } else {
+                // สุ่มตอบ 1-2 คน
                 const loadingMsg = addMessage("กำลังประมวลผล...", 'shin', '🔬 ชิน');
-                const reply = await callGroqAPI('shin', cleanText);
-                loadingMsg.remove();
-                addMessage(reply, 'shin', '🔬 ชิน');
+                setTimeout(() => {
+                    loadingMsg.remove();
+                    addMessage(getRandomResponse('shin'), 'shin', '🔬 ชิน');
+                    
+                    if (Math.random() > 0.5) {
+                        setTimeout(() => {
+                            addMessage(getRandomResponse('gen'), 'gen', '🎨 เก็น');
+                        }, 1000);
+                    }
+                }, 800);
             }
         }
     </script>
