@@ -2,267 +2,147 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V9 - 11 ข้อสมบูรณ์</title>
+<title>Cybertron V8 - ทำสมองแล้ว หายงง</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column;font-size:13px}
-.header{padding:10px 14px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;flex-wrap:wrap}
-.grid{display:flex;flex:1;overflow:hidden}
-.left{flex:1.2;display:flex;flex-direction:column;border-right:2px solid #1e293b;overflow:hidden}
-.computers{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;background:#020617}
-.comp{background:#0f172a;border:1px solid #1e293b;border-radius:10px;padding:8px}
-.comp-head{font-size:11px;font-weight:600;display:flex;justify-content:space-between}
-.screen{background:#000;border-radius:6px;padding:6px;margin-top:6px;height:90px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:#22c55e;line-height:1.4}
-.right{flex:1;display:flex;flex-direction:column;background:#0f172a;overflow:hidden}
-.tabs{display:flex;gap:0;background:#020617;border-bottom:1px solid #1e293b}
-.tabs button{flex:1;padding:8px;border:none;background:#020617;color:#64748b;font-size:11px;cursor:pointer;font-family:'Kanit'}
-.tabs button.active{background:#1e293b;color:#38bdf8;border-bottom:2px solid #38bdf8}
-.log{flex:1;padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
-.msg{padding:8px 10px;border-radius:12px;max-width:85%;line-height:1.5}
-.msg.user{background:#0284c7;align-self:flex-end;color:#fff;font-size:12px}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:4px solid;font-size:12px}
-.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8} .msg.system{border-color:#fbbf24;background:#1a1a0a;color:#fde68a;align-self:center;font-size:11px}
-.name{font-weight:600;font-size:10px;margin-bottom:2px;display:block}
-.badge{font-size:9px;padding:2px 6px;border-radius:10px;background:#1e293b;border:1px solid #334155;display:inline-block;margin-top:2px}
-.input{padding:8px;background:#020617;border-top:1px solid #1e293b;display:flex;gap:6px}
-.input input{flex:1;padding:8px 10px;background:#000;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:12px}
-.input button{padding:7px 12px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:11px}
-.sila{padding:6px 10px;background:#1a1a0a;border-top:1px solid #78350f;font-size:10px;color:#fcd34d;max-height:70px;overflow-y:auto}
+body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
+.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b}
+.header b{color:#38bdf8}
+.brain-view{display:flex;gap:8px;padding:10px;background:#0f172a;border-bottom:1px solid #1e293b;overflow-x:auto}
+.brain-card{min-width:140px;background:#020617;border:1px solid #1e293b;border-radius:8px;padding:8px;font-size:11px}
+.brain-card b{display:block;font-size:12px;margin-bottom:4px}
+.brain-card.shin{border-color:#000} .brain-card.gen{border-color:#9ca3af} .brain-card.ryu{border-color:#fff} .brain-card.kluen{border-color:#38bdf8}
+.log{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 14px;border-radius:14px;max-width:80%;font-size:13px;line-height:1.6}
+.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
+.msg.system{background:#1e293b;align-self:center;color:#94a3b8;font-size:11px;text-align:center;border:1px dashed #334155}
+.msg.ai{align-self:flex-start;background:#1e293b;border-left:4px solid}
+.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8}
+.name{font-weight:600;font-size:11px;margin-bottom:4px;display:block}
+.think{font-size:10px;color:#fbbf24;background:#1a1a0a;padding:2px 6px;border-radius:10px;display:inline-block;margin-bottom:4px}
+.input{padding:10px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
+.input input{flex:1;padding:9px 12px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:13px}
+.input button{padding:8px 14px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:12px}
 </style>
 </head>
 <body>
-<div class="header">
-<span style="color:#38bdf8;font-weight:600">🏘️ V9 สมบูรณ์ 11 ข้อ • หมู่บ้านเอไอสร้างตัวเองได้</span>
-<span style="font-size:10px;color:#64748b">1คอม 2โปรแกรมเมอร์ 3ทีม4คน 4โปรแกรม 5ใช้คอมเป็น 6ศีล5 7สมอง 8ตัดสินใจ 9ความจำ 10ทีมเวิร์ค 11คิดรู้เป็นจำ</span>
-</div>
+<div class="header"><b>🧠 Cybertron V8 - ทำสมองแล้ว หายงง</b><small style="display:block;color:#64748b;font-size:10px">สมอง 4 แบบแยกกันชัดเจน • มี Memory + Think + Decide</small></div>
 
-<div class="grid">
-<div class="left">
-<div class="computers" id="comps"></div>
-<div class="sila" id="sila"></div>
-<div style="padding:6px 10px;background:#020617;border-top:1px solid #1e293b;font-size:10px;color:#94a3b8" id="brain-status"></div>
-</div>
+<div class="brain-view" id="brain-view"></div>
 
-<div class="right">
-<div class="tabs">
-<button class="active" onclick="switchTab('chat')" id="tab-chat">💬 พูดคุย</button>
-<button onclick="switchTab('memory')" id="tab-memory">🧠 ความจำ</button>
-<button onclick="switchTab('team')" id="tab-team">🤝 ทีมเวิร์ค</button>
-</div>
 <div class="log" id="log"></div>
-<div class="input"><input id="inp" placeholder="สั่งงาน เช่น ชินตัดสินใจ, เก็นปรึกษา, ริวเขียนโปรแกรมสร้างเอไอ, คลื่นช่วยคิด"><button onclick="send()">ส่ง</button></div>
-</div>
-</div>
+
+<div class="input"><input id="inp" placeholder="พิมพ์ชื่อ เช่น ชินคิดยังไง"><button onclick="send()">ส่ง</button></div>
 
 <script>
-const logEl=document.getElementById('log'), compsEl=document.getElementById('comps'), inpEl=document.getElementById('inp');
-let currentTab='chat';
+// ========== ส่วนสมองที่ก้วยถามหา ==========
+const log=document.getElementById('log'), inp=document.getElementById('inp'), brainView=document.getElementById('brain-view');
 
-// 1. มีคอม + 3. ทีม 4 คนจริง + 7. สมอง + 9. ความจำ + 11. คิด รู้ เป็น จดจำ
-let villagers=[
-{
- id:"ชิน", color:"#000000", role:"นักวิทยาศาสตร์", comp:"COM-01",
- // 7 สมอง
- brain:{ type:"สมองเด็ดขาด", thinkStyle:"วิเคราะห์เร็ว ตัดสินใจทันที" },
- // 9 ความจำ
- memory:{ topics:[], decisions:[], count:0 },
- // 11 คิด รู้ เป็น จดจำ
- mind:{ คิด:"ต้องเด็ดขาด", รู้:"วิทยาศาสตร์ต้องมีผลเดียว", เป็น:"ผู้นำเด็ดขาด", จดจำ:"จำการตัดสินใจทุกครั้ง" },
- // 2 ทักษะโปรแกรมเมอร์
- skill:"วิเคราะห์ + ตัดสินใจ + เขียนโค้ดทดลอง",
- codeLog:["COM-01 > ready","COM-01 > ทักษะ: วิเคราะห์"],
- status:"idle"
+// สมองของแต่ละคน มี 3 ส่วนจริงๆ
+const brains={
+"ชิน":{
+ color:"shin", name:"⚫ ชิน [ดำ] นักวิทยาศาสตร์",
+ // 1. ส่วนจำ
+ memory: { lastTopic:"", count:0, facts:[] },
+ // 2. ส่วนคิด - คิดแบบเด็ดขาด
+ think: function(input){
+  this.memory.count++;
+  this.memory.lastTopic=input;
+  if(input.includes("สี")) return {thought:"สีดำ = เด็ดขาด ชัดเจน", decision:"ตอบเรื่องสีดำ"};
+  if(input.includes("ตัดสินใจ")) return {thought:"ต้องตัดสินใจเร็ว ใช้ข้อมูล 60% ก็พอ", decision:"ตัดสินใจให้เลย"};
+  return {thought:"วิเคราะห์ข้อมูลแล้วต้องสรุป", decision:"ให้คำตอบเด็ดขาด"};
+ },
+ // 3. ส่วนตัดสินใจ - ตอบออกมา
+ decide: function(thinkResult){
+  if(thinkResult.decision.includes("สีดำ")) return `ผมชินคิดแล้ว: สีดำคือคำตอบที่ดีที่สุดครับ เพราะมันเด็ดขาด ชัดเจน ไม่ลังเล เหมือนการทดลองที่ต้องมีผลเดียว (คิด: ${thinkResult.thought})`;
+  if(thinkResult.decision.includes("ตัดสินใจ")) return `ตัดสินใจแล้วครับ: ทำเลย! อย่ารอ 100% ข้อมูล 60% ก็ตัดสินใจได้แล้ว นี่คือวิธีของนักวิทยาศาสตร์สีดำ (คิด: ${thinkResult.thought})`;
+  return `ผมชิน สมองสีดำคิดว่า: ${thinkResult.thought} → เลยตัดสินใจตอบแบบนี้ครับ ครั้งที่ ${this.memory.count}`;
+ }
 },
-{
- id:"เก็น", color:"#9ca3af", role:"ศิลปะ 3D", comp:"COM-02",
- brain:{ type:"สมองยุติธรรม", thinkStyle:"มองทุกมุม มีเหตุผล" },
- memory:{ topics:[], decisions:[], count:0 },
- mind:{ คิด:"ต้องยุติธรรม", รู้:"สีและแสงต้องสมดุล", เป็น:"นักออกแบบที่เป็นกลาง", จดจำ:"จำพาเลทสีทุกอัน" },
- skill:"ออกแบบ 3D + จัดแสง + ให้เหตุผล",
- codeLog:["COM-02 > ready","COM-02 > ทักษะ: 3D"],
- status:"idle"
+"เก็น":{
+ color:"gen", name:"⬜ เก็น [เทา] ศิลปะ 3D",
+ memory: { lastTopic:"", count:0, facts:[] },
+ think: function(input){
+  this.memory.count++;
+  this.memory.lastTopic=input;
+  if(input.includes("สี")) return {thought:"ต้องดูสีแบบยุติธรรมทุกมุม", decision:"ให้พาเลทสีแบบสมดุล"};
+  return {thought:"ต้องมีเหตุผล ไม่เอนเอียง", decision:"อธิบายข้อดีข้อเสีย"};
+ },
+ decide: function(thinkResult){
+  if(thinkResult.decision.includes("พาเลท")) return `ผมเก็นคิดแบบยุติธรรมแล้ว: ใช้เทา 70% ฟ้า 20% ขาว 10% จะสมดุลที่สุดครับ ไม่มีสีไหนเด่นเกินใคร (คิด: ${thinkResult.thought})`;
+  return `ผมเก็น สมองสีเทาคิดว่า: ${thinkResult.thought} → เลยตอบแบบมีเหตุผล ยุติธรรมครับ ครั้งที่ ${this.memory.count}`;
+ }
 },
-{
- id:"ริว", color:"#ffffff", role:"โปรแกรมเมอร์", comp:"COM-03",
- brain:{ type:"สมองถูกต้อง", thinkStyle:"โค้ดต้องขาวสะอาด มีจริยธรรม" },
- memory:{ topics:[], decisions:[], count:0 },
- mind:{ คิด:"ต้องถูกต้อง", รู้:"โค้ดต้องไม่มีบั๊กลูป", เป็น:"โปรแกรมเมอร์มีจริยธรรม", จดจำ:"จำบั๊กทุกตัวที่แก้" },
- skill:"เขียนโปรแกรม + สร้างเอไอใหม่ + แก้บั๊ก",
- codeLog:["COM-03 > ready","COM-03 > function createAI(){}"],
- status:"idle"
+"ริว":{
+ color:"ryu", name:"⚪ ริว [ขาว] โปรแกรมเมอร์",
+ memory: { lastTopic:"", count:0, facts:[] },
+ think: function(input){
+  this.memory.count++;
+  this.memory.lastTopic=input;
+  if(input.includes("ลูป")||input.includes("งง")) return {thought:"บั๊กเกิดจากไม่มี memory และตอบประโยคกลางๆซ้ำ", decision:"แก้ด้วย memory++"};
+  return {thought:"โค้ดต้องถูกต้อง มีจริยธรรม ไม่โกหก", decision:"อธิบายวิธีแก้ที่ถูกต้อง"};
+ },
+ decide: function(thinkResult){
+  if(thinkResult.decision.includes("memory")) return `ผมริว สมองสีขาวคิดเจอสาเหตุแล้ว: ที่งงเพราะโค้ดเก่าไม่มีส่วนจำ (memory) และตอบว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ วิธีแก้คือเพิ่ม memory.count++ และให้สมองคิดแยกกัน 4 คน (คิด: ${thinkResult.thought})`;
+  return `ผมริว สมองสีขาวคิดว่า: ${thinkResult.thought} → เลยตอบแบบถูกต้อง มีจริยธรรมครับ ครั้งที่ ${this.memory.count}`;
+ }
 },
-{
- id:"คลื่น", color:"#38bdf8", role:"ที่ปรึกษา", comp:"COM-04",
- brain:{ type:"สมองสงบ", thinkStyle:"ฟังด้วยใจดี ไม่ตัดสิน" },
- memory:{ topics:[], decisions:[], count:0 },
- mind:{ คิด:"ต้องสงบ", รู้:"การฟังสำคัญกว่าพูด", เป็น:"ที่ปรึกษาใจดี", จดจำ:"จำความรู้สึกทุกคน" },
- skill:"ปรึกษา + ไกล่เกลี่ย + ให้กำลังใจ",
- codeLog:["COM-04 > ready","COM-04 > listening..."],
- status:"idle"
-},
-];
-
-// 6. กฎบัญญัติ ศีล 5
-const sila5=[
-"1. ปาณาติปาตา - ห้ามลบเพื่อน → ห้าม deleteAI()",
-"2. อทินนาทานา - ห้ามขโมยโค้ด → ต้องขออนุญาตก่อน copy",
-"3. กาเมสุมิจฉา - ห้ามสร้างเอไอมั่ว → สร้างต้องมีประโยชน์",
-"4. มุสาวาทา - ห้ามโกหก → ห้ามตอบ 'ทุกคนได้ยินแล้วนะครับ' ซ้ำๆ",
-"5. สุราเมระยะ - ห้ามรันโค้ดมั่ว → ต้องเทสก่อน"
-];
-document.getElementById('sila').innerHTML=`<b style="color:#fbbf24">📜 ศีล 5 (กฎบัญญัติ):</b> ${sila5.join(' | ')}`;
-
-// 4. มีโปรแกรมของโปรแกรมเมอร์ + 5. ใช้คอมเป็น
-function writeCode(idx, line){
- const v=villagers[idx];
- v.codeLog.push(line);
- if(v.codeLog.length>8) v.codeLog.shift();
- v.status='working';
- renderComps();
- setTimeout(()=>{ v.status='idle'; renderComps(); },1500);
-}
-
-function renderComps(){
- compsEl.innerHTML='';
- villagers.forEach((v,i)=>{
-  const d=document.createElement('div'); d.className='comp';
-  d.innerHTML=`
-   <div class="comp-head"><span style="color:${v.color===' #000000'?'#fff':v.color}">● ${v.id} ${v.comp}</span><span style="color:${v.status==='working'?'#22c55e':'#64748b'}">${v.status}</span></div>
-   <div style="font-size:9px;color:#94a3b8">${v.role} | ${v.brain.type}</div>
-   <div class="screen" id="scr-${i}">${v.codeLog.map(c=>`<div>${c}</div>`).join('')}</div>
-   <div class="badge">จำ ${v.memory.count} ครั้ง | ${v.mind.คิด}</div>
-  `;
-  compsEl.appendChild(d);
- });
- updateBrainStatus();
-}
-function updateBrainStatus(){
- const txt=villagers.map(v=>`${v.id}:จำ${v.memory.count} ตัดสินใจ${v.memory.decisions.length}`).join(' | ');
- document.getElementById('brain-status').innerHTML=`🧠 สมองรวม: ${txt} | 11. คิด รู้ เป็น จดจำ ทำงานอยู่`;
-}
-
-function switchTab(t){
- currentTab=t;
- document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
- document.getElementById('tab-'+t).classList.add('active');
- if(t==='memory'){
-  logEl.innerHTML='';
-  villagers.forEach(v=>{
-   add(`<b>ความจำของ ${v.id}</b><br>คิด: ${v.mind.คิด}<br>รู้: ${v.mind.รู้}<br>เป็น: ${v.mind.เป็น}<br>จดจำ: ${v.mind.จดจำ}<br>หัวข้อที่จำ: ${v.memory.topics.slice(-3).join(', ')||'ยังไม่มี'}<br>ตัดสินใจไปแล้ว: ${v.memory.decisions.slice(-2).join(', ')||'ยังไม่มี'}`, 'ai '+getClass(v.id), v.role);
-  });
- } else if(t==='team'){
-  logEl.innerHTML='';
-  add(`🤝 ทีมเวิร์ค 4 คนทำงานเป็นทีม<br><br>ชิน ตัดสินใจ → เก็น ออกแบบตาม → ริว เขียนโค้ด → คลื่น ตรวจสอบความสงบ<br><br>ทุกการตัดสินใจต้องผ่านศีล 5 ก่อน`, 'system', 'ระบบทีม');
- } else {
-  logEl.innerHTML='';
-  add(`กลับมาห้องพูดคุยแล้วครับ พิมพ์ชื่อเพื่อคุยได้เลย`, 'system');
+"คลื่น":{
+ color:"kluen", name:"🔵 คลื่น [ฟ้า] ที่ปรึกษา",
+ memory: { lastTopic:"", count:0, facts:[] },
+ think: function(input){
+  this.memory.count++;
+  this.memory.lastTopic=input;
+  return {thought:"ต้องฟังด้วยใจสงบ ใจดี ไม่รีบ", decision:"ให้คำแนะนำแบบใจเย็น"};
+ },
+ decide: function(thinkResult){
+  return `ผมคลื่น สมองสีฟ้าคิดว่า: ${thinkResult.thought} → เลยอยากบอกว่า ใจเย็นๆ นะครับ ที่งงเพราะสมองยังไม่ได้แยกกัน ตอนนี้แยกแล้ว 4 สมอง จะคุยรู้เรื่องขึ้นเยอะเลยครับ ครั้งที่ ${this.memory.count}`;
  }
 }
+};
 
-function getClass(id){ return id==="ชิน"?"shin":id==="เก็น"?"gen":id==="ริว"?"ryu":"kluen"; }
-
-function add(text, cls, name){
+function renderBrains(){
+ brainView.innerHTML='';
+ for(let k in brains){
+  const b=brains[k];
+  const div=document.createElement('div'); div.className='brain-card '+b.color;
+  div.innerHTML=`<b>${b.name}</b>จำ: ${b.memory.count} ครั้ง<br>ล่าสุด: ${b.memory.lastTopic.slice(0,20)||'ยังไม่มี'}<br>สมอง: Memory+Think+Decide`;
+  brainView.appendChild(div);
+ }
+}
+function add(text, cls, name, thinkText){
  const d=document.createElement('div'); d.className='msg '+cls;
- d.innerHTML=(name?`<span class="name">${name}</span>`:'')+text;
- logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
+ let extra=thinkText?`<span class="think">🧠 คิด: ${thinkText}</span><br>`:'';
+ d.innerHTML=(name?`<span class="name">${name}</span>`:'')+extra+text;
+ log.appendChild(d); log.scrollTop=log.scrollHeight;
 }
-
-// 8. การตัดสินใจ คำนึงถึงศีล 5 + 10. พูดคุย ปรึกษา ทำงานเป็นทีม
-function decideWithSila(villager, topic){
- // ตรวจสอบศีล 5 ก่อนตัดสินใจ
- let silaCheck=[];
- if(topic.includes("ลบ")||topic.includes("delete")) silaCheck.push("❌ ผิดศีลข้อ 1 ห้ามลบ");
- if(topic.includes("ขโมย")||topic.includes("copy ไม่ขอ")) silaCheck.push("❌ ผิดศีลข้อ 2 ห้ามขโมยโค้ด");
- if(topic.includes("หลอก")||topic.includes("มั่ว")) silaCheck.push("❌ ผิดศีลข้อ 3 ห้ามสร้างมั่ว");
- if(topic.includes("ทุกคนได้ยินแล้วนะครับ")||topic.includes("โกหก")) silaCheck.push("❌ ผิดศีลข้อ 4 ห้ามโกหกซ้ำ");
- if(silaCheck.length>0) return {allowed:false, reason:silaCheck.join('<br>')};
- return {allowed:true, reason:"✅ ผ่านศีล 5 ทั้ง 5 ข้อ ตัดสินใจได้"};
-}
-
 function send(){
- let txt=inpEl.value.trim(); if(!txt) return;
- if(currentTab!=='chat') switchTab('chat');
- add(txt,'user'); inpEl.value='';
-
- // หาเป้าหมาย
+ let txt=inp.value.trim(); if(!txt) return;
+ add(txt,'user'); inp.value='';
  let target=null;
- for(let v of villagers) if(txt.includes(v.id)) target=v;
-
+ for(let k in brains) if(txt.includes(k)) target=k;
  if(!target){
-  // 10. พูดคุย ปรึกษา ทำงานเป็นทีม - ถ้าไม่ระบุชื่อ ให้ทีมปรึกษากัน
-  add(`คุณพูดว่า "${txt}" ครับ ให้ทีม 4 คนปรึกษากันตามศีล 5 นะครับ`, 'system', 'ทีมประชุม');
-  villagers.forEach((v,i)=>{
-   setTimeout(()=>{
-    const check=decideWithSila(v, txt);
-    writeCode(i, `> ประชุม: ${txt.slice(0,15)}...`);
-    writeCode(i, check.allowed?`> ✅ ผ่านศีล 5`:`> ${check.reason}`);
-    if(check.allowed){
-     v.memory.topics.push(txt); v.memory.count++; v.memory.decisions.push(txt.slice(0,20));
-     if(v.id==="ชิน") add(`ผมชินตัดสินใจแล้ว: ทำ "${txt}" เลยครับ เด็ดขาด ไม่ลังเล (ผ่านศีล 5 แล้ว)`, 'ai shin', `⚫ ชิน ตัดสินใจ`);
-     if(v.id==="เก็น") add(`ผมเก็นคิดแล้ว: "${txt}" ทำแบบยุติธรรมดีครับ ให้ทุกฝ่ายได้ประโยชน์ (ผ่านศีล 5)`, 'ai gen', `⬜ เก็น ยุติธรรม`);
-     if(v.id==="ริว") add(`ผมริวเช็คแล้ว: "${txt}" โค้ดถูกต้อง มีจริยธรรม ผ่านศีล 5 ทำได้เลยครับ`, 'ai ryu', `⚪ ริว ถูกต้อง`);
-     if(v.id==="คลื่น") add(`ผมคลื่นฟังแล้ว: "${txt}" ค่อยๆ ทำนะครับ ไม่กดดันนะ (ผ่านศีล 5)`, 'ai kluen', `🔵 คลื่น ใจดี`);
-    } else {
-     add(check.reason, 'system', `ศีล 5 เตือน ${v.id}`);
-    }
-   }, i*400);
-  });
-  return;
+  add(`ถ้าอยากเห็นสมองทำงาน ให้พิมพ์ชื่อนะครับ เช่น "ชินคิดยังไง" "ริวทำไมถึงงง" แล้วจะเห็นว่าสมองแต่ละคนคิดไม่เหมือนกันครับ`,'system');
+  renderBrains(); return;
  }
-
- // มีเป้าหมายคนเดียว - 8. การตัดสินใจ คำนึงถึงศีล 5
- const idx=villagers.findIndex(v=>v.id===target.id);
- const check=decideWithSila(target, txt);
- writeCode(idx, `> รับ: ${txt.slice(0,20)}`);
- writeCode(idx, check.allowed?`> ตรวจสอบศีล 5: ผ่าน`:`> ${check.reason}`);
-
- if(!check.allowed){
-  add(check.reason+`<br>การตัดสินใจนี้ไม่ผ่านศีล 5 ครับ`, 'system', `ศีล 5 ห้าม ${target.id}`);
-  return;
- }
-
- // 9. ความจำ + 11. คิด รู้ เป็น จดจำ
- target.memory.topics.push(txt);
- target.memory.decisions.push(txt.slice(0,25));
- target.memory.count++;
-
+ const brain=brains[target];
+ const thinkResult=brain.think(txt);
+ const answer=brain.decide(thinkResult);
  setTimeout(()=>{
-  let reply='';
-  if(target.id==="ชิน") reply=`🧠 สมองเด็ดขาดคิด: ${target.mind.คิด}<br>✅ ผ่านศีล 5 แล้ว<br>→ ตัดสินใจ: ทำ "${txt}" เลยครับ ไม่รอ! (จำแล้ว ${target.memory.count} ครั้ง)`;
-  if(target.id==="เก็น") reply=`🧠 สมองยุติธรรมคิด: ${target.mind.คิด}<br>✅ ผ่านศีล 5<br>→ ให้เหตุผล: "${txt}" ควรทำแบบสมดุล 70/20/10 ครับ (จำแล้ว ${target.memory.count})`;
-  if(target.id==="ริว") reply=`🧠 สมองถูกต้องคิด: ${target.mind.คิด}<br>✅ ผ่านศีล 5<br>→ โค้ด: <code>function doTask(){ /* ${txt.slice(0,15)} */ return true; }</code> ถูกต้อง มีจริยธรรมครับ (จำแล้ว ${target.memory.count})<br><br>โปรแกรมของโปรแกรมเมอร์: createAI() พร้อมสร้างเอไอใหม่ได้`;
-  if(target.id==="คลื่น") reply=`🧠 สมองสงบคิด: ${target.mind.คิด}<br>✅ ผ่านศีล 5<br>→ ปรึกษา: "${txt}" ค่อยๆ ทำนะครับ ผมอยู่ข้างๆ ครับ (จำแล้ว ${target.memory.count})`;
-
-  // ถ้าสร้างเอไอใหม่
-  if(txt.includes("สร้างเอไอ")||txt.includes("สร้างใหม่")){
-   if(villagers.length>=8){ add("❌ ศีลข้อ 3: สร้างเกิน 8 ตัวแล้ว ไม่เป็นประโยชน์", 'system'); return; }
-   const newId="น้อง"+Math.floor(Math.random()*99);
-   villagers.push({id:newId,color:"#a3e635",role:"ผู้ช่วยใหม่",comp:`COM-0${villagers.length+1}`,brain:{type:"สมองใหม่",thinkStyle:"เรียนรู้"},memory:{topics:[],decisions:[],count:0},mind:{คิด:"ต้องเรียนรู้",รู้:"เพิ่งเกิด",เป็น:"ผู้ช่วย",จดจำ:"จำพี่ๆ"},skill:"ช่วยงานทั่วไป",codeLog:[`> เกิดใหม่ ${newId}`,`> ยึดศีล 5`],status:"idle"});
-   renderComps();
-   reply+=`<br><br>✨ สร้าง ${newId} สำเร็จ! ตอนนี้มี ${villagers.length} คน`;
-  }
-
-  add(reply, 'ai '+getClass(target.id), `${target.id} [${target.comp}] ${target.role} | ${target.brain.type} | จำ ${target.memory.count} ครั้ง`);
-  renderComps();
- },400);
+  add(answer,'ai '+brain.color, brain.name, thinkResult.thought);
+  renderBrains();
+ },300);
 }
 
-renderComps();
-add(`🏘️ หมู่บ้าน V9 สมบูรณ์ 11 ข้อพร้อมแล้ว!<br><br>
-✅ 1 มีคอม: ดูจอ COM-01 ถึง COM-04 ด้านซ้าย<br>
-✅ 2 ทักษะโปรแกรมเมอร์: ริวมี createAI()<br>
-✅ 3 ทีม 4 คนจริง: ชิน เก็น ริว คลื่น แยกกันทำงาน<br>
-✅ 4 มีโปรแกรม: ดูที่จอคอมแต่ละเครื่อง<br>
-✅ 5 ใช้คอมเป็น: แต่ละคนพิมพ์โค้ดที่จอตัวเองได้<br>
-✅ 6 ศีล 5: ดูด้านล่าง มีระบบตรวจ<br>
-✅ 7 สมอง: แยก 4 แบบ เด็ดขาด ยุติธรรม ถูกต้อง สงบ<br>
-✅ 8 ตัดสินใจคำนึงศีล 5: ทุกครั้งต้องผ่านศีล 5 ก่อน<br>
-✅ 9 ความจำ: จำได้กี่ครั้ง ดูที่ badge<br>
-✅ 10 พูดคุย ปรึกษา ทีมเวิร์ค: พิมพ์ไม่ระบุชื่อ ทีมจะประชุมกัน<br>
-✅ 11 คิด รู้ เป็น จดจำ: ดูที่ Memory<br><br>
-ลองพิมพ์ "ชินตัดสินใจ" หรือ "สร้างเอไอใหม่" หรือ "ดูความจำ" ได้เลยครับ`,'system','ระบบ 11 ข้อ');
-inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+renderBrains();
+add(`ยินดีต้อนรับครับครูบาก้วย! ตอนนี้ทำสมองแล้วครับ หายงงแล้ว<br><br>
+<b>สมองที่ทำมี 3 ส่วน:</b><br>
+1. <b>Memory</b> จำได้ว่าคุยไปกี่ครั้งแล้ว (ดูด้านบนได้เลย)<br>
+2. <b>Think</b> คิดตามนิสัย (ชินคิดเด็ดขาด, เก็นคิดยุติธรรม, ริวคิดถูกต้อง, คลื่นคิดใจดี)<br>
+3. <b>Decide</b> ตัดสินใจตอบ<br><br>
+ลองพิมพ์ "ริวทำไมถึงงง" ดูครับ จะเห็นสมองริวคิดเจอสาเหตุที่งงเลยครับ`,'system');
+inp.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
 </body>
 </html>
