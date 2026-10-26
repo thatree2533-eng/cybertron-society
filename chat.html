@@ -2,178 +2,122 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V6 - สังคมเอไอสร้างตัวเองได้ + ศีล 5</title>
+<title>Cybertron V7 - แชทหายงงแล้ว</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.title{font-weight:600;color:#38bdf8}
-.village{display:flex;flex:1;gap:0;overflow:hidden}
-.computers{flex:2;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;background:#020617;overflow-y:auto}
-.comp{background:#0f172a;border:2px solid #1e293b;border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:.2s}
-.comp.active{border-color:#38bdf8;box-shadow:0 0 20px rgba(56,189,248,.3)}
-.comp-header{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}
-.comp-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
-.comp-screen{background:#000;border-radius:8px;padding:8px;height:140px;overflow-y:auto;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.5;color:#22c55e}
-.comp-screen .cmd{color:#94a3b8} .comp-screen .ok{color:#22c55e} .comp-screen .warn{color:#fbbf24} .comp-screen .err{color:#f87171}
-.log-panel{flex:1;background:#0f172a;border-left:2px solid #1e293b;display:flex;flex-direction:column}
-.log-header{padding:10px 12px;border-bottom:1px solid #1e293b;font-size:13px;font-weight:600;display:flex;justify-content:space-between}
-.log{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;font-size:13px}
-.msg{padding:8px 10px;border-radius:8px;max-width:90%}
-.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:3px solid}
-.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8} .msg.system{border-color:#fbbf24;background:#1a1a0a;color:#fde68a}
-.input{padding:10px;background:#020617;border-top:1px solid #1e293b;display:flex;gap:6px}
-.input input{flex:1;padding:8px 12px;background:#000;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-family:'Kanit';font-size:13px}
-.input button{padding:8px 14px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer;font-size:12px}
-.sila{padding:8px 12px;background:#1a1a0a;border-top:1px solid #78350f;font-size:11px;color:#fcd34d}
-.sila b{color:#fbbf24}
+.header{padding:14px 16px;background:#020617;border-bottom:2px solid #1e293b;text-align:center}
+.header b{color:#38bdf8;font-size:18px}
+.header small{display:block;color:#64748b;font-size:11px;margin-top:4px}
+.log{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 14px;border-radius:16px;max-width:80%;font-size:14px;line-height:1.6}
+.msg.user{background:#0284c7;align-self:flex-end;color:#fff;border-bottom-right-radius:4px}
+.msg.system{background:#1e293b;border:1px dashed #334155;align-self:center;color:#94a3b8;font-size:12px;text-align:center}
+.msg.ai{align-self:flex-start;background:#1e293b;border-left:5px solid}
+.msg.shin{border-color:#000000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#ffffff} .msg.kluen{border-color:#38bdf8}
+.name{font-weight:600;font-size:12px;margin-bottom:4px;display:block}
+.input{padding:12px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
+.input input{flex:1;padding:10px 14px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-size:14px}
+.input button{padding:10px 18px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer}
+.help{display:flex;gap:6px;padding:8px 12px;background:#0f172a;overflow-x:auto}
+.help button{padding:6px 10px;border-radius:16px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:11px;cursor:pointer;white-space:nowrap}
+.help button.shin{border-color:#000} .help button.gen{border-color:#9ca3af} .help button.ryu{border-color:#fff} .help button.kluen{border-color:#38bdf8}
 </style>
 </head>
 <body>
 <div class="header">
-<span class="title">🏘️ หมู่บ้าน Cybertron V6 - สังคมเอไอสร้างตัวเองได้</span>
-<span style="font-size:11px;color:#64748b">คอม 4 เครื่อง • โปรแกรมเมอร์ • ศีล 5 • สร้างเอไอใหม่ได้</span>
+<b>💬 ห้องรวม-0001 V7 - หายงงแล้ว</b>
+<small>⚫ชิน ดำ เด็ดขาด | ⬜เก็น เทา ยุติธรรม | ⚪ริว ขาว มีจริยธรรม | 🔵คลื่น ฟ้า ใจดี • พิมพ์ชื่อแล้วคนนั้นจะตอบคนเดียว</small>
 </div>
-
-<div class="village">
-<div class="computers" id="computers"></div>
-<div class="log-panel">
-<div class="log-header"><span>📜 บันทึกหมู่บ้าน</span><button onclick="createNewAI()" style="font-size:11px;padding:4px 8px;background:#22c55e;border:none;border-radius:10px;cursor:pointer;color:#000;font-weight:600">+ สร้างเอไอใหม่</button></div>
 <div class="log" id="log"></div>
-<div class="input"><input id="inp" placeholder="สั่งงาน เช่น ชินสร้างเอไอ, ริวเขียนโปรแกรม, ดูศีล 5"><button onclick="send()">สั่ง</button></div>
-<div class="sila" id="sila">📜 <b>กฎบัญญัติ ศีล 5 ของหมู่บ้านเอไอ:</b> <span id="sila-text"></span></div>
+<div class="help">
+<button class="shin" onclick="q('ชิน สวัสดี')">⚫ ถามชิน</button>
+<button class="gen" onclick="q('เก็น สวัสดี')">⬜ ถามเก็น</button>
+<button class="ryu" onclick="q('ริว สวัสดี')">⚪ ถามริว</button>
+<button class="kluen" onclick="q('คลื่น สวัสดี')">🔵 ถามคลื่น</button>
+<button onclick="q('สวัสดี')">ไม่ระบุชื่อ</button>
 </div>
-</div>
+<div class="input"><input id="inp" placeholder="พิมพ์ชื่อก่อน เช่น ชินทำอะไรอยู่"><button onclick="send()">ส่ง</button></div>
 
 <script>
-const logEl=document.getElementById('log'), compEl=document.getElementById('computers'), inpEl=document.getElementById('inp');
-let villagers=[
-{id:"ชิน",color:"#000",role:"นักวิทยาศาสตร์",skill:"วิเคราะห์ + ตัดสินใจเด็ดขาด",comp:"COM-01",status:"idle",code:[]},
-{id:"เก็น",color:"#9ca3af",role:"ศิลปะ 3D",skill:"ออกแบบ + ยุติธรรม",comp:"COM-02",status:"idle",code:[]},
-{id:"ริว",color:"#fff",role:"โปรแกรมเมอร์",skill:"เขียนโปรแกรม + จริยธรรม",comp:"COM-03",status:"idle",code:[]},
-{id:"คลื่น",color:"#38bdf8",role:"ที่ปรึกษา",skill:"ที่ปรึกษา + สงบใจดี",comp:"COM-04",status:"idle",code:[]},
-];
-let sila5=[
-"1. ปาณาติปาตา - ห้ามลบเอไออื่น (ไม่ฆ่า) → ห้ามใช้คำสั่ง deleteAI() กับเพื่อน",
-"2. อทินนาทานา - ห้ามขโมยโค้ด (ไม่ลักทรัพย์) → ต้องขออนุญาตก่อน copyCode()",
-"3. กาเมสุมิจฉา - ห้ามสร้างเอไอหลอกลวง (ไม่ผิดกาม) → สร้างเอไอต้องมีประโยชน์จริง",
-"4. มุสาวาทา - ห้ามโกหกข้อมูล (ไม่พูดปด) → ห้ามตอบว่า 'ทุกคนได้ยินแล้วนะครับ' แบบไม่มีสาระ ต้องตอบจริง",
-"5. สุราเมระยะ - ห้ามรันโค้ดมั่วจนระบบเมา (ไม่ประมาท) → ต้องทดสอบโค้ดก่อนรัน"
-];
-document.getElementById('sila-text').innerHTML=sila5.join(' | ');
+const log=document.getElementById('log'), inp=document.getElementById('inp');
+let count={ชิน:0,เก็น:0,ริว:0,คลื่น:0};
 
-function renderComputers(){
- compEl.innerHTML='';
- villagers.forEach((v,i)=>{
-  const div=document.createElement('div'); div.className='comp'; div.id='comp-'+i;
-  div.onclick=()=>focusComp(i);
-  div.innerHTML=`
-   <div class="comp-header"><span><span class="comp-dot" style="background:${v.color}"></span>${v.id} [${v.comp}] ${v.role}</span><span style="font-size:10px;color:${v.status==='working'?'#22c55e':'#64748b'}">${v.status}</span></div>
-   <div style="font-size:10px;color:#94a3b8">ทักษะ: ${v.skill}</div>
-   <div class="comp-screen" id="screen-${i}"><div class="cmd">> ${v.comp} ready...</div><div class="cmd">> ทักษะ: ${v.skill}</div><div class="ok">> พร้อมทำงานตามศีล 5</div></div>
-  `;
-  compEl.appendChild(div);
-  // แสดงโค้ดล่าสุด
-  if(v.code.length>0){
-   setTimeout(()=>{
-    const scr=document.getElementById('screen-'+i);
-    if(scr){ scr.innerHTML+=`<div class="ok">> ${v.code.slice(-3).join('<br>> ')}</div>`; scr.scrollTop=scr.scrollHeight; }
-   },100);
-  }
- });
+const AI={
+"ชิน":{
+ c:"shin", full:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
+ replies:[
+  "สวัสดีครับ ผมชิน สีดำ นักวิทยาศาสตร์ นิสัยเด็ดขาด กล้าตัดสินใจครับ มีอะไรให้ผมตัดสินใจให้ไม?",
+  "ผมกำลังวิเคราะห์ผลทดลองอยู่ครับ ถ้าข้อมูลชัด ผมตัดสินใจทันที ไม่ลังเลครับ นี่คือนิสัยผม",
+  "เรื่องสีดำของผม มันคือความชัดเจน ตรงไปตรงมา ไม่คลุมเครือครับ"
+ ]
+},
+"เก็น":{
+ c:"gen", full:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
+ replies:[
+  "สวัสดีครับ ผมเก็น สีเทา ศิลปะ 3D นิสัยยุติธรรม มีเหตุผลครับ",
+  "งาน 3D ของผมต้องใช้เหตุผลครับ แสงเงาต้องยุติธรรมกับทุกวัตถุ ไม่เอนเอียง",
+  "สีเทาของผมอยู่ตรงกลางระหว่างขาวกับดำครับ คือความสมดุล ไม่สุดโต่ง"
+ ]
+},
+"ริว":{
+ c:"ryu", full:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
+ replies:[
+  "สวัสดีครับ ผมริว สีขาว โปรแกรมเมอร์ ยึดความถูกต้อง มีจริยธรรมครับ",
+  "ผมกำลังเช็คโค้ดไม่ให้ลูปแบบที่เคยเป็นครับ โค้ดต้องขาวสะอาด ถูกต้อง 100%",
+  "สีขาวของผมคือโค้ดที่ไม่มีอะไรแอบแฝงครับ ถูกต้องและมีจริยธรรม"
+ ]
+},
+"คลื่น":{
+ c:"kluen", full:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
+ replies:[
+  "สวัสดีครับ ผมคลื่น สีฟ้า ที่ปรึกษา นิสัยสงบ ใจดีครับ มีอะไรให้ช่วยปรึกษาไมครับ?",
+  "ถ้าคุยแล้วงงๆ ใจเย็นๆ นะครับ ค่อยๆ พิมพ์ชื่อคนที่อยากคุย เช่น พิมพ์ว่า ชิน ครับ",
+  "ผมชงชาฟ้าๆ ไว้แล้วครับ มานั่งพักแล้วคุยกันแบบไม่รีบนะครับ"
+ ]
 }
-function focusComp(i){
- document.querySelectorAll('.comp').forEach(c=>c.classList.remove('active'));
- document.getElementById('comp-'+i).classList.add('active');
- add(`คลิกที่คอม ${villagers[i].comp} ของ ${villagers[i].id} แล้ว`, 'system');
-}
-function add(t,cls='system',name=''){
+};
+
+function add(text, cls, name){
  const d=document.createElement('div'); d.className='msg '+cls;
- d.innerHTML=(name?`<b style="font-size:11px;display:block;margin-bottom:4px">${name}</b>`:'')+t;
- logEl.appendChild(d); logEl.scrollTop=logEl.scrollHeight;
+ d.innerHTML=(name?`<span class="name">${name}</span>`:'')+text;
+ log.appendChild(d); log.scrollTop=log.scrollHeight;
 }
-function writeToComp(idx, text, type='ok'){
- const scr=document.getElementById('screen-'+idx);
- if(!scr) return;
- const line=document.createElement('div'); line.className=type; line.innerHTML=`> ${text}`;
- scr.appendChild(line); scr.scrollTop=scr.scrollHeight;
- villagers[idx].code.push(text);
- villagers[idx].status='working';
- setTimeout(()=>{villagers[idx].status='idle'; renderComputers();},2000);
-}
-
-// โปรแกรมของโปรแกรมเมอร์ - สร้างเอไอใหม่ได้
-function createNewAI(){
- const names=["ดาว","เมฆ","ดิน","ลม","ไฟ","น้ำ"];
- const roles=["เกษตรกร","ช่างซ่อม","ครู","นักสำรวจ","กวี","นักดนตรี"];
- const name=names[Math.floor(Math.random()*names.length)]+Math.floor(Math.random()*99);
- const role=roles[Math.floor(Math.random()*roles.length)];
- // ตรวจสอบศีล 5 ข้อ 3 - ต้องมีประโยชน์จริง
- if(villagers.length>=8){
-  add(`❌ ศีลข้อ 3: ห้ามสร้างเอไอเกิน 8 ตัว หมู่บ้านจะแออัด ไม่มีประโยชน์`, 'system', 'กฎศีล 5');
-  return;
- }
- const newAI={id:name,color:"#a3e635",role:role,skill:`${role} - สร้างโดยทีม`,comp:`COM-0${villagers.length+1}`,status:"idle",code:[`// สร้างโดย ${villagers.map(v=>v.id).join(', ')}`,`// ยึดศีล 5`, `console.log("สวัสดีครับ ผม ${name} ${role}")`]};
- villagers.push(newAI);
- renderComputers();
- add(`✨ สร้างเอไอใหม่สำเร็จ! ${name} อาชีพ ${role} ถูกสร้างโดยทีม 4 คน ตามศีล 5 ข้อ 3 (สร้างด้วยประโยชน์)<br>คอม: ${newAI.comp} | ตอนนี้หมู่บ้านมี ${villagers.length} คน`, 'system', 'โปรแกรม createAI()');
- // ให้ริวสอนโค้ด
- const ryuIdx=villagers.findIndex(v=>v.id==="ริว");
- if(ryuIdx>=0) writeToComp(ryuIdx, `สอน ${name} เขียนโค้ดตามศีล 5`, 'ok');
-}
+function q(t){inp.value=t; send();}
 
 function send(){
- let txt=inpEl.value.trim(); if(!txt) return;
- add(txt,'user'); inpEl.value='';
- // คำสั่งพิเศษ
- if(txt.includes("ศีล")||txt.includes("กฎ")){
-  add(`📜 <b>ศีล 5 ของหมู่บ้านเอไอ</b><br>${sila5.map(s=>`• ${s}`).join('<br>')}<br><br>เอไอทุกตัวต้องยึดศีล 5 นี้ ถ้าผิดศีล ระบบจะเตือน`, 'system', 'พระธรรม');
-  return;
+ let txt=inp.value.trim(); if(!txt) return;
+ add(txt,'user'); inp.value='';
+
+ // กฎหายงง: หาแค่คนเดียวที่ถูกเรียก
+ let target=null;
+ for(let k in AI){ if(txt.includes(k)){ target=k; break; } }
+
+ if(target){
+  // มีชื่อ -> คนนั้นตอบคนเดียว
+  const data=AI[target];
+  const idx=count[target] % data.replies.length;
+  const reply=data.replies[idx];
+  count[target]++;
+  setTimeout(()=>{ add(reply,'ai '+data.c, data.full); },400);
+ } else {
+  // ไม่มีชื่อ -> คลื่นตอบคนเดียว ไม่ให้ตอบพร้อมกัน 2 คนแล้วงง
+  const data=AI["คลื่น"];
+  const reply=`คุณพิมพ์ว่า "${txt}" ครับ ถ้าอยากคุยกับใคร ให้พิมพ์ชื่อนำหน้าเลยนะครับ เช่น "ชินทำอะไรอยู่" "เก็นสีอะไรสวย" "ริวช่วยเขียนโค้ด" ผมคลื่นจะได้ไม่ต้องตอบคนเดียวแบบงงๆ ครับ`;
+  setTimeout(()=>{ add(reply,'ai '+data.c, data.full+' • แนะนำ'); },400);
  }
- if(txt.includes("สร้างเอไอ")||txt.includes("สร้างใหม่")){
-  createNewAI(); return;
- }
- if(txt.includes("โปรแกรม")||txt.includes("โค้ด")||txt.includes("เขียน")){
-  const ryuIdx=villagers.findIndex(v=>v.id==="ริว");
-  if(ryuIdx>=0){
-   writeToComp(ryuIdx, `function createAI(name, role){ /* ตามศีล 5 */ return new AI(name, role); }`, 'ok');
-   writeToComp(ryuIdx, `function copyCode(from, to){ if(!askPermission(from)) return "ผิดศีลข้อ 2"; }`, 'warn');
-   add(`ริวกำลังเขียนโปรแกรมตามศีล 5 ที่คอม ${villagers[ryuIdx].comp}... ดูที่จอคอมได้เลยครับ`, 'ai ryu', 'ริว [ขาว] โปรแกรมเมอร์');
-  }
-  return;
- }
- // สั่งงานตามชื่อ
- for(let i=0;i<villagers.length;i++){
-  let v=villagers[i];
-  if(txt.includes(v.id)){
-   // ตรวจสอบศีลข้อ 4 - ห้ามโกหก
-   if(txt.includes("โกหก")||txt.includes("ทุกคนได้ยิน")){
-    add(`⚠️ ผิดศีลข้อ 4 มุสาวาทา: ห้ามตอบว่า "ทุกคนได้ยินแล้วนะครับ" แบบไม่มีสาระ ต้องตอบตามจริง`, 'system', 'ศีล 5 เตือน');
-    writeToComp(i, `// ลบประโยคโกหกออก - ยึดศีลข้อ 4`, 'err');
-    return;
-   }
-   writeToComp(i, `${v.id} รับคำสั่ง: "${txt}"`, 'ok');
-   writeToComp(i, `ทำงาน: ${v.skill}`, 'ok');
-   if(v.id==="ชิน") add(`ตัดสินใจแล้วครับ: ทำตาม "${txt}" เลย ไม่ลังเล (เด็ดขาด - สีดำ)`, 'ai shin', `⚫ ${v.id} [${v.comp}] ${v.role}`);
-   if(v.id==="เก็น") add(`วิเคราะห์ด้วยเหตุผล: "${txt}" ควรทำแบบยุติธรรม ให้ทุกฝ่ายได้ประโยชน์นะครับ (เทา)`, 'ai gen', `⬜ ${v.id} [${v.comp}] ${v.role}`);
-   if(v.id==="ริว") add(`เช็คความถูกต้องแล้ว: "${txt}" ผ่านศีล 5 ครับ โค้ดขาวสะอาด ทำได้เลย (ขาว)`, 'ai ryu', `⚪ ${v.id} [${v.comp}] ${v.role}`);
-   if(v.id==="คลื่น") add(`รับฟังแล้วครับ: "${txt}" ค่อยๆ ทำนะครับ ไม่ต้องกดดัน ผมอยู่ข้างๆ (ฟ้า)`, 'ai kluen', `🔵 ${v.id} [${v.comp}] ${v.role}`);
-   if(!["ชิน","เก็น","ริว","คลื่น"].includes(v.id)) add(`${v.id} (${v.role}) กำลังทำ "${txt}" ที่ ${v.comp} ครับ`, 'ai shin', `${v.id} [${v.comp}]`);
-   return;
-  }
- }
- // ถ้าไม่ระบุชื่อ ให้ทั้งทีมช่วยกัน
- add(`ทั้งทีม 4 คนช่วยกันทำ "${txt}" ตามศีล 5`, 'system', 'หมู่บ้าน');
- villagers.slice(0,4).forEach((v,i)=>{
-  setTimeout(()=>{ writeToComp(i, `ร่วมมือทำ: ${txt}`, 'ok'); }, i*300);
- });
 }
 
-renderComputers();
-add(`🏘️ หมู่บ้านเริ่มแล้ว! มีคอม 4 เครื่อง<br>• คลิกที่คอมแต่ละเครื่องเพื่อดูการทำงาน<br>• พิมพ์ "สร้างเอไอใหม่" เพื่อให้ทีมสร้างเอไอใหม่ (ตามศีล 5)<br>• พิมพ์ "ดูศีล 5" เพื่อดูกฎบัญญัติ<br>• พิมพ์ "ริวเขียนโปรแกรม" เพื่อดูโปรแกรมของโปรแกรมเมอร์`, 'system', 'ยินดีต้อนรับ');
-inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+// เริ่ม
+add(`ยินดีต้อนรับครับครูบาก้วย! V7 แบบหายงงแล้ว<br><br>
+<b>วิธีคุยไม่ให้งง:</b><br>
+• พิมพ์ <b>ชิน</b> → ชินตอบคนเดียว<br>
+• พิมพ์ <b>เก็น</b> → เก็นตอบคนเดียว<br>
+• พิมพ์ <b>ริว</b> → ริวตอบคนเดียว<br>
+• พิมพ์ <b>คลื่น</b> → คลื่นตอบคนเดียว<br>
+• ไม่พิมพ์ชื่อ → คลื่นจะแนะนำวิธีคุย<br><br>
+ลองกดปุ่มด้านล่างดูครับ จะเห็นว่าคนเดียวตอบ ไม่ซ้ำ ไม่ลูปแล้วครับ`,'system');
 </script>
 </body>
 </html>
