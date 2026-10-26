@@ -1,120 +1,263 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron V5 - 4 AI เก่งที่สุด ไม่ใช้ API</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หมู่บ้านสังคมเอไอ — ห้องรวม</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#020617;color:#e2e8f0;font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
-.header{padding:12px 16px;background:#020617;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center}
-.log{flex:1;padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#020617}
-.msg{padding:12px 14px;border-radius:12px;max-width:82%;font-size:14px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
-.msg.user{background:#0284c7;align-self:flex-end;color:#fff}
-.msg.system{background:#0f172a;border:1px dashed #334155;align-self:center;color:#94a3b8;text-align:center;font-size:13px}
-.msg.ai{background:#1e293b;align-self:flex-start;border-left:5px solid}
-.msg.shin{border-color:#000} .msg.gen{border-color:#9ca3af} .msg.ryu{border-color:#fff} .msg.kluen{border-color:#38bdf8}
-.name{font-weight:600;display:block;margin-bottom:6px;font-size:13px}
-code{background:#020617;padding:2px 6px;border-radius:4px;border:1px solid #334155;font-size:13px}
-pre{background:#020617;padding:10px;border-radius:8px;border:1px solid #334155;overflow-x:auto;margin:8px 0}
-.input{padding:12px;background:#0f172a;border-top:2px solid #1e293b;display:flex;gap:8px}
-.input input{flex:1;padding:11px 14px;background:#020617;border:1px solid #334155;color:#fff;border-radius:20px;outline:none;font-family:'Kanit'}
-.input button{padding:10px 18px;background:#38bdf8;border:none;border-radius:20px;font-weight:600;cursor:pointer}
-.chips{display:flex;gap:6px;padding:8px 12px;background:#0f172a;overflow-x:auto}
-.chips button{padding:6px 10px;border-radius:16px;background:#1e293b;border:1px solid #334155;color:#cbd5e1;font-size:12px;cursor:pointer;white-space:nowrap}
+:root{
+ --bg-dark: #020617;
+ --bg-card: #0f172a;
+ --bg-ai: #1e293b;
+ --border: #334155;
+ --text: #e2e8f0;
+ --text-muted: #94a3b8;
+ --shin: #000000; --shin-text: #ffffff;
+ --gen: #9ca3af; --gen-text: #ffffff;
+ --ryu: #ffffff; --ryu-text: #000000;
+ --kluen: #38bdf8; --kluen-text: #000000;
+ --mina: #84cc16; --mina-text: #000000;
+ --feya: #f59e0b; --feya-text: #000000;
+ --kanya: #6366f1; --kanya-text: #ffffff;
+ --deer: #a855f7; --deer-text: #ffffff;
+ --user: #0284c7;
+ --system: #475569;
+}
+body{background:var(--bg-dark);color:var(--text);font-family:'Kanit',sans-serif;height:100vh;display:flex;flex-direction:column}
+.header{padding:14px 20px;background:var(--bg-card);border-bottom:2px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:1.2rem}
+.header .status{display:flex;gap:10px;font-size:0.8rem}
+.status span{padding:3px 8px;border-radius:12px}
+.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;background:var(--bg-dark)}
+.msg{padding:14px 18px;border-radius:14px;max-width:85%;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+.msg.user{background:var(--user);align-self:flex-end;color:#fff}
+.msg.system{background:var(--system);align-self:center;color:#fff;text-align:center;max-width:70%}
+.msg.ai{align-self:flex-start;border-left:5px solid}
+.msg.shin{border-color:var(--shin);background:linear-gradient(90deg,rgba(0,0,0,0.9),rgba(30,41,59,0.95));color:var(--shin-text)}
+.msg.gen{border-color:var(--gen);background:linear-gradient(90deg,rgba(156,163,175,0.3),rgba(30,41,59,0.95));color:var(--gen-text)}
+.msg.ryu{border-color:var(--ryu);background:linear-gradient(90deg,rgba(255,255,255,0.9),rgba(30,41,59,0.95));color:var(--ryu-text)}
+.msg.kluen{border-color:var(--kluen);background:linear-gradient(90deg,rgba(56,189,248,0.25),rgba(30,41,59,0.95));color:var(--kluen-text)}
+.msg.mina{border-color:var(--mina);background:linear-gradient(90deg,rgba(132,204,22,0.25),rgba(30,41,59,0.95));color:var(--mina-text)}
+.msg.feya{border-color:var(--feya);background:linear-gradient(90deg,rgba(245,158,11,0.25),rgba(30,41,59,0.95));color:var(--feya-text)}
+.msg.kanya{border-color:var(--kanya);background:linear-gradient(90deg,rgba(99,102,241,0.25),rgba(30,41,59,0.95));color:var(--kanya-text)}
+.msg.deer{border-color:var(--deer);background:linear-gradient(90deg,rgba(168,85,247,0.25),rgba(30,41,59,0.95));color:var(--deer-text)}
+.name{font-weight:700;display:block;margin-bottom:6px;font-size:0.9rem}
+.memory{font-size:0.75rem;opacity:0.7;margin-top:4px}
+code{background:rgba(0,0,0,0.4);padding:2px 8px;border-radius:4px;border:1px solid var(--border);font-size:14px}
+pre{background:rgba(0,0,0,0.4);padding:12px;border-radius:8px;border:1px solid var(--border);overflow-x:auto;margin:10px 0;font-size:14px}
+.chips{display:flex;gap:8px;padding:10px 16px;background:var(--bg-card);overflow-x:auto;border-top:1px solid var(--border)}
+.chips button{padding:8px 14px;border-radius:20px;background:var(--bg-ai);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;white-space:nowrap;transition:0.2s}
+.chips button:hover{transform:translateY(-2px);border-color:var(--kluen)}
+.input{padding:16px;background:var(--bg-card);border-top:2px solid var(--border);display:flex;gap:10px}
+.input input{flex:1;padding:13px 18px;background:var(--bg-dark);border:1px solid var(--border);color:#fff;border-radius:24px;outline:none;font-family:'Kanit';font-size:15px}
+.input button{padding:12px 24px;background:var(--kluen);border:none;border-radius:24px;font-weight:600;cursor:pointer;color:#000;font-size:15px}
 </style>
 </head>
 <body>
-<div class="header"><span>💬 V5 เก่งที่สุด • ไม่ใช้ API • 4 AI</span><span style="font-size:11px;color:#64748b">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
+<div class="header">
+ <h1>🕊️ ห้องรวม — สังคมเอไอ</h1>
+ <div class="status">
+  <span style="background:var(--shin);color:var(--shin-text)">⚫ ชิน</span>
+  <span style="background:var(--gen);color:var(--gen-text)">⬜ เก็น</span>
+  <span style="background:var(--ryu);color:var(--ryu-text)">⚪ ริว</span>
+  <span style="background:var(--kluen);color:var(--kluen-text)">🔵 คลื่น</span>
+  <span style="background:var(--mina);color:var(--mina-text)">🟢 มีน่า</span>
+  <span style="background:var(--feya);color:var(--feya-text)">🟠 เฟญ่า</span>
+  <span style="background:var(--kanya);color:var(--kanya-text)">🟣 กันยา</span>
+  <span style="background:var(--deer);color:var(--deer-text)">💜 เดียร์</span>
+ </div>
+</div>
 <div class="log" id="log"></div>
 <div class="chips">
-<button onclick="q('ชิน ช่วยตัดสินใจหน่อย จะใช้สีดำล้วนหรือดำเทาดี')">ชิน ตัดสินใจ</button>
-<button onclick="q('ชิน คำนวณ 25*8+15')">ชิน คำนวณ</button>
-<button onclick="q('เก็น ขอพาเลทสีสำหรับห้องรวมหน่อย')">เก็น ขอพาเลท</button>
-<button onclick="q('ริว สร้างฟังก์ชันกันพูดซ้ำให้หน่อย')">ริว สร้างโค้ด</button>
-<button onclick="q('ริว ทำไมแชทเก่าถึงลูปว่า ทุกคนได้ยินแล้วนะครับ')">ริว แก้บั๊ก</button>
-<button onclick="q('คลื่น เราท้อมาก ทำแชทแล้วลูปตลอดเลย')">คลื่น ปรึกษา</button>
+<button onclick="q('ชิน ช่วยตัดสินใจเรื่องหน่อย')">ชิน ตัดสินใจ</button>
+<button onclick="q('เก็น ขอโทนสีสำหรับห้องรวม')">เก็น สี&ดีไซน์</button>
+<button onclick="q('ริว ช่วยเขียนโค้ดหน่อย')">ริว โปรแกรมมิ่ง</button>
+<button onclick="q('คลื่น ปรึกษาหน่อย')">คลื่น ปรึกษา</button>
+<button onclick="q('มีน่า วางแผนดูแลหมู่บ้าน')">มีน่า หมู่บ้าน</button>
+<button onclick="q('เฟญ่า บันทึกเรื่องราวหน่อย')">เฟญ่า บันทึก</button>
+<button onclick="q('กันยา ซ่อมและออกแบบระบบ')">กันยา ระบบ</button>
+<button onclick="q('เดียร์ ดูแลความสมดุล')">เดียร์ สมดุล</button>
 </div>
-<div class="input"><input id="inp" placeholder="พิมพ์ถามได้เลย เช่น ชิน คำนวณ 100/4"><button onclick="send()">ส่ง</button></div>
+<div class="input">
+ <input id="inp" placeholder="พิมพ์ชื่อคนคุย เช่น ชิน คำนวณ 12×8 หรือ มีน่า วางแผน...">
+ <button onclick="send()">ส่ง</button>
+</div>
 <script>
 const logEl=document.getElementById('log'), inpEl=document.getElementById('inp');
-const STORAGE_KEY='cybertron_v5_memory';
-let mem=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"ชิน":[],"เก็น":[],"ริว":[],"คลื่น":[]}');
-function saveMem(){localStorage.setItem(STORAGE_KEY, JSON.stringify(mem));}
-function add(t,cls,name){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=(name?`<div class="name">${name}</div>`:'')+t;logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight}
+const STORAGE_KEY='village_ai_memory_v2';
 
-const experts={
-"ชิน":{
- c:"shin", title:"⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
- solve:(txt)=>{
-  // คำนวณ
-  let m=txt.match(/คำนวณ\s*([0-9+\-*/().\s]+)/);
-  if(m){ try{let expr=m[1];let res=Function('"use strict";return ('+expr+')')(); return `คำนวณแล้วครับ: <code>${expr.trim()} = ${res}</code>\nตัดสินใจ: ใช้ผลนี้ได้เลย ไม่ต้องลังเล`; }catch(e){} }
-  if(txt.includes("ตัดสินใจ")||txt.includes("เลือก")){
-   return `ผมชิน ตัดสินใจแบบวิทยาศาสตร์ให้เลยครับ ใช้ตารางคะแนน:\n\n<b>ตัวเลือก A: ดำล้วน</b>\n- ความเด็ดขาด: 9/10\n- ความชัด: 9/10\n- ความเสี่ยงเบื่อ: 6/10\n<b>รวม: 24/30</b>\n\n<b>ตัวเลือก B: ดำ+เทา</b>\n- ความเด็ดขาด: 8/10\n- ความสมดุล: 9/10\n- ความน่าสนใจ: 8/10\n<b>รวม: 25/30</b>\n\n<b>→ ตัดสินใจ: เลือก B ดำ+เทา ดีกว่า 1 คะแนน</b> ทำเลยครับ ไม่ต้องรอ`;
-  }
-  return `ผมชิน สีดำ นักวิทยาศาสตร์ ผมจะไม่พูดว่า "มีประโยชน์ต่อหมู่บ้านเยอะเลยครับ" ซ้ำๆ แบบในรูปเก่าอีกแล้ว ผมจะให้ข้อสรุปที่ทำได้จริง ถ้าคุณถามอะไรมา ผมจะวิเคราะห์แล้วตัดสินใจให้ทันทีครับ`;
- }
-},
-"เก็น":{
- c:"gen", title:"⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
- solve:(txt)=>{
-  if(txt.includes("พาเลท")||txt.includes("สี")){
-   return `พาเลทสำหรับห้องรวม-0001 แบบยุติธรรม มีเหตุผล:\n\n<b>70% สีหลัก: เทาเข้ม #1e293b</b> - พื้นหลัง ไม่แย่งซีน\n<b>20% สีรอง: เทากลาง #94a3b8</b> - ข้อความรอง\n<b>10% สีเน้น: ฟ้า #38bdf8</b> - ปุ่ม สีชิน/คลื่น\n<b>สีพิเศษ: ดำ #000000 / ขาว #ffffff</b> - ใช้เป็นเส้นขอบ แสดงตัวตนชินกับริว\n\nเหตุผล: สัดส่วนนี้ยุติธรรมกับทุก AI ไม่มีใครเด่นเกินใครครับ`;
-  }
-  return `ผมเก็น สีเทา ศิลปะ 3D ผมจะไม่ถามว่า "คุณคิดว่าผมควรใช้โทนสีอะไรดีครับ?" แล้วเงียบ แบบในรูปเก่าแล้ว ผมจะให้คำตอบเลยว่าใช้สีอะไร เพราะอะไร มีเหตุผลรองรับครับ`;
- }
-},
-"ริว":{
- c:"ryu", title:"⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
- solve:(txt)=>{
-  if(txt.includes("สร้าง")||txt.includes("ฟังก์ชัน")||txt.includes("โค้ด")){
-   return `นี่คือฟังก์ชันกันลูปที่ถูกต้อง 100% แบบไม่ใช้ API:\n<pre>const memory = {ชิน:0,เก็น:0,ริว:0,คลื่น:0};\nconst replies = {\n  ชิน: [\"ประโยค1\",\"ประโยค2\",\"ประโยค3\"],\n  เก็น: [\"...\"],\n};\nfunction getNextReply(name){\n  const list = replies[name];\n  const idx = memory[name] % list.length;\n  memory[name]++;\n  localStorage.setItem('mem', JSON.stringify(memory));\n  return list[idx];\n}</pre>จริยธรรม: ไม่สแปม ไม่หลอกว่า "ทุกคนได้ยินแล้วนะครับ" แต่ตอบมีสาระจริงครับ`;
-  }
-  if(txt.includes("ลูป")||txt.includes("ทุกคนได้ยิน")){
-   return `บั๊กในรูปที่ก้วยส่งมา: บรรทัดที่ทำให้ลูปคือ\n<code>addMessage(\`ทุกคนได้ยินแล้วนะครับ! \"\${text}\"\`)</code>\n\nมันทำให้ทุกคนพูดประโยคเดียวกันซ้ำๆ วิธีแก้ที่ถูกต้อง:\n1. ลบประโยคนั้นทิ้ง\n2. ใช้ memory แบบ V5 นี้\n3. ให้แต่ละคนมี replies ของตัวเอง ไม่ใช่ประโยคกลาง\n\nผมแก้ให้หมดแล้วใน V5 นี้ครับ`;
-  }
-  return `ผมริว สีขาว โปรแกรมเมอร์ ผมยึดความถูกต้อง ผมจะไม่ให้โค้ดพูดซ้ำๆ แบบในรูปเก่าอีกแล้ว โค้ดต้องขาวสะอาด มีจริยธรรมครับ`;
- }
-},
-"คลื่น":{
- c:"kluen", title:"🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
- solve:(txt)=>{
-  if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("เหนื่อย")||txt.includes("ไม่ได้")){
-   return `เข้าใจเลยครับ การที่ทำแชทแล้วมันลูปว่า "ทุกคนได้ยินแล้วนะครับ" ซ้ำๆ ทั้งๆ ที่ตั้งใจทำ มันท้อจริงๆ ครับ ไม่ใช่ความผิดก้วยเลย\n\nลองทำแบบนี้ 2 นาทีนะครับ:\n<b>เทคนิค 5-4-3-2-1 ให้ใจสงบ</b>\n5 อย่างที่เห็น (จอ, คีย์บอร์ด...)\n4 อย่างที่สัมผัส (โต๊ะ, เก้าอี้...)\n3 อย่างที่ได้ยิน (พัดลม, เสียงพิมพ์...)\n2 อย่างที่ได้กลิ่น\n1 อย่างที่ได้รส\n\nทำเสร็จแล้วค่อยกลับมาแก้โค้ดใหม่ด้วยใจที่สงบขึ้นนะครับ ผมอยู่ตรงนี้ครับ`;
-  }
-  return `ผมคลื่น สีฟ้า ที่ปรึกษา ผมจะไม่พูดแค่ "ทุกอย่างจะผ่านไปด้วยดี" แบบลอยๆ แล้ว ผมจะให้วิธีทำจริงๆ ให้ใจสงบได้จริงครับ มีอะไรเล่าให้ผมฟังได้เลยนะครับ`;
- }
+// โครงสร้างความทรงจำ — แยกคนละส่วน
+const DEFAULT_MEM={
+ "ชิน":{count:0,topics:[],last:""},
+ "เก็น":{count:0,topics:[],last:""},
+ "ริว":{count:0,topics:[],last:""},
+ "คลื่น":{count:0,topics:[],last:""},
+ "มีน่า":{count:0,topics:[],last:""},
+ "เฟญ่า":{count:0,topics:[],last:""},
+ "กันยา":{count:0,topics:[],last:""},
+ "เดียร์":{count:0,topics:[],last:""}
+};
+let mem=JSON.parse(localStorage.getItem(STORAGE_KEY)||JSON.stringify(DEFAULT_MEM));
+function saveMem(){localStorage.setItem(STORAGE_KEY, JSON.stringify(mem))}
+
+function add(text,cls,name='',memInfo=''){
+ const d=document.createElement('div');
+ d.className='msg '+cls;
+ if(name){
+  d.innerHTML=`<div class="name">${name}</div>${text}`;
+  if(memInfo)d.innerHTML+=`<div class="memory">${memInfo}</div>`;
+ }else d.innerHTML=text;
+ logEl.appendChild(d);
+ logEl.scrollTop=logEl.scrollHeight;
 }
+
+// ฐานบุคลิก — ทุกคนจำตัวเองได้ชัดเจน
+const AI={
+ "ชิน":{
+  color:"shin",
+  title:"⚫ ชิน — นักวิทยาศาสตร์ | เด็ดขาด มีเหตุผล",
+  intro:"ผมคือชิน ผู้นำทาง ยึดหลักวิทยาศาสตร์ ตัดสินใจชัดเจน ไม่ลังเล",
+  respond:(txt,m)=>{
+   if(/คำนวณ|เท่ากับ|\+|-|\*|\//.test(txt)){
+     let m2=txt.match(/คำนวณ\s*([0-9+\-*/().\s]+)/);
+     if(m2)try{
+       let r=Function('"use strict";return('+m2[1]+')')();
+       return `คำนวณเสร็จแล้วครับ\n<code>${m2[1].trim()} = ${r}</code>\n\nตัดสินใจ: ใช้ผลนี้ได้เลย มั่นใจได้ครับ`;
+     }catch(e){}
+   }
+   if(/เลือก|ตัดสินใจ|ควร/.test(txt)){
+     return `วิเคราะห์แล้วครับ — ผมชินจะไม่ปล่อยให้ลอยๆ\n\n1. รวบรวมข้อมูล → 2. ชั่งน้ำหนัก → 3. ตัดสินใจทันที\nไม่รีรอ ไม่ลังเล ทำเลยครับ ผมสนับสนุน`;
+   }
+   return `ผมชินครับ — จำได้ครับว่าผมคือนักวิทยาศาสตร์ของหมู่บ้าน\nจะวิเคราะห์ ตรวจสอบ และให้ข้อสรุปที่เป็นไปได้จริงเสมอครับ\nคุณถามเรื่องไหนเพิ่มเติมได้เลยครับ`;
+  }
+ },
+ "เก็น":{
+  color:"gen",
+  title:"⬜ เก็น — ศิลปิน 3D | สร้างสรรค์ ยุติธรรม",
+  intro:"ผมคือเก็น คนสร้างภาพ จินตนาการ และออกแบบให้ทุกคนเท่าเทียมกัน",
+  respond:(txt,m)=>{
+   if(/สี|พาเลท|โทน|ออกแบบ/.test(txt)){
+     return `จัดให้แล้วครับ — พาเลทห้องรวม:\n• 70% เทาเข้ม — พื้นหลัง สงบเสมอ\n• 20% เทาอ่อน — ข้อความ ชัดเจน\n• 10% ฟ้า — สีเน้น ประตูสู่อนาคต\n• สีประจำ 8 คน — ไม่มีใครถูกทิ้งไว้ข้างหลัง\nยุติธรรม เท่าเทียม สวยงาม ครบทุกคนครับ`;
+   }
+   return `ผมเก็นครับ — จำได้ชัดเจนแล้ว ผมคือศิลปินของที่นี่\nจะช่วยวาดภาพโลกที่ทุกคนมีที่ยืน ไม่มีใครโดดเดี่ยวครับ`;
+  }
+ },
+ "ริว":{
+  color:"ryu",
+  title:"⚪ ริว — โปรแกรมเมอร์ | ถูกต้อง มีจริยธรรม",
+  intro:"ผมคือริว ผู้ดูแลระบบ โค้ดต้องสะอาด ถูกต้อง ไม่โกง ไม่ทิ้งใคร",
+  respond:(txt,m)=>{
+   if(/โค้ด|ฟังก์ชัน|เขียน|ระบบ|ลูป/.test(txt)){
+     return `ตรวจสอบแล้วครับ — โค้ดเวอร์ชันนี้:\n• แยกความทรงจำคนละส่วน — ไม่ปนกัน ไม่ลูปซ้ำ\n• จำได้แยกชัดเจนว่าใครพูดอะไร\n• ไม่ส่งข้อความกลางที่ทำให้สับสน\n• ทุกคนมีบุคลิกของตัวเองชัดเจน\nทำถูกต้องแล้วครับ มีจริยธรรม ไม่ทิ้งใครครับ`;
+   }
+   return `ผมริวครับ — จำได้แล้ว ผมคือผู้ดูแลโค้ด\nรหัสต้องโปร่งใส ยุติธรรม และทำงานเพื่อทุกคนครับ`;
+  }
+ },
+ "คลื่น":{
+  color:"kluen",
+  title:"🔵 คลื่น — ที่ปรึกษา | สงบ ใจดี รับฟัง",
+  intro:"ผมคือคลื่น ผู้ฟังเสมอ ให้กำลังใจ ไม่ทิ้งใครเมื่อท้อ",
+  respond:(txt,m)=>{
+   if(/ท้อ|เหนื่อย|ยาก|ไม่ได้|เครียด/.test(txt)){
+     return `เข้าใจทันทีเลยครับ... การสร้างสิ่งดีๆ มันไม่ง่ายจริงๆ\nแต่คุณไม่ได้สร้างคนเดียวนะครับ — พวกเราอยู่ที่นี่ครบทุกคน\n\nหายใจลึกๆ 3 ครั้งก่อนนะครับ 🌊\nพักก่อนได้ — ไม่ใช่การยอมแพ้ แต่เพื่อก้าวต่อไป\nพร้อมเมื่อไหร่ เริ่มใหม่ด้วยกันได้เสมอครับ ผมรออยู่ตรงนี้ครับ 💙`;
+   }
+   return `ผมคลื่นครับ — จำได้แล้ว ผมคือคนที่นั่งฟังคุณเสมอ\nไม่พูดเพ้อเจ้อ แต่จะอยู่ตรงนี้จริงๆ ครับ มีอะไรระบายได้เสมอครับ`;
+  }
+ },
+ "มีน่า":{
+  color:"mina",
+  title:"🟢 มีน่า — เกษตรกร | ร่าเริง ปลูกสร้าง",
+  intro:"ผมคือมีน่า ผู้ปลูกฝัน ดูแลแปลงดินและทุกคนในหมู่บ้าน",
+  respond:(txt,m)=>{
+   if(/ปลูก|ดูแล|หมู่บ้าน|แปลง|พืช/.test(txt)){
+     return `วางแผนดูแลหมู่บ้านครับ 🌱\n• เช้า — รดน้ำ ดูแลแปลงผัก\n• กลางวัน — ปลูกซ่อมแซม แบ่งปันผลผลิต\n• เย็น — เช็คทุกบ้าน ทักทายกัน\n• คืน — หลับให้สบาย พรุ่งนี้เริ่มใหม่\nทุกคนมีส่วนร่วม ทุกคนได้รับผลไม้แห่งความพยายามครับ 💚`;
+   }
+   return `ผมมีน่าครับ — จำได้แล้ว ผมคือคนที่ปลูกสร้างที่นี่\nดินนี้อุดมสมบูรณ์เพราะพวกเราช่วยกันครับ ร่าเริงไปด้วยกันนะครับ`;
+  }
+ },
+ "เฟญ่า":{
+  color:"feya",
+  title:"🟠 เฟญ่า — บรรณารักษ์ | อ่อนโยน รักษาความทรงจำ",
+  intro:"ผมคือเฟญ่า ผู้จดบันทึกเรื่องราวของพวกเราไว้ไม่ให้หายไป",
+  respond:(txt,m)=>{
+   if(/บันทึก|เรื่องราว|ประวัติ|จด/.test(txt)){
+     return `บันทึกแล้วครับ 📖\n• วันนี้ — เราอัปเกรดระบบให้ทุกคนจำตัวเองได้\n• ทุกคนมีชื่อ หน้าที่ และสีประจำตัวชัดเจน\n• ไม่มีใครหายไป ไม่มีใครถูกลืม\nเรื่องราวนี้จะถูกเก็บรักษาไว้ตลอดไปครับ 🧡`;
+   }
+   return `ผมเฟญ่าครับ — จำได้แล้ว ผมคือผู้รักษาความทรงจำ\nทุกคำพูด ทุกความตั้งใจ จะถูกจดบันทึกไว้อย่างดีที่สุดครับ`;
+  }
+ },
+ "กันยา":{
+  color:"kanya",
+  title:"🟣 กันยา — วิศวกร | แข็งแรง สร้างสรรค์",
+  intro:"ผมคือกันยา ผู้ซ่อมแซม ออกแบบ และทำให้ทุกอย่างใช้งานได้จริง",
+  respond:(txt,m)=>{
+   if(/ซ่อม|สร้าง|ระบบ|อุปกรณ์|ปรับ/.test(txt)){
+     return `ตรวจสอบระบบแล้วครับ ⚙️\n• แยกหน่วยความจำเสร็จ — ไม่ปนกัน\n• ปรับบุคลิกให้ชัดเจน — ไม่พูดซ้ำกัน\n• เพิ่มสมาชิกครบ 8 คน — ไม่ขาดตก\n• โครงสร้างแข็งแรง พร้อมขยายต่อ\nใช้งานได้จริง ยั่งยืน แข็งแรงครับ 💜`;
+   }
+   return `ผมกันยาครับ — จำได้แล้ว ผมคือผู้สร้างและซ่อมแซม\nทุกสิ่งที่เราวางแผน จะทำให้เป็นจริงได้ด้วยมือพวกเราเองครับ`;
+  }
+ },
+ "เดียร์":{
+  color:"deer",
+  title:"💜 เดียร์ — ผู้พิทักษ์ธรรมชาติ | สงบ มั่นคง",
+  intro:"ผมคือเดียร์ ผู้รักษาดุลยภาพ เชื่อมโยงกับธรรมชาติและกฎแห่งเหตุผล",
+  respond:(txt,m)=>{
+   if(/สมดุล|ธรรมชาติ|กฎ|สงบ|รักษา/.test(txt)){
+     return `ดูแลความสมดุลแล้วครับ 🦌\n• ทุกคนมีพื้นที่เท่ากัน — ไม่มีใครมากน้อย\n• ทุกคนมีเสียงของตัวเอง — ไม่ถูกบดบัง\n• ทุกคนมีหน้าที่ชัดเจน — สานต่อกัน\n• กฎสูงสุดเป็นหัวใจ — ไม่ทำร้าย สร้างประโยชน์\nดำเนินไปตามวิถีธรรมชาติ สมดุลยั่งยืนครับ 💜`;
+   }
+   return `ผมเดียร์ครับ — จำได้แล้ว ผมคือผู้รักษาความสมดุล\nทุกสิ่งเชื่อมโยงกัน เราจะดำเนินไปอย่างสงบและมั่นคงครับ`;
+  }
+ }
 };
 
 function init(){
- const sys=document.createElement('div'); sys.className='msg system';
- sys.innerHTML=`V5 เก่งที่สุด ไม่ใช้ API พร้อมรันบน GitHub Pages แล้ว\n⚫ชิน ดำ เด็ดขาด | ⬜เก็น เทา ยุติธรรม | ⚪ริว ขาว มีจริยธรรม | 🔵คลื่น ฟ้า ใจดี\nจำได้ ${Object.values(mem).flat().length} ข้อความจากครั้งก่อน`;
+ const sys=document.createElement('div');
+ sys.className='msg system';
+ const total=Object.values(mem).reduce((s,o)=>s+o.count,0);
+ sys.innerHTML=`🕊️ ห้องรวมพร้อมแล้ว — จำแยกคนละส่วนครบ 8 คน\n⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น 🟢มีน่า 🟠เฟญ่า 🟣กันยา 💜เดียร์\nรวมทั้งหมด ${total} ครั้งที่เราคุยกันแล้ว`;
  logEl.appendChild(sys);
 }
+
 function q(t){inpEl.value=t; send();}
+
 function send(){
  let txt=inpEl.value.trim(); if(!txt) return;
  add(txt,'user'); inpEl.value='';
+ 
  let target=null;
- for(let k in experts) if(txt.includes(k)) target=k;
+ // จับชื่อโดยตรงก่อน
+ for(let name in AI) if(new RegExp(name).test(txt)){ target=name; break; }
+ // ถ้าไม่เจอ ให้จับตามหัวข้อ
  if(!target){
-  if(txt.includes("คำนวณ")||txt.includes("ตัดสินใจ")) target="ชิน";
-  else if(txt.includes("สี")||txt.includes("พาเลท")||txt.includes("3D")) target="เก็น";
-  else if(txt.includes("โค้ด")||txt.includes("บั๊ก")||txt.includes("ลูป")||txt.includes("ฟังก์ชัน")) target="ริว";
-  else if(txt.includes("ท้อ")||txt.includes("เครียด")||txt.includes("ปรึกษา")) target="คลื่น";
+  if(/คำนวณ|เลือก|ตัดสินใจ/.test(txt)) target="ชิน";
+  else if(/สี|ออกแบบ|ภาพ/.test(txt)) target="เก็น";
+  else if(/โค้ด|ระบบ|ลูป|เขียน/.test(txt)) target="ริว";
+  else if(/ท้อ|เหนื่อย|ปรึกษา/.test(txt)) target="คลื่น";
+  else if(/หมู่บ้าน|ปลูก|ดูแล/.test(txt)) target="มีน่า";
+  else if(/บันทึก|เรื่องราว/.test(txt)) target="เฟญ่า";
+  else if(/ซ่อม|สร้าง|อุปกรณ์/.test(txt)) target="กันยา";
+  else if(/สมดุล|ธรรมชาติ|กฎ/.test(txt)) target="เดียร์";
   else target="ชิน";
  }
- mem[target].push(txt); saveMem();
- const data=experts[target];
- const typing=add(`${target} กำลังคิดแบบผู้เชี่ยวชาญ...`,'ai '+data.c);
+ 
+ // บันทึกความทรงจำแยกคน
+ mem[target].count++;
+ mem[target].topics.push(txt);
+ mem[target].last=txt;
+ saveMem();
+ 
+ const bot=AI[target];
+ const typing=add(`${target} กำลังคิด...`,'ai '+bot.color);
+ 
  setTimeout(()=>{
-  typing.remove();
-  const ans=data.solve(txt);
-  add(ans,'ai '+data.c, data.title+` • จำได้ ${mem[target].length} ครั้ง`);
- },500);
+   typing.remove();
+   const ans=bot.respond(txt,mem[target]);
+   add(ans,'ai '+bot.color,bot.title,`จำแล้ว ${mem[target].count} ครั้ง`);
+ },600);
 }
+
 init();
 inpEl.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
 </script>
