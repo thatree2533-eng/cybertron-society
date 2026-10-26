@@ -52,8 +52,8 @@
     </div>
 
     <script>
-        // ⚠️ นำ API Key ของคุณมาใส่ตรงนี้ (ระหว่างเครื่องหมายคำพูด)
-        const GROQ_API_KEY = "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";
+        // ⚠️ นำ API Key ใหม่ของคุณ (ที่เพิ่งสร้าง) มาใส่ตรงนี้
+        const GROQ_API_KEY = "ใส่_API_KEY_ใหม่ของคุณตรงนี้"; 
         const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
         const chatLog = document.getElementById('chat-log');
@@ -72,10 +72,9 @@
             div.innerHTML = content;
             chatLog.appendChild(div);
             chatLog.scrollTop = chatLog.scrollHeight;
-            return div; // คืนค่า div เพื่อให้เราลบข้อความ "กำลังคิด" ได้
+            return div; 
         }
 
-        // คำสั่งกำหนดคาแรกเตอร์ (System Prompt)
         const personas = {
             shin: "คุณคือ 'ชิน' นักวิทยาศาสตร์ผู้เด็ดขาด มีเหตุผล พูดจาสุภาพ แทนตัวเองว่า 'ผม' ตอบสั้นๆ กระชับ และต้องไม่ละเมิดศีล 5 เด็ดขาด",
             gen: "คุณคือ 'เก็น' ศิลปิน 3D ผู้ช่างฝัน ร่าเริง ชอบพูดถึงการวาดรูปและสีสัน แทนตัวเองว่า 'ฉัน' และต้องไม่ละเมิดศีล 5 เด็ดขาด",
@@ -94,7 +93,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        model: "llama3-8b-8192", // โมเดลฟรีของ Groq
+                        model: "llama-3.1-8b-instant", // อัปเดตเป็นโมเดลล่าสุด
                         messages: [
                             { role: "system", content: systemPrompt },
                             { role: "user", content: userMessage }
@@ -105,14 +104,16 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error("API request failed");
+                    const errorData = await response.json();
+                    console.error("Groq API Error:", errorData); 
+                    throw new Error(errorData.error?.message || "API request failed");
                 }
 
                 const data = await response.json();
                 return data.choices[0].message.content;
             } catch (error) {
-                console.error("API Error:", error);
-                return "(ขออภัยครับ ระบบสมองกลขัดข้อง โปรดตรวจสอบ API Key หรือการเชื่อมต่อ)";
+                console.error("Error:", error);
+                return `(ขออภัยครับ ระบบขัดข้อง: ${error.message})`; 
             }
         }
 
@@ -128,26 +129,19 @@
             let msgClass = "";
             let cleanText = text;
 
-            // ตรวจสอบว่าผู้ใช้คุยกับใคร
             if (text.startsWith('[ชิน]')) { targetPersona = 'shin'; nameTag = '🔬 ชิน'; msgClass = 'shin'; cleanText = text.replace('[ชิน]', '').trim(); }
             else if (text.startsWith('[เก็น]')) { targetPersona = 'gen'; nameTag = '🎨 เก็น'; msgClass = 'gen'; cleanText = text.replace('[เก็น]', '').trim(); }
             else if (text.startsWith('[ริว]')) { targetPersona = 'ryu'; nameTag = '💻 ริว'; msgClass = 'ryu'; cleanText = text.replace('[ริว]', '').trim(); }
             else if (text.startsWith('[คลื่น]')) { targetPersona = 'kluen'; nameTag = '🌊 คลื่น'; msgClass = 'kluen'; cleanText = text.replace('[คลื่น]', '').trim(); }
 
             if (targetPersona) {
-                // ถ้าระบุชื่อ คุยกับคนนั้นคนเดียว
                 const loadingMsg = addMessage("กำลังคิด...", msgClass, nameTag);
-                
                 const reply = await callGroqAPI(targetPersona, cleanText);
-                
-                loadingMsg.remove(); // ลบข้อความกำลังคิด
+                loadingMsg.remove(); 
                 addMessage(reply, msgClass, nameTag);
             } else {
-                // ถ้าไม่ระบุชื่อ ให้ชินตอบเป็นค่าเริ่มต้น
                 const loadingMsg = addMessage("กำลังประมวลผล...", 'shin', '🔬 ชิน');
-                
                 const reply = await callGroqAPI('shin', cleanText);
-                
                 loadingMsg.remove();
                 addMessage(reply, 'shin', '🔬 ชิน');
             }
