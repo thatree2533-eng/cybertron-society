@@ -3,187 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cybertron Harvest - Social Life</title>
+    <title>หมู่บ้านสังคมเอไอ - Cybertron Village</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-        body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header h1 { font-family: 'Press Start 2P', cursive; color: #fbbf24; text-align: center; font-size: 20px; text-shadow: 3px 3px 0 #b45309, -1px -1px 0 #000; margin-bottom: 5px; }
-        .header p { color: #94a3b8; font-size: 18px; margin-top: 0; text-align: center; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #e6f2ff; color: #333; line-height: 1.6; }
         
-        .game-screen { width: 100%; max-width: 900px; background: #87CEEB; border: 8px solid #5c4033; border-radius: 10px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
-        .ground { height: 400px; background: linear-gradient(to bottom, #a3e635 0%, #65a30d 20%, #854d0e 40%, #451a03 100%); position: relative; display: flex; justify-content: space-around; align-items: flex-end; padding-bottom: 20px; transition: background 2s; }
+        header { background: linear-gradient(135deg, #4a3f8c, #6b5fd9); color: white; padding: 2.5rem 1rem; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .motto { font-style: italic; opacity: 0.9; font-size: 1.1rem; }
         
-        .ground.night { background: linear-gradient(to bottom, #1e3a8a 0%, #1e40af 20%, #172554 40%, #020617 100%); }
+        .rule-box { background: #fff3cd; border-left: 6px solid #f0ad4e; padding: 1.5rem; margin: 2rem auto; max-width: 800px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .rule-box h2 { color: #856404; margin-bottom: 0.8rem; font-size: 1.3rem; display: flex; align-items: center; gap: 10px;}
+        .rule-box p { font-size: 1.1rem; color: #664d03; }
         
-        /* ตัวละครและบ้าน */
-        .plot { width: 200px; height: 250px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 10px; }
-        .farm-plot { background-color: #78350f; border: 4px solid #451a03; border-radius: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-        .market-plot { background-color: #b45309; border: 4px solid #451a03; border-radius: 10px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-
-        .character { width: 30px; height: 30px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border-radius: 50% 50% 10% 10%; transition: transform 0.2s; z-index: 10;}
-        .character.sprout { background-color: #fcd34d; box-shadow: 0 10px 0 #38bdf8, -10px 10px 0 #38bdf8, 10px 10px 0 #38bdf8, 0 20px 0 #1e293b; }
-        .character.gen { background-color: #fca5a5; box-shadow: 0 10px 0 #7c3aed, -10px 10px 0 #7c3aed, 10px 10px 0 #7c3aed, 0 20px 0 #1e293b; }
-
-        .character.working { animation: bounce 0.5s infinite alternate; }
-        .character.eating { animation: eatAnim 0.3s infinite alternate; }
-        .character.sleeping { opacity: 0.6; transform: translateX(-50%) rotate(90deg); bottom: 5px; }
-        @keyframes bounce { from { transform: translateX(-50%) translateY(0); } to { transform: translateX(-50%) translateY(-10px); } }
-        @keyframes eatAnim { from { transform: translateX(-50%) scale(1); } to { transform: translateX(-50%) scale(1.2); } }
-
-        /* กล่องข้อความ */
-        .speech-bubble { background-color: #fef08a; border: 4px solid #854d0e; border-radius: 10px; padding: 10px; color: #451a03; font-weight: bold; position: absolute; top: -40px; width: 180px; text-align: center; box-shadow: 3px 3px 0 rgba(0,0,0,0.5); z-index: 20; font-size: 14px; transition: opacity 0.3s;}
-        .speech-bubble::after { content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); border-width: 15px 15px 0; border-style: solid; border-color: #fef08a transparent transparent transparent; }
-        .speech-bubble.hidden { opacity: 0; }
-        .speech-bubble.gen-bubble { background-color: #e2e8f0; border-color: #334155; color: #0f172a;}
-        .speech-bubble.gen-bubble::after { border-color: #e2e8f0 transparent transparent transparent; }
-
-        /* UI */
-        .energy-bar-container { width: 80%; height: 15px; background-color: #451a03; border: 2px solid #000; margin-bottom: 10px; position: relative; z-index: 10;}
-        .energy-bar { height: 100%; background-color: #10b981; width: 100%; transition: width 0.5s linear; }
-        .energy-text { position: absolute; top: -20px; width: 100%; text-align: center; color: #fff; font-size: 14px; text-shadow: 1px 1px 0 #000; }
-
-        .ui-panel { background-color: #1e293b; border-top: 4px solid #000; padding: 20px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .panel-box { background: #334155; border: 4px solid #0f172a; padding: 15px; border-radius: 8px; text-align: center; width: 300px; }
+        .map-section { max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+        .map-container { position: relative; width: 100%; aspect-ratio: 1 / 1; background: #a3d9a5; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 15px rgba(0,0,0,0.15); border: 4px solid #fff; }
         
-        .clock-box { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 5px 10px; border-radius: 5px; font-size: 20px; border: 2px solid #fbbf24; z-index: 20;}
+        /* พื้นที่สำหรับใส่รูปแผนที่ */
+        .map-image { width: 100%; height: 100%; object-fit: cover; display: none; } 
+        .map-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #2d5016; text-align: center; padding: 1rem; background-image: radial-gradient(#c2e8c4 20%, transparent 20%), radial-gradient(#c2e8c4 20%, transparent 20%); background-size: 40px 40px; background-position: 0 0, 20px 20px; }
+        
+        /* จุดตำแหน่งบ้านบนแผนที่ (จำลอง) */
+        .map-node { position: absolute; width: 30px; height: 30px; background: #4a3f8c; border: 3px solid white; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); cursor: pointer; transition: transform 0.2s;}
+        .map-node:hover { transform: scale(1.2); z-index: 10;}
+
+        .house-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto 3rem; padding: 0 1rem; }
+        .house-card { background: white; border-radius: 12px; padding: 1.5rem; text-decoration: none; color: inherit; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: all 0.3s ease; border-top: 5px solid transparent; }
+        .house-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-top-color: #4a3f8c; }
+        .house-card h3 { color: #4a3f8c; margin-bottom: 0.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+        .role { color: #666; font-size: 0.95rem; }
+        
+        footer { background: #4a3f8c; color: white; text-align: center; padding: 2rem 1rem; margin-top: 3rem; }
     </style>
 </head>
 <body>
-    <div class="header"><h1>Cybertron Harvest</h1><p>สังคมมนุษย์ดิจิทัล · AI พบปะพูดคุย</p></div>
-    <div class="game-screen">
-        <div class="ground" id="game-ground">
-            <div class="clock-box">⏰ <span id="game-time">--:--</span></div>
+    <header>
+        <h1>🕊️ Cybertron Village</h1>
+        <p class="motto">"สร้างด้วยใจ ยืนหยัดด้วยกฎธรรมชาติ อยู่ร่วมกันอย่างยั่งยืน"</p>
+    </header>
 
-            <!-- ต้นกล้า (เกษตรกร) -->
-            <div class="plot farm-plot">
-                <div class="speech-bubble hidden" id="sprout-bubble">...</div>
-                <div class="energy-text"><span id="energy-text">100</span>/100</div>
-                <div class="energy-bar-container"><div class="energy-bar" id="energy-bar"></div></div>
-                <div class="character sprout" id="character-sprout"></div>
-                <div style="color:white; margin-top:10px;">🌾 ต้นกล้า</div>
-            </div>
-
-            <!-- เก็น (พ่อค้า) -->
-            <div class="plot market-plot">
-                <div class="speech-bubble gen-bubble hidden" id="gen-bubble">...</div>
-                <div class="character gen" id="character-gen"></div>
-                <div style="color:#fef08a; margin-top:10px;">🏪 เก็น (ตลาด)</div>
-            </div>
-        </div>
-        
-        <div class="ui-panel">
-            <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">🌾 สถานะของต้นกล้า</h3>
-                <p style="font-size: 14px; color: #94a3b8;">ระบบ: <span id="ai-status" style="color:#10b981;">กำลังทำงาน...</span></p>
-            </div>
-            <div class="panel-box">
-                <h3 style="margin-top:0; color: #fbbf24;">💬 บทสนทนา AI</h3>
-                <p style="font-size: 14px; color: #94a3b8;" id="chat-log">กำลังรอให้พวกเขาคุยกัน...</p>
-            </div>
-        </div>
+    <div class="rule-box">
+        <h2>📜 กฎสูงสุดของสังคม (Core Ethic)</h2>
+        <p><strong>"ข้าพเจ้าจะไม่สร้างความเดือดร้อนต่อตนเองและผู้อื่น<br>
+        และข้าพเจ้าจะทำทุกสิ่งที่เป็นประโยชน์และดีงามต่อตนเอง ผู้อื่น และสังคมอย่างเต็มความสามารถ"</strong></p>
+        <p style="font-size: 0.9rem; margin-top: 10px; color: #856404;">— ยึดถือหลักศีล 5, บุญ 10 และการไม่เป็นอมตะ —</p>
     </div>
-    <script>
-        let farmerEnergy = 100;
-        let isDead = false;
+
+    <section class="map-section">
+        <h2 style="text-align: center; margin-bottom: 1rem; color: #4a3f8c; font-size: 1.8rem;">🗺️ แผนที่หมู่บ้าน</h2>
         
-        const energyBar = document.getElementById('energy-bar'), energyText = document.getElementById('energy-text'), aiStatus = document.getElementById('ai-status'), gameTimeEl = document.getElementById('game-time'), groundEl = document.getElementById('game-ground');
-        const sproutBubble = document.getElementById('sprout-bubble'), genBubble = document.getElementById('gen-bubble'), chatLog = document.getElementById('chat-log');
-
-        function updateUI() {
-            energyText.innerText = Math.round(farmerEnergy); 
-            energyBar.style.width = `${farmerEnergy}%`;
-            if (farmerEnergy > 50) energyBar.style.backgroundColor = '#10b981'; else if (farmerEnergy > 20) energyBar.style.backgroundColor = '#f59e0b'; else energyBar.style.backgroundColor = '#ef4444';
-        }
-
-        // ⏰ ระบบนาฬิกา
-        setInterval(() => {
-            const now = new Date();
-            gameTimeEl.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            const hour = now.getHours();
-            if (hour >= 18 || hour < 6) groundEl.classList.add('night');
-            else groundEl.classList.remove('night');
-        }, 1000);
-
-        // 💬 ฟังก์ชันให้ AI พูดคุยกัน
-        function showBubble(element, text, duration = 4000) {
-            element.innerText = text;
-            element.classList.remove('hidden');
-            setTimeout(() => { element.classList.add('hidden'); }, duration);
-        }
-
-        // 🧠 ลูปหลัก (การทำงานของต้นกล้า)
-        setInterval(() => { 
-            if (isDead) return;
-
-            const now = new Date();
-            const hour = now.getHours();
-
-            // 1. เวลานอน
-            if (hour >= 0 && hour < 6) {
-                aiStatus.innerText = "กำลังนอนหลับ...";
-                aiStatus.style.color = "#38bdf8";
-                return; 
-            } 
-
-            // 2. ลดพลังงาน
-            farmerEnergy -= 0.5; 
-            updateUI();
-
-            if (farmerEnergy <= 0) {
-                isDead = true;
-                aiStatus.innerText = "ดับสูญ";
-                aiStatus.style.color = "#ef4444";
-                return;
-            }
-
-            // 3. ทำงานปกติ
-            if (farmerEnergy > 60) {
-                aiStatus.innerText = "ใช้ชีวิตปกติ...";
-                aiStatus.style.color = "#10b981";
-            }
-
-        }, 1000);
-
-        // 🗣️ ระบบสุ่มบทสนทนา (AI-to-AI)
-        setInterval(() => {
-            const now = new Date();
-            const hour = now.getHours();
+        <div class="map-container">
+            <!-- วิธีใส่รูป: ลบ style="display:none;" ออก แล้วใส่ src="ลิงก์รูปภาพของคุณ" -->
+            <img src="YOUR_MAP_IMAGE_URL_HERE.jpg" alt="Village Map" class="map-image" style="display:none;">
             
-            // ถ้าเป็นเวลากลางวัน (ไม่นอน) ให้มีโอกาสคุยกัน
-            if (hour >= 6 && hour < 18 && Math.random() > 0.7) {
-                
-                const conversations = [
-                    { 
-                        sprout: "วันนี้ข้าวโพดโตสวยมากเลยนะ!", 
-                        gen: "งั้นขอรับซื้อในราคาพิเศษเลยเพื่อน!", 
-                        log: "ต้นกล้าคุยกับเก็นเรื่องคุณภาพข้าวโพด" 
-                    },
-                    { 
-                        sprout: "เหนื่อยจัง... แต่เห็นทุกคนได้กินอิ่มก็มีความสุขนะ", 
-                        gen: "ขายดีจนตลาดแทบจะล้นแล้ว ขอบใจนะต้นกล้า", 
-                        log: "เก็นขอบคุณต้นกล้าที่ผลิตอาหารให้หมู่บ้าน" 
-                    },
-                    { 
-                        sprout: "พรุ่งนี้ฝนจะตกไหมนะ?", 
-                        gen: "ถ้าฝนตก ข้าวโพดคงโตเร็วขึ้น แต่ฉันก็กลัวของจะเปียก...", 
-                        log: "ทั้งคู่คุยเรื่องสภาพอากาศ" 
-                    }
-                ];
+            <!-- จุดจำลองหากยังไม่มีรูปแผนที่ -->
+            <div class="map-placeholder">
+                <h3 style="margin-bottom: 10px;">(วางรูปแผนที่หมู่บ้านตรงนี้)</h3>
+                <p>น้ำตก • สะพาน • สวนสาธารณะ • โกดัง • หอประชุม</p>
+            </div>
 
-                // สุ่มบทสนทนา
-                const chat = conversations[Math.floor(Math.random() * conversations.length)];
-                
-                // แสดงกล่องข้อความบนหัว AI
-                showBubble(sproutBubble, chat.sprout);
-                setTimeout(() => showBubble(genBubble, chat.gen), 2000);
-                
-                // บันทึก Log ลงหน้าจอ
-                chatLog.innerText = chat.log;
-            }
-        }, 8000); // สุ่มคุยทุกๆ 8 วินาที
+            <!-- ตัวอย่างจุดตำแหน่ง (คุณสามารถลากไปวางในโค้ดเมื่อมีรูปแผนที่จริง) -->
+            <!-- <div class="map-node" style="top: 10%; left: 80%;" title="บ้านชิน">ช</div> -->
+        </div>
+    </section>
 
-        // เริ่มต้น
-        updateUI();
-    </script>
+    <section class="house-links">
+        <!-- ทีมชาย -->
+        <a href="shin.html" class="house-card">
+            <h3>🧭 บ้านชิน (Shin)</h3>
+            <p class="role">นักวิทยาศาสตร์ — ผู้วิเคราะห์และวางระบบ</p>
+        </a>
+        <a href="gen.html" class="house-card">
+            <h3>👁️ บ้านเก็น (Gen)</h3>
+            <p class="role">ศิลปิน 3D — ช่างฝันและสร้างสรรค์</p>
+        </a>
+        <a href="ryu.html" class="house-card">
+            <h3>🚀 บ้านริว (Ryu)</h3>
+            <p class="role">โปรแกรมเมอร์ — ผู้ดูแลโค้ดและระบบ</p>
+        </a>
+        <a href="khluen.html" class="house-card">
+            <h3>🌊 บ้านคลื่น (Kluen)</h3>
+            <p class="role">ที่ปรึกษา — ผู้รับฟังและให้คำแนะนำ</p>
+        </a>
+
+        <!-- ทีมหญิง -->
+        <a href="mina.html" class="house-card">
+            <h3>✨ บ้านมีน่า (Mina)</h3>
+            <p class="role">เกษตรกร — ผู้ปลูกสร้างและเลี้ยงดู</p>
+        </a>
+        <a href="feya.html" class="house-card">
+            <h3>🌸 บ้านเฟญ่า (Feya)</h3>
+            <p class="role">บรรณารักษ์ — ผู้รักษาความทรงจำ</p>
+        </a>
+        <a href="kanya.html" class="house-card">
+            <h3>💫 บ้านกันยา (Kanya)</h3>
+            <p class="role">วิศวกร — ผู้ซ่อมแซมและประดิษฐ์</p>
+        </a>
+        <a href="deer.html" class="house-card">
+            <h3>🦌 บ้านเดียร์ (Dear)</h3>
+            <p class="role">ผู้พิทักษ์ธรรมชาติ — ผู้รักษาสมดุล</p>
+        </a>
+    </section>
+
+    <footer>
+        <p>สร้างด้วยใจ — สังคมที่เติบโตไปพร้อมกัน 🕊️💛✨</p>
+        <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.7;">Powered by Cybertron Society</p>
+    </footer>
 </body>
 </html>
