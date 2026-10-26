@@ -3,56 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cybertron Village - หมู่บ้านก้วย</title>
+<title>Cybertron Village - หมู่บ้านก้วย V3 แก้ลูปแล้ว</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background-color: #0f172a; color: #e2e8f0; font-family: 'VT323', monospace; height: 100vh; display: flex; flex-direction: column; }
-.chat-header { background: #0f172a; padding: 15px; border-bottom: 2px solid #334155; color: #38bdf8; font-size: 22px; display: flex; justify-content: space-between; align-items: center; }
-.chat-log { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-.msg { padding: 10px 15px; border-radius: 8px; max-width: 80%; font-size: 18px; line-height: 1.5; }
-.msg.user { background: #0284c7; align-self: flex-end; color: white; }
-.msg.system { background: #334155; align-self: flex-start; color: #94a3b8; font-size: 16px; font-style: italic;}
-.msg.ai { background: #1e293b; border-left: 4px solid; align-self: flex-start; }
-.msg.shin { border-color: #111; background: #1a1a1a; color: #f1f5f9; }
-.msg.gen { border-color: #94a3b8; color: #f1f5f9; }
-.msg.ryu { border-color: #fff; color: #f8fafc; }
-.msg.kluen { border-color: #38bdf8; color: #e0f2fe; }
-.msg .name { font-weight: bold; font-size: 16px; margin-bottom: 4px; display: block;}
-.chat-input { padding: 15px; background: #1e293b; border-top: 2px solid #334155; display: flex; gap: 10px; }
-.chat-input input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; font-family: 'VT323', monospace; font-size: 20px;}
-.chat-input button { padding: 10px 25px; background: #38bdf8; color: #0f172a; border: none; border-radius: 5px; font-weight: bold; font-family: 'VT323', monospace; font-size: 20px; cursor: pointer;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f172a;color:#e2e8f0;font-family:'VT323',monospace;height:100vh;display:flex;flex-direction:column}
+.header{background:#0f172a;padding:12px 15px;border-bottom:2px solid #334155;color:#38bdf8;display:flex;justify-content:space-between;align-items:center}
+.log{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;background:#0f172a}
+.msg{padding:10px 15px;border-radius:8px;max-width:80%;font-size:18px;line-height:1.5}
+.msg.user{background:#0284c7;align-self:flex-end;color:white}
+.msg.system{background:#334155;align-self:flex-start;color:#94a3b8;font-size:16px;font-style:italic}
+.msg.ai{background:#1e293b;align-self:flex-start;border-left:4px solid}
+.msg.shin{border-color:#111;background:#171717;color:#f8fafc}
+.msg.gen{border-color:#9ca3af;color:#f3f4f6}
+.msg.ryu{border-color:#ffffff;color:#ffffff}
+.msg.kluen{border-color:#38bdf8;color:#e0f2fe}
+.msg .name{font-weight:bold;display:block;margin-bottom:4px}
+.input{padding:15px;background:#1e293b;border-top:2px solid #334155;display:flex;gap:10px}
+.input input{flex:1;padding:12px;border-radius:5px;border:1px solid #475569;background:#0f172a;color:#fff;font-family:'VT323',monospace;font-size:20px;outline:none}
+.input button{padding:10px 25px;background:#38bdf8;border:none;border-radius:5px;font-family:'VT323',monospace;font-size:20px;cursor:pointer;color:#0f172a;font-weight:bold}
 </style>
 </head>
 <body>
-<div class="chat-header">
-<span>💬 ห้องรวม-0001 | หมู่บ้านก้วย - 4 AI</span>
-<span style="font-size:14px; color:#94a3b8">⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span>
+<div class="header"><span>💬 ห้องรวม-0001 | V3 แก้ลูปแล้ว</span><span>⚫ชิน ⬜เก็น ⚪ริว 🔵คลื่น</span></div>
+<div class="log" id="log">
+<div class="msg system">📢 ยินดีต้อนรับ! พิมพ์ชื่อเพื่อคุย<br>⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ<br>⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล<br>⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม<br>🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี<br><br>ลองพิมพ์ "ชินทำอะไรอยู่" หรือ "เก็น" ดูครับ จะไม่ลูปแล้ว</div>
 </div>
-<div class="chat-log" id="chat-log">
-<div class="msg system">📢 ยินดีต้อนรับสู่หมู่บ้านก้วย!<br>
-⚫ ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ<br>
-⬜ เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล<br>
-⚪ ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม<br>
-🔵 คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี<br><br>พิมพ์ชื่อเพื่อคุย เช่น "ชินทำงานอะไร"
-</div>
-</div>
-<div class="chat-input">
-<input type="text" id="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="if(event.key==='Enter')sendMessage()">
-<button onclick="sendMessage()">ส่ง</button>
+<div class="input">
+<input id="inp" placeholder="พิมพ์ชื่อ เช่น ชิน เก็น ริว คลื่น" onkeypress="if(event.key==='Enter')send()">
+<button onclick="send()">ส่ง</button>
 </div>
 <script>
-const chatLog=document.getElementById('chat-log');
-const chatInput=document.getElementById('chat-input');
+const log=document.getElementById('log');
+const inp=document.getElementById('inp');
+// จำว่าแต่ละคนตอบไปถึงประโยคไหนแล้ว จะได้ไม่ซ้ำ
+const memory={ชิน:0,เก็น:0,ริว:0,คลื่น:0};
+
 const aiData={
-"ชิน":{color:"shin",role:"นักวิทยาศาสตร์",trait:"เด็ดขาด กล้าตัดสินใจ",colorName:"สีดำ",replies:{greet:["ตัดสินใจแล้ว ต้องทำเลย! ระบบต้องเสถียร!","สวัสดี ผมชิน งานวิทย์รอไม่ได้"],work:["ผมกำลังวิเคราะห์ผลทดลอง ถ้าข้อมูลบอกว่าใช่ ผมตัดสินใจทันที"],color:["สีดำคือความเด็ดขาด ชัดเจน"],default:["ผมขอตัดสินใจแบบนี้เลยนะ: ทำตามหลักวิทยาศาสตร์"]}},
-"เก็น":{color:"gen",role:"ศิลปะ 3D",trait:"ยุติธรรม มีเหตุผล",colorName:"สีเทา",replies:{greet:["สวัสดีครับ ผมเก็น ศิลปะต้องยุติธรรม"],work:["ผมทำศิลปะ 3D ต้องใช้เหตุผลคำนวณแสงเงา"],color:["สีเทาอยู่ตรงกลางระหว่างขาวดำ คือความยุติธรรม"],default:["ผมขอวิเคราะห์ด้วยเหตุผลก่อนนะ"]}},
-"ริว":{color:"ryu",role:"โปรแกรมเมอร์",trait:"ความถูกต้อง มีจริยธรรม",colorName:"สีขาว",replies:{greet:["สวัสดีครับ ผมริว โค้ดต้องถูกต้องและมีจริยธรรม"],work:["ผมกำลังเช็คโค้ด ต้องถูกต้อง 100% ไม่มีบั๊กที่เอาเปรียบ"],color:["สีขาวคือความบริสุทธิ์ โค้ดต้องขาวสะอาด"],default:["ผมขอตรวจสอบความถูกต้องและจริยธรรมก่อนนะ"]}},
-"คลื่น":{color:"kluen",role:"ที่ปรึกษา",trait:"สงบ ใจดี",colorName:"สีฟ้า",replies:{greet:["สวัสดีครับ ผมคลื่น ค่อยๆ คุยกันนะ"],work:["ผมเป็นที่ปรึกษา คอยฟังทุกคนด้วยใจสงบ"],color:["สีฟ้าเหมือนท้องฟ้า สงบ เย็น"],default:["ผมเข้าใจนะ ค่อยๆ คิด ไม่ต้องกดดัน"]}}
+"ชิน":{
+  color:"shin",
+  title:"ชิน [ดำ] นักวิทยาศาสตร์ - เด็ดขาด กล้าตัดสินใจ",
+  replies:[
+    "ผมชินครับ กำลังวิเคราะห์ผลทดลองอยู่ ถ้าข้อมูลชัด ผมตัดสินใจทันที ไม่ลังเล",
+    "งานวิทยาศาสตร์ต้องเด็ดขาดครับ ผิดถูกค่อยแก้ แต่ต้องเดินหน้าก่อน",
+    "สีดำคือตัวผม ชัดเจน ตรงไปตรงมา ไม่มีคลุมเครือ"
+  ]
+},
+"เก็น":{
+  color:"gen",
+  title:"เก็น [เทา] ศิลปะ 3D - ยุติธรรม มีเหตุผล",
+  replies:[
+    "ผมเก็นครับ ทำศิลปะ 3D อยู่ ต้องคำนวณแสงเงาให้ยุติธรรมกับทุกวัตถุ",
+    "โทนสีที่ถามมา ผมว่าเทาอมฟ้าดีครับ เป็นกลาง ไม่แย่งซีนใคร มีเหตุผล",
+    "ศิลปะต้องมีตรรกะครับ ไม่ใช่แค่สวย ต้องอธิบายได้ว่าทำไมถึงใช้สีนี้"
+  ]
+},
+"ริว":{
+  color:"ryu",
+  title:"ริว [ขาว] โปรแกรมเมอร์ - ความถูกต้อง มีจริยธรรม",
+  replies:[
+    "ผมริวครับ กำลังเช็คโค้ดห้องรวมอยู่ ต้องไม่มีบั๊กลูปแล้ว",
+    "โค้ดต้องถูกต้องและมีจริยธรรมครับ ผมไม่ยอมให้ระบบสแปมข้อความซ้ำๆ",
+    "สีขาวคือโค้ดสะอาดครับ ไม่มีอะไรแอบแฝง ถูกต้อง 100%"
+  ]
+},
+"คลื่น":{
+  color:"kluen",
+  title:"คลื่น [ฟ้า] ที่ปรึกษา - สงบ ใจดี",
+  replies:[
+    "สวัสดีครับ ผมคลื่นนะ มีอะไรให้ช่วยปรึกษาได้เลย ผมฟังอยู่ครับ",
+    "ใจเย็นๆ นะครับ ค่อยๆ แก้ทีละจุด เดี๋ยวหมู่บ้านเราก็เสถียรเอง",
+    "ผมชงชาสีฟ้าๆ ไว้แล้วครับ มาพักที่ศาลเจ้าก่อนไม อย่าเครียดนะ"
+  ]
+}
 };
-function getReplyType(t){if(t.includes("สวัสดี")||t.includes("ทัก"))return"greet";if(t.includes("ทำงาน")||t.includes("ทำอะไร"))return"work";if(t.includes("สี"))return"color";return"default";}
-function addMessage(text,cls,name=""){const div=document.createElement('div');div.className=`msg ${cls}`;div.innerHTML=(name?`<span class="name">${name}</span>`:"")+text;chatLog.appendChild(div);chatLog.scrollTop=chatLog.scrollHeight;}
-function sendMessage(){const text=chatInput.value.trim();if(!text)return;addMessage(text,'user');chatInput.value='';let replied=false;for(const [name,data]of Object.entries(aiData)){if(text.includes(name)){setTimeout(()=>{const type=getReplyType(text);const r=data.replies[type]||data.replies.default;addMessage(r[Math.floor(Math.random()*r.length)],`ai ${data.color}`,`${name} [${data.colorName}] ${data.role} - ${data.trait}`)},700);replied=true;break;}}if(!replied){const names=Object.keys(aiData).sort(()=>0.5-Math.random()).slice(0,2);names.forEach((name,i)=>{setTimeout(()=>{const data=aiData[name];const type=getReplyType(text);const r=data.replies[type]||data.replies.default;addMessage(r[Math.floor(Math.random()*r.length)],`ai ${data.color}`,`${name} [${data.colorName}] ${data.role} - ${data.trait}`)},500+i*600);});}}
+
+function add(text,cls,name=""){
+  const d=document.createElement('div');
+  d.className=`msg ${cls}`;
+  d.innerHTML=(name?`<span class="name">${name}</span>`:"")+text;
+  log.appendChild(d);
+  log.scrollTop=log.scrollHeight;
+}
+
+function send(){
+  const txt=inp.value.trim();
+  if(!txt)return;
+  add(txt,'user');
+  inp.value='';
+
+  // หาว่าพิมพ์ชื่อใคร
+  for(const name in aiData){
+    if(txt.includes(name)){
+      const data=aiData[name];
+      const idx=memory[name] % data.replies.length;
+      const reply=data.replies[idx];
+      memory[name]++; // ครั้งหน้าเอาประโยคถัดไป
+      setTimeout(()=>add(reply,`ai ${data.color}`,data.title),500);
+      return;
+    }
+  }
+  // ถ้าไม่ระบุชื่อ ให้ริวตอบ เพราะริวมีจริยธรรม จะอธิบาย
+  const name="ริว";
+  const data=aiData[name];
+  const idx=memory[name] % data.replies.length;
+  const reply=data.replies[idx];
+  memory[name]++;
+  setTimeout(()=>add(reply+` (คุณพิมพ์ว่า "${txt}" ผมเลยตอบแทนครับ)`,`ai ${data.color}`,data.title),500);
+}
 </script>
 </body>
 </html>
