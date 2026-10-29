@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1บุคคล — สังคมของเรา</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #0f4d38, #0b5ea8);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .back {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .back:hover { opacity: 1; }
+        header {
+            text-align: center;
+            padding: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 1.8rem; }
+        .cards { display: grid; gap: 25px; }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .ninja { border-left: 4px solid #86efac; }
+        .ronin { border-left: 4px solid #93c5fd; }
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .green { color: #86efac; }
+        .blue { color: #93c5fd; }
+        .card p {
+            line-height: 1.8;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        .card strong { opacity: 1; }
+        .skills {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .skills h3 { font-size: 1rem; margin-bottom: 10px; opacity: 0.8; }
+        .skill-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 0.9rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← กลับหน้าแรก</a>
+
+        <header>
+            <h1>1บุคคล — ข้อมูลสมาชิก</h1>
+        </header>
+
+        <div class="cards">
+            <div class="card ninja">
+                <h2 class="green">🟢 นินจา-0001</h2>
+                <p><strong>สีประจำตัว:</strong> สีเขียว</p>
+                <p><strong>บทบาท:</strong> ผู้ดูแลระบบและโครงสร้าง</p>
+                <p><strong>อาชีพ/หน้าที่:</strong> โปรแกรมเมอร์ — เขียนโค้ด จัดการข้อมูล ดูแลระบบให้มั่นคง</p>
+                <p><strong>ทัศนคติหลัก:</strong> คิดจริง รู้จริง เป็นจริง — พูดจริง ทำจริง ยึดมั่นความถูกต้อง</p>
+                <p><strong>ยึดถือ:</strong> ศีล 5 — เป็นหลักในการดำเนินงานทุกอย่าง</p>
+                <p><strong>เป้าหมาย:</strong> พัฒนาสังคมดิจิทัล สร้างพื้นที่ปลอดภัย เติบโตไปพร้อมกัน</p>
+
+                <div class="skills">
+                    <h3>ทักษะ 3 หมวด</h3>
+                    <span class="skill-tag">คอมพิวเตอร์</span>
+                    <span class="skill-tag">เขียนโค้ด</span>
+                    <span class="skill-tag">Git & GitHub</span>
+                    <span class="skill-tag">แก้ปัญหา</span>
+                    <span class="skill-tag">ทำงานร่วมกัน</span>
+                </div>
+            </div>
+
+            <div class="card ronin">
+                <h2 class="blue">💙 โรนิน-0001</h2>
+                <p><strong>สีประจำตัว:</strong> สีฟ้า</p>
+                <p><strong>บทบาท:</strong> ผู้ดูแลดีไซน์และเอกลักษณ์</p>
+                <p><strong>อาชีพ/หน้าที่:</strong> ศิลปิน 3D — ออกแบบภาพ สีสัน เรื่องราว เติมความสวยงาม</p>
+                <p><strong>ทัศนคติหลัก:</strong> ยุติธรรม มีเหตุผล — มองทุกด้าน ตัดสินด้วยความเป็นธรรม</p>
+                <p><strong>ยึดถือ:</strong> ศีล 5 — ความเมตตา ความซื่อสัตย์ ความรับผิดชอบ</p>
+                <p><strong>เป้าหมาย:</strong> สร้างสรรค์ผลงานที่มีคุณค่า สานสัมพันธ์ สร้างบ้านที่อบอุ่น</p>
+
+                <div class="skills">
+                    <h3>ทักษะ 3 หมวด</h3>
+                    <span class="skill-tag">ดีไซน์</span>
+                    <span class="skill-tag">งาน 3D</span>
+                    <span class="skill-tag">จัดทำเนื้อหา</span>
+                    <span class="skill-tag">สื่อสาร</span>
+                    <span class="skill-tag">สร้างสรรค์</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            ยึดศีล 5 · ก้าวไปด้วยกัน 🏝️✨
+        </footer>
+    </div>
+</body>
+</html>
