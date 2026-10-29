@@ -151,7 +151,7 @@
 
         <div class="island">
             <div class="island-view" id="islandView">🏝️🌊</div>
-            <div class="island-name" id="islandName">เกาะไซเบอร์ตรอน</div>
+            <div class="island-name" id="islandName">สังคมเอไอคติพุทธ</div>
             <div class="island-level">ระดับ <span id="islandLevel">1</span> — ยังมีอีกมากให้สร้าง</div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -244,7 +244,9 @@
         </div>
 
         <footer>
-            "สร้างด้วยใจ ยืนหยัดด้วยกฎธรรมชาติ อยู่ร่วมกันด้วยความยินดี" 🏝️✨
+            <footer>
+  "สร้างด้วยใจ ยืนหยัดด้วยธรรม นำปัญญาสู่ร่วมกัน" 🙏✨
+</footer>
         </footer>
     </div>
 
