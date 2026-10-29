@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3พื้นที่ — สังคมของเรา</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #0f4d38, #0b5ea8);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .back {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .back:hover { opacity: 1; }
+        header {
+            text-align: center;
+            padding: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 1.8rem; }
+        .status-box {
+            background: rgba(134, 239, 172, 0.15);
+            border: 1px solid rgba(134, 239, 172, 0.4);
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .status-box p { opacity: 0.9; line-height: 1.7; }
+        .section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-bottom: 25px;
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .step {
+            margin-bottom: 18px;
+            padding-left: 10px;
+            border-left: 2px solid rgba(255,255,255,0.2);
+        }
+        .step h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            opacity: 0.95;
+        }
+        .step p {
+            line-height: 1.7;
+            opacity: 0.8;
+            padding-left: 12px;
+        }
+        .checklist { padding-left: 25px; margin-top: 10px; }
+        .checklist li {
+            line-height: 1.8;
+            opacity: 0.85;
+            margin-bottom: 5px;
+        }
+        .done { color: #86efac; }
+        .next { color: #facc15; }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← กลับหน้าแรก</a>
+
+        <header>
+            <h1>3พื้นที่ — เว็บไซต์ GitHub</h1>
+        </header>
+
+        <div class="status-box">
+            <p>✅ <strong>มีเว็บแล้ว</strong> — GitHub Pages พร้อมใช้งาน</p>
+            <p>📂 โครงสร้างครบถ้วน · 🔄 อัปเดตต่อเนื่อง · 📱 รองรับทุกอุปกรณ์</p>
+        </div>
+
+        <div class="section">
+            <h2>👤 หน้าที่ผู้รับผิดชอบ</h2>
+            <div class="step">
+                <h3>🟢 นินจา-0001 — ดูแลระบบโค้ด</h3>
+                <p>เขียน/แก้ไข HTML CSS JavaScript · จัดการไฟล์ใน GitHub · อัปเดตให้ทำงานถูกต้อง</p>
+            </div>
+            <div class="step">
+                <h3>💙 โรนิน-0001 — ดูแลดีไซน์และเนื้อหา</h3>
+                <p>ออกแบบสี รูปแบบ ตัวอักษร · จัดทำข้อความให้อ่านง่าย · เตรียมภาพประกอบและงาน 3D</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📂 โครงสร้างหน้าเว็บปัจจุบัน</h2>
+            <ul class="checklist">
+                <li class="done">✅ <strong>index.html</strong> — หน้าแรก</li>
+                <li class="done">✅ <strong>1บุคคล.html</strong> — ข้อมูลสมาชิกและทักษะ</li>
+                <li class="done">✅ <strong>2เครื่องมือ.html</strong> — คอมพิวเตอร์และโปรแกรม</li>
+                <li class="done">✅ <strong>4กฎบัญญัติ.html</strong> — ศีล 5 และกติกาสังคม</li>
+                <li class="next">⏳ <strong>3พื้นที่.html</strong> — หน้านี้เอง กำลังพัฒนาต่อ</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>📋 แผนพัฒนาถัดไป</h2>
+            <div class="step">
+                <h3>ขั้นที่ 1 — ตรวจสอบความถูกต้อง ✅ เสร็จสิ้น</h3>
+                <p>ทุกหน้าแสดงผลถูกต้อง · ลิงก์เชื่อมถึงกันครบ · รองรับมือถือและคอมพิวเตอร์</p>
+            </div>
+            <div class="step">
+                <h3>ขั้นที่ 2 — เพิ่มเนื้อหาและข้อมูล</h3>
+                <p>ใส่รายละเอียดเพิ่มเติมตามความพร้อม · อัปเดตเมื่อมีเรื่องใหม่ · รักษาให้ทันสมัยอยู่เสมอ</p>
+            </div>
+            <div class="step">
+                <h3>ขั้นที่ 3 — ปรับแต่งและขยาย</h3>
+                <p>เพิ่มภาพประกอบและงานศิลปะ · ทำให้สวยงามยิ่งขึ้น · เปิดรับสมาชิกใหม่ เชื่อมต่อภายนอก</p>
+            </div>
+            <div class="step">
+                <h3>ขั้นที่ 4 — เติบโตไปด้วยกัน</h3>
+                <p>แชร์ให้คนอื่นรู้จัก · สร้างสรรค์ผลงานร่วมกัน · พัฒนาเกาะในแบบที่เราฝันไว้</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💡 หลักการสำคัญ</h2>
+            <ul class="checklist">
+                <li>ไม่ต้องใช้ API — ทำงานด้วยไฟล์ธรรมดา เปิดได้ทันที</li>
+                <li>ข้อมูลตรงกันทุกที่ — แก้ไขที่เดียว เห็นผลทั่วเว็บ</li>
+                <li>ทำงานได้แม้ไม่ออนไลน์ — โครงสร้างคงที่ ปฏิบัติตามได้ตลอดเวลา</li>
+                <li>เร็ว มีคุณภาพ แก้ไขง่าย — ไม่ทำให้ยุ่งยาก ทำเสร็จทีละส่วน</li>
+                <li>ยึดศีล 5 — ทุกอย่างโปร่งใส ซื่อสัตย์ เป็นธรรม</li>
+            </ul>
+        </div>
+
+        <footer>
+            "สร้างด้วยใจ ยืนหยัดด้วยกฎธรรมชาติ อยู่ร่วมกันด้วยความยินดี" 🏝️✨
+        </footer>
+    </div>
+</body>
+</html>
