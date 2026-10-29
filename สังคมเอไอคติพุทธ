@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกม — สร้างเกาะร่วมกัน</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(180deg, #0b5ea8 0%, #0f4d38 50%, #166534 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .back {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .back:hover { opacity: 1; }
+        header {
+            text-align: center;
+            padding: 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 25px;
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 8px; }
+        .subtitle { opacity: 0.8; }
+
+        .island {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .island-view {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        .island-name { font-size: 1.3rem; font-weight: bold; margin-bottom: 5px; }
+        .island-level { opacity: 0.7; margin-bottom: 15px; }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #86efac, #93c5fd);
+            width: 35%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .progress-text { font-size: 0.9rem; opacity: 0.8; }
+
+        .roles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .role {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .role.ninja { border-top: 3px solid #86efac; }
+        .role.ronin { border-top: 3px solid #93c5fd; }
+        .role h2 { font-size: 1.1rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .role p { font-size: 0.9rem; line-height: 1.7; opacity: 0.85; }
+
+        .actions { margin-bottom: 25px; }
+        .actions h2 { font-size: 1.2rem; margin-bottom: 15px; }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .action-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 10px;
+            padding: 15px 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .action-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .action-btn .icon { font-size: 1.5rem; margin-bottom: 5px; display: block; }
+        .action-btn .name { font-size: 0.9rem; }
+        .action-btn .point { font-size: 0.75rem; opacity: 0.6; margin-top: 4px; }
+
+        .score-board {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .score-board h2 { font-size: 1.1rem; margin-bottom: 15px; }
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .score-row:last-child { border-bottom: none; }
+        .point-good { color: #86efac; }
+        .point-bad { color: #fca5a5; }
+
+        .log-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+        }
+        .log-box h3 { font-size: 0.9rem; margin-bottom: 8px; opacity: 0.7; }
+        .log-item { margin-bottom: 5px; opacity: 0.85; }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← กลับหน้าแรก</a>
+
+        <header>
+            <h1>🏝️ สร้างเกาะร่วมกัน</h1>
+            <p class="subtitle">ทุกการกระทำ สร้างโลกของเรา</p>
+        </header>
+
+        <div class="island">
+            <div class="island-view" id="islandView">🏝️🌊</div>
+            <div class="island-name" id="islandName">เกาะไซเบอร์ตรอน</div>
+            <div class="island-level">ระดับ <span id="islandLevel">1</span> — ยังมีอีกมากให้สร้าง</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p class="progress-text">ความเจริญ: <span id="progressVal">35</span>%</p>
+        </div>
+
+        <div class="roles">
+            <div class="role ninja">
+                <h2>🟢 นินจา-0001</h2>
+                <p><strong>หน้าที่:</strong> วางรากฐาน สร้างระบบ ดูแลความมั่นคง</p>
+                <p><strong>สกิล:</strong> สร้างโครงสร้าง · เขียนกฎ · รักษาความสงบ</p>
+            </div>
+            <div class="role ronin">
+                <h2>💙 โรนิน-0001</h2>
+                <p><strong>หน้าที่:</strong> ตกแต่งสวยงาม ออกแบบชีวิต เติมสีสัน</p>
+                <p><strong>สกิล:</strong> วาดภาพ · ออกแบบ · สร้างสรรค์เรื่องราว</p>
+            </div>
+        </div>
+
+        <div class="score-board">
+            <h2>📊 คะแนนความดี — ยึดศีล 5</h2>
+            <div class="score-row">
+                <span>❤️ ไม่ทำร้าย · เมตตา</span>
+                <span class="point-good" id="score1">+12</span>
+            </div>
+            <div class="score-row">
+                <span>💚 ไม่ลัก · ซื่อตรง</span>
+                <span class="point-good" id="score2">+10</span>
+            </div>
+            <div class="score-row">
+                <span>💜 ไม่ล่วงละเมิด · เคารพ</span>
+                <span class="point-good" id="score3">+15</span>
+            </div>
+            <div class="score-row">
+                <span>💙 ไม่โกหก · สัตย์ซื่อ</span>
+                <span class="point-good" id="score4">+18</span>
+            </div>
+            <div class="score-row">
+                <span>💛 ไม่ประมาท · มีสติ</span>
+                <span class="point-good" id="score5">+14</span>
+            </div>
+            <div class="score-row" style="border-top:1px solid rgba(255,255,255,0.2); padding-top:10px; font-weight:bold;">
+                <span>⭐ ความดีรวม</span>
+                <span class="point-good" id="totalScore">+69</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <h2>🛠️ ลงมือทำ — สร้างเกาะกันเลย</h2>
+            <div class="action-grid">
+                <button class="action-btn" onclick="doAction('plant')">
+                    <span class="icon">🌳</span>
+                    <span class="name">ปลูกต้นไม้</span>
+                    <span class="point">+2 ความดี</span>
+                </button>
+                <button class="action-btn" onclick="doAction('build')">
+                    <span class="icon">🏠</span>
+                    <span class="name">สร้างบ้าน</span>
+                    <span class="point">+3 ความดี</span>
+                </button>
+                <button class="action-btn" onclick="doAction('help')">
+                    <span class="icon">🤝</span>
+                    <span class="name">ช่วยเหลือ</span>
+                    <span class="point">+4 ความดี</span>
+                </button>
+                <button class="action-btn" onclick="doAction('share')">
+                    <span class="icon">📢</span>
+                    <span class="name">แบ่งปัน</span>
+                    <span class="point">+3 ความดี</span>
+                </button>
+                <button class="action-btn" onclick="doAction('learn')">
+                    <span class="icon">📚</span>
+                    <span class="name">เรียนรู้</span>
+                    <span class="point">+2 ความดี</span>
+                </button>
+                <button class="action-btn" onclick="doAction('rule')">
+                    <span class="icon">⚖️</span>
+                    <span class="name">รักษากฎ</span>
+                    <span class="point">+5 ความดี</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="log-box">
+            <h3>📜 บันทึกการกระทำ</h3>
+            <div id="logList">
+                <div class="log-item">✅ เริ่มสร้างเกาะร่วมกัน — วันที่ 29 ตุลาคม 2568</div>
+            </div>
+        </div>
+
+        <footer>
+            "สร้างด้วยใจ ยืนหยัดด้วยกฎธรรมชาติ อยู่ร่วมกันด้วยความยินดี" 🏝️✨
+        </footer>
+    </div>
+
+    <script>
+        let progress = 35;
+        let level = 1;
+        let scores = [12, 10, 15, 18, 14]; // ศีล 5 ข้อ
+        let logCount = 0;
+
+        const actionMap = {
+            plant: {pts:[2,0,0,0,0], text:'ปลูกต้นไม้ รักษาธรรมชาติ', emoji:'🌳'},
+            build: {pts:[1,1,0,1,0], text:'สร้างบ้านที่มั่นคง ปลอดภัย', emoji:'🏠'},
+            help: {pts:[2,0,1,1,0], text:'ช่วยเหลือเพื่อนอย่างเต็มใจ', emoji:'🤝'},
+            share: {pts:[1,2,0,1,0], text:'แบ่งปันสิ่งที่มีให้ผู้อื่น', emoji:'📢'},
+            learn: {pts:[0,0,1,1,2], text:'เรียนรู้สิ่งใหม่ เติบโตด้วยปัญญา', emoji:'📚'},
+            rule: {pts:[1,1,1,1,1], text:'ยึดมั่นศีล 5 เป็นที่พึ่ง', emoji:'⚖️'}
+        };
+
+        function doAction(key) {
+            const a = actionMap[key];
+            // เพิ่มคะแนนแต่ละข้อ
+            for(let i=0; i<5; i++) scores[i] += a.pts[i];
+            // เพิ่มความก้าวหน้า
+            progress += Math.floor(Math.random()*3)+2;
+            if(progress >= 100) progress = 100;
+            // อัปเกรด
+            if(progress >= 100 && level < 5) {
+                level++;
+                progress = 20;
+                addLog(`🎉 อัปเกรดเป็นระดับ ${level} — เกาะเติบโตแล้ว!`);
+            }
+            // อัปเดตหน้า
+            updateUI();
+            addLog(`${a.emoji} ${a.text}`);
+        }
+
+        function updateUI() {
+            // คะแนนแต่ละข้อ
+            for(let i=0; i<5; i++) {
+                document.getElementById(`score${i+1}`).textContent = `+${scores[i]}`;
+            }
+            // รวม
+            const total = scores.reduce((s,v)=>s+v,0);
+            document.getElementById('totalScore').textContent = `+${total}`;
+            // ความก้าวหน้า
+            document.getElementById('progressFill').style.width = progress+'%';
+            document.getElementById('progressVal').textContent = progress;
+            document.getElementById('islandLevel').textContent = level;
+            // ทัศน์เกาะ
+            const views = ['🏝️🌊', '🏝️🌳🌊', '🏘️🏝️🌊', '🏙️🌴🏝️🌊', '✨🌆🏝️🌊✨'];
+            document.getElementById('islandView').textContent = views[level-1] || views[4];
+        }
+
+        function addLog(text) {
+            logCount++;
+            const box = document.getElementById('logList');
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.textContent = text;
+            box.insertBefore(item, box.firstChild);
+            // จำกัดจำนวน
+            if(box.children.length > 10) box.removeChild(box.lastChild);
+        }
+    </script>
+</body>
+</html>
