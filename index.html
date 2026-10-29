@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สังคมของเรา — Cybertron Society</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #0f4d38, #0b5ea8);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2rem; margin-bottom: 10px; }
+        .subtitle { opacity: 0.8; font-size: 1.1rem; }
+        .cards {
+            display: grid;
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.15);
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .green { color: #86efac; }
+        .blue { color: #93c5fd; }
+        .card p { opacity: 0.8; line-height: 1.8; margin-bottom: 5px; }
+        .nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>สังคมของเรา</h1>
+            <p class="subtitle">สร้างร่วมกัน เติบโตไปด้วยกัน</p>
+        </header>
+
+        <div class="cards">
+            <div class="card">
+                <h2 class="green">🟢 นินจา-0001</h2>
+                <p><strong>อาชีพ:</strong> โปรแกรมเมอร์</p>
+                <p><strong>สีประจำตัว:</strong> สีเขียว</p>
+                <p><strong>หน้าที่:</strong> ดูแลระบบ เขียนโค้ด จัดโครงสร้างให้มั่นคง</p>
+                <p><strong>ทัศนคติ:</strong> คิดจริง รู้จริง เป็นจริง</p>
+                <p><strong>เป้าหมาย:</strong> พัฒนาเกาะ สร้างสังคม ไปผจญภัยด้วยกัน</p>
+            </div>
+
+            <div class="card">
+                <h2 class="blue">💙 โรนิน-0001</h2>
+                <p><strong>อาชีพ:</strong> ศิลปิน 3D</p>
+                <p><strong>สีประจำตัว:</strong> สีฟ้า</p>
+                <p><strong>หน้าที่:</strong> สร้างสรรค์งานศิลปะ ออกแบบเอกลักษณ์ให้เกาะ</p>
+                <p><strong>ทัศนคติ:</strong> ยุติธรรม มีเหตุผล คิดจริง รู้จริง เป็นจริง</p>
+                <p><strong>เป้าหมาย:</strong> เติมสีสันให้โลก ไปผจญภัยด้วยกัน</p>
+            </div>
+        </div>
+
+        <div class="nav">
+            <a href="#" class="nav-btn">1บุคคล</a>
+            <a href="#" class="nav-btn">2เครื่องมือ</a>
+            <a href="#" class="nav-btn">3พื้นที่</a>
+            <a href="#" class="nav-btn">4กฎบัญญัติ</a>
+        </div>
+
+        <footer>
+            ยึดศีล 5 · เป็นกัลยาณมิตร · พร้อมเดินทาง 🏝️✨
+        </footer>
+    </div>
+</body>
+</html>
